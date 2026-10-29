@@ -1,0 +1,195 @@
+name: Apply remaining Glowara analyzer fixes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    name: Apply fixes and commit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply remaining source fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+
+          def replace(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              if old not in text:
+                  raise SystemExit(f'Pattern not found in {path}: {old[:160]!r}')
+              p.write_text(text.replace(old, new, 1), encoding='utf-8')
+              print(f'patched {path}')
+
+
+          def replace_all(path: str, old: str, new: str) -> None:
+              p = Path(path)
+              text = p.read_text(encoding='utf-8')
+              count = text.count(old)
+              if count == 0:
+                  raise SystemExit(f'Pattern not found in {path}: {old[:160]!r}')
+              p.write_text(text.replace(old, new), encoding='utf-8')
+              print(f'patched {path} ({count} occurrences)')
+
+
+          replace(
+              'lib/core/db/db_factory_io.dart',
+              "import 'package:sembast/sembast.dart';\n"
+              "import 'package:sembast/sembast_io.dart';",
+              "import 'package:sembast/sembast_io.dart';",
+          )
+          replace(
+              'lib/core/db/db_factory_web.dart',
+              "import 'package:sembast/sembast.dart';\n"
+              "import 'package:sembast_web/sembast_web.dart';",
+              "import 'package:sembast_web/sembast_web.dart';",
+          )
+          replace(
+              'lib/core/models/app_models.dart',
+              "import 'dart:convert';\n",
+              "",
+          )
+          replace(
+              'lib/core/repositories/journal_repository.dart',
+              'var list = await _db.list(',
+              'final list = await _db.list(',
+          )
+
+          for path in Path('lib').rglob('*.dart'):
+              text = path.read_text(encoding='utf-8')
+              updated = (
+                  text
+                  .replace('MaterialStateProperty', 'WidgetStateProperty')
+                  .replace('MaterialState', 'WidgetState')
+                  .replace('.withOpacity(', '.withValues(alpha: ')
+              )
+              if updated != text:
+                  path.write_text(updated, encoding='utf-8')
+                  print(f'patched Flutter 3.47 APIs in {path}')
+
+          replace(
+              'lib/core/theme/app_theme.dart',
+              'checkColor: c.onPrimary,',
+              'checkColor: WidgetStatePropertyAll<Color?>(c.onPrimary),',
+          )
+
+          replace(
+              'lib/features/calendar/tasks_screen.dart',
+              'formatTime(time!, locale)',
+              'formatTime(time, locale)',
+          )
+          replace(
+              'lib/features/calendar/tasks_screen.dart',
+              'DropdownButtonFormField<String>(\n              value: _category,',
+              'DropdownButtonFormField<String>(\n              initialValue: _category,',
+          )
+          replace(
+              'lib/features/calendar/tasks_screen.dart',
+              'DropdownButtonFormField<RepeatPattern>(\n              value: _repeat,',
+              'DropdownButtonFormField<RepeatPattern>(\n              initialValue: _repeat,',
+          )
+
+          replace(
+              'lib/features/care/care_screen.dart',
+              'DropdownButtonFormField<String>(\n            value: _period,',
+              'DropdownButtonFormField<String>(\n            initialValue: _period,',
+          )
+          replace(
+              'lib/features/care/care_screen.dart',
+              'DropdownButtonFormField<String>(\n            value: _category,',
+              'DropdownButtonFormField<String>(\n            initialValue: _category,',
+          )
+
+          replace(
+              'lib/features/habits/habits_screen.dart',
+              'DropdownButtonFormField<RepeatPattern>(\n              value: _schedule,',
+              'DropdownButtonFormField<RepeatPattern>(\n              initialValue: _schedule,',
+          )
+          replace(
+              'lib/features/health/health_screen.dart',
+              'DropdownButtonFormField<String>(\n                value: type,',
+              'DropdownButtonFormField<String>(\n                initialValue: type,',
+          )
+          replace_all(
+              'lib/features/language/language_screen.dart',
+              'value: _level,',
+              'initialValue: _level,',
+          )
+
+          replace(
+              'lib/features/progress/progress_screen.dart',
+              '  Widget build(BuildContext context) {\n'
+              '    final l10n = context.l10n;\n'
+              '    final c = context.glowColors;',
+              '  Widget build(BuildContext context) {\n'
+              '    final c = context.glowColors;',
+          )
+          replace(
+              'lib/features/progress/progress_screen.dart',
+              'DropdownButtonFormField<String>(\n              value: _metric,',
+              'DropdownButtonFormField<String>(\n              initialValue: _metric,',
+          )
+          replace(
+              'lib/features/settings/settings_screen.dart',
+              "import 'package:glowara/core/theme/glow_theme.dart';\n",
+              '',
+          )
+          replace(
+              'lib/features/settings/settings_screen.dart',
+              'DropdownButtonFormField<int>(\n                          value: reminders.quietStartHour,',
+              'DropdownButtonFormField<int>(\n                          initialValue: reminders.quietStartHour,',
+          )
+          replace(
+              'lib/features/settings/settings_screen.dart',
+              'DropdownButtonFormField<int>(\n                          value: reminders.quietEndHour,',
+              'DropdownButtonFormField<int>(\n                          initialValue: reminders.quietEndHour,',
+          )
+          replace(
+              'lib/features/study/study_screen.dart',
+              "import 'package:glowara/features/study/subject_detail_screen.dart';\n",
+              '',
+          )
+          PY
+
+      - name: Show diff
+        run: |
+          git diff --stat
+          git diff --check
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            lib/core/db/db_factory_io.dart \
+            lib/core/db/db_factory_web.dart \
+            lib/core/models/app_models.dart \
+            lib/core/repositories/journal_repository.dart \
+            lib/core/theme/app_theme.dart \
+            lib/features/calendar/tasks_screen.dart \
+            lib/features/care/care_screen.dart \
+            lib/features/habits/habits_screen.dart \
+            lib/features/health/health_screen.dart \
+            lib/features/language/language_screen.dart \
+            lib/features/language/quiz_screen.dart \
+            lib/features/progress/progress_screen.dart \
+            lib/features/settings/settings_screen.dart \
+            lib/features/study/study_screen.dart
+          if git diff --cached --quiet; then
+            echo "No source changes were produced." >&2
+            exit 1
+          fi
+          git commit -m "Fix remaining Flutter 3.47 analyzer issues"
+          git push origin HEAD:main
