@@ -9,7 +9,6 @@ import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
-import 'package:glowara/features/study/subject_detail_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class StudyScreen extends StatefulWidget {

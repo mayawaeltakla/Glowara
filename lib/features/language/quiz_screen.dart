@@ -152,11 +152,11 @@ class _QuizScreenState extends State<QuizScreen> {
           if (_answered) {
             if (isCorrect) {
               border = c.success;
-              background = c.success.withOpacity(0.10);
+              background = c.success.withValues(alpha: 0.10);
               textColor = c.success;
             } else if (isSelected) {
               border = c.danger;
-              background = c.danger.withOpacity(0.10);
+              background = c.danger.withValues(alpha: 0.10);
               textColor = c.danger;
             }
           }

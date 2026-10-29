@@ -273,7 +273,7 @@ class _HabitDialogState extends State<_HabitDialog> {
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<RepeatPattern>(
-              value: _schedule,
+              initialValue: _schedule,
               decoration: InputDecoration(labelText: context.tr('habitSchedule')),
               items: <DropdownMenuItem<RepeatPattern>>[
                 DropdownMenuItem<RepeatPattern>(

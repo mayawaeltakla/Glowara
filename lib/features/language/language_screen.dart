@@ -414,7 +414,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                               decoration: BoxDecoration(
-                                color: c.success.withOpacity(0.12),
+                                color: c.success.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -707,7 +707,7 @@ class _ProfileDialogState extends State<_ProfileDialog> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: _level,
+            initialValue: _level,
             decoration: InputDecoration(labelText: context.tr('level')),
             items: <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(value: 'beginner', child: Text(context.tr('levelBeginner'))),
@@ -941,7 +941,7 @@ class _LessonDialogState extends State<_LessonDialog> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _level,
+              initialValue: _level,
               decoration: InputDecoration(labelText: context.tr('level')),
               items: <DropdownMenuItem<String>>[
                 DropdownMenuItem<String>(value: 'beginner', child: Text(context.tr('levelBeginner'))),

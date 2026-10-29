@@ -174,7 +174,7 @@ class _HealthScreenState extends State<HealthScreen> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               DropdownButtonFormField<String>(
-                value: type,
+                initialValue: type,
                 decoration: InputDecoration(labelText: context.tr('mealType')),
                 items: <DropdownMenuItem<String>>[
                   DropdownMenuItem<String>(value: 'breakfast', child: Text(context.tr('breakfast'))),

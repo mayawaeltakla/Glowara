@@ -56,7 +56,7 @@ class JournalRepository {
       _db.delete(_moods, _moodId(userId, dateKey(day)));
 
   Future<List<JournalEntry>> journals(String userId, {String query = ''}) async {
-    var list = await _db.list(
+    final list = await _db.list(
       _journals,
       JournalEntry.fromJson,
       filter: Filter.equals('userId', userId),

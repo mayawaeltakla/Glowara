@@ -360,7 +360,7 @@ class _CareStepDialogState extends State<_CareStepDialog> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: _period,
+            initialValue: _period,
             decoration: InputDecoration(labelText: context.tr('morningRoutine')),
             items: <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(value: 'morning', child: Text(context.tr('morningRoutine'))),
@@ -370,7 +370,7 @@ class _CareStepDialogState extends State<_CareStepDialog> {
           ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
-            value: _category,
+            initialValue: _category,
             decoration: InputDecoration(labelText: context.tr('skinCare')),
             items: <DropdownMenuItem<String>>[
               DropdownMenuItem<String>(value: 'skin', child: Text(context.tr('skinCare'))),

@@ -147,7 +147,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final c = context.glowColors;
     final state = AppState.of(context);
 
@@ -441,7 +440,7 @@ class _GoalDialogState extends State<_GoalDialog> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _metric,
+              initialValue: _metric,
               decoration: InputDecoration(labelText: context.tr('goalMetric')),
               items: <DropdownMenuItem<String>>[
                 DropdownMenuItem<String>(value: 'tasks', child: Text(context.tr('metricTasks'))),

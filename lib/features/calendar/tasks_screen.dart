@@ -342,7 +342,7 @@ class _TasksScreenState extends State<TasksScreen> {
                                       if (hasTime)
                                         _TaskMeta(
                                           icon: Icons.schedule,
-                                          label: formatTime(time!, locale),
+                                          label: formatTime(time, locale),
                                         ),
                                       if (task.category != null && task.category!.isNotEmpty)
                                         _TaskMeta(
@@ -551,7 +551,7 @@ class _TaskDialogState extends State<_TaskDialog> {
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<String>(
-              value: _category,
+              initialValue: _category,
               decoration: InputDecoration(labelText: context.tr('taskCategory')),
               items: <DropdownMenuItem<String>>[
                 DropdownMenuItem<String>(value: 'personal', child: Text(context.tr('categoryPersonal'))),
@@ -564,7 +564,7 @@ class _TaskDialogState extends State<_TaskDialog> {
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField<RepeatPattern>(
-              value: _repeat,
+              initialValue: _repeat,
               decoration: InputDecoration(labelText: context.tr('repeat')),
               items: <DropdownMenuItem<RepeatPattern>>[
                 DropdownMenuItem<RepeatPattern>(

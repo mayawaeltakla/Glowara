@@ -7,7 +7,6 @@ import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
-import 'package:glowara/core/theme/glow_theme.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -435,7 +434,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: <Widget>[
                       Expanded(
                         child: DropdownButtonFormField<int>(
-                          value: reminders.quietStartHour,
+                          initialValue: reminders.quietStartHour,
                           decoration: InputDecoration(labelText: context.tr('quietFrom')),
                           items: List<int>.generate(24, (i) => i).map((hour) {
                             return DropdownMenuItem<int>(value: hour, child: Text('$hour:00'));
@@ -450,7 +449,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(width: 10),
                       Expanded(
                         child: DropdownButtonFormField<int>(
-                          value: reminders.quietEndHour,
+                          initialValue: reminders.quietEndHour,
                           decoration: InputDecoration(labelText: context.tr('quietTo')),
                           items: List<int>.generate(24, (i) => i).map((hour) {
                             return DropdownMenuItem<int>(value: hour, child: Text('$hour:00'));

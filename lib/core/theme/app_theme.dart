@@ -42,8 +42,8 @@ class AppThemes {
       cardColor: c.surface,
       dividerColor: c.border,
       shadowColor: c.shadow,
-      highlightColor: c.primary.withOpacity(0.10),
-      splashColor: c.primary.withOpacity(0.12),
+      highlightColor: c.primary.withValues(alpha: 0.10),
+      splashColor: c.primary.withValues(alpha: 0.12),
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: c.primary,
@@ -63,11 +63,11 @@ class AppThemes {
         error: c.danger,
         onError: c.onSurface,
         outline: c.border,
-        outlineVariant: c.border.withOpacity(0.45),
+        outlineVariant: c.border.withValues(alpha: 0.45),
         inverseSurface: c.surface,
         onInverseSurface: c.onSurface,
         inversePrimary: c.primaryContainer,
-        surfaceTint: c.primary.withOpacity(0.18),
+        surfaceTint: c.primary.withValues(alpha: 0.18),
       ),
       extensions: [GlowThemeExtension(colors: c)],
       textTheme: _textTheme(c),
@@ -93,33 +93,33 @@ class AppThemes {
       ),
       dividerTheme: DividerThemeData(color: c.border, space: 1, thickness: 1),
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) return c.primary;
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) return c.primary;
           return c.surface;
         }),
-        checkColor: c.onPrimary,
+        checkColor: WidgetStatePropertyAll<Color?>(c.onPrimary),
         side: BorderSide(color: c.border, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) return c.primary;
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) return c.primary;
           return c.onSurfaceVariant;
         }),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) return c.primary;
+        thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) return c.primary;
           return c.onSurfaceVariant;
         }),
-        trackColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) return c.primary.withOpacity(0.5);
+        trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) return c.primary.withValues(alpha: 0.5);
           return c.border;
         }),
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: c.onSurface.withOpacity(0.9),
+          color: c.onSurface.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(8),
         ),
         textStyle: TextStyle(color: c.scaffold, fontSize: 13),
@@ -228,7 +228,7 @@ class AppThemes {
       filled: true,
       fillColor: c.surfaceAlt,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      hintStyle: TextStyle(color: c.onSurfaceVariant.withOpacity(0.7), fontSize: 14),
+      hintStyle: TextStyle(color: c.onSurfaceVariant.withValues(alpha: 0.7), fontSize: 14),
       labelStyle: TextStyle(color: c.onSurfaceVariant, fontSize: 15),
       errorStyle: TextStyle(color: c.danger, fontSize: 12, height: 1.3),
       enabledBorder: OutlineInputBorder(
@@ -249,7 +249,7 @@ class AppThemes {
       ),
       disabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: c.border.withOpacity(0.5), width: 1.2),
+        borderSide: BorderSide(color: c.border.withValues(alpha: 0.5), width: 1.2),
       ),
     );
   }
