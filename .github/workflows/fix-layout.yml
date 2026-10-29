@@ -1,0 +1,148 @@
+name: Fix Glowara layout
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-layout:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore project directories
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+
+          mapping = {
+              "CONTENT_SOURCES.md": "docs/CONTENT_SOURCES.md",
+              "FINAL_REPORT_AR.md": "docs/FINAL_REPORT_AR.md",
+              "INSTALL_WINDOWS.md": "docs/INSTALL_WINDOWS.md",
+              "STORAGE_AND_LIMITATIONS.md": "docs/STORAGE_AND_LIMITATIONS.md",
+              "setup_windows.ps1": "tool/setup_windows.ps1",
+              "core_test.dart": "test/core_test.dart",
+              "main.dart": "lib/main.dart",
+              "app.dart": "lib/app.dart",
+              "app_ar.arb": "lib/l10n/app_ar.arb",
+              "app_en.arb": "lib/l10n/app_en.arb",
+              "feature_models.dart": "lib/core/models/feature_models.dart",
+              "app_models.dart": "lib/core/models/app_models.dart",
+              "local_database.dart": "lib/core/db/local_database.dart",
+              "legacy_migration.dart": "lib/core/db/legacy_migration.dart",
+              "db_factory_web.dart": "lib/core/db/db_factory_web.dart",
+              "db_factory_stub.dart": "lib/core/db/db_factory_stub.dart",
+              "db_factory_io.dart": "lib/core/db/db_factory_io.dart",
+              "glow_widgets.dart": "lib/core/widgets/glow_widgets.dart",
+              "journal_screen.dart": "lib/features/journal/journal_screen.dart",
+              "care_screen.dart": "lib/features/care/care_screen.dart",
+              "date_utils.dart": "lib/core/utils/date_utils.dart",
+              "tasks_screen.dart": "lib/features/calendar/tasks_screen.dart",
+              "glow_theme.dart": "lib/core/theme/glow_theme.dart",
+              "app_theme.dart": "lib/core/theme/app_theme.dart",
+              "progress_screen.dart": "lib/features/progress/progress_screen.dart",
+              "worship_repository.dart": "lib/core/repositories/worship_repository.dart",
+              "storage_repository.dart": "lib/core/storage/storage_repository.dart",
+              "auth_screens.dart": "lib/features/auth/auth_screens.dart",
+              "task_repository.dart": "lib/core/repositories/task_repository.dart",
+              "study_repository.dart": "lib/core/repositories/study_repository.dart",
+              "settings_repository.dart": "lib/core/repositories/settings_repository.dart",
+              "progress_repository.dart": "lib/core/repositories/progress_repository.dart",
+              "language_repository.dart": "lib/core/repositories/language_repository.dart",
+              "journal_repository.dart": "lib/core/repositories/journal_repository.dart",
+              "health_repository.dart": "lib/core/repositories/health_repository.dart",
+              "habit_repository.dart": "lib/core/repositories/habit_repository.dart",
+              "care_repository.dart": "lib/core/repositories/care_repository.dart",
+              "auth_repository.dart": "lib/core/repositories/auth_repository.dart",
+              "app_state.dart": "lib/core/state/app_state.dart",
+              "health_screen.dart": "lib/features/health/health_screen.dart",
+              "quiz_screen.dart": "lib/features/language/quiz_screen.dart",
+              "language_screen.dart": "lib/features/language/language_screen.dart",
+              "habits_screen.dart": "lib/features/habits/habits_screen.dart",
+              "privacy_service.dart": "lib/core/security/privacy_service.dart",
+              "more_screen.dart": "lib/features/more/more_screen.dart",
+              "settings_screen.dart": "lib/features/settings/settings_screen.dart",
+              "app_localizations.dart": "lib/core/localization/app_localizations.dart",
+              "extra_strings.dart": "lib/core/localization/extra_strings.dart",
+              "study_screen.dart": "lib/features/study/study_screen.dart",
+              "subject_detail_screen.dart": "lib/features/study/subject_detail_screen.dart",
+              "home_screen.dart": "lib/features/home/home_screen.dart",
+              "worship_screen.dart": "lib/features/worship/worship_screen.dart",
+              "quran_service.dart": "lib/features/worship/quran_service.dart",
+              "quran_reader_screen.dart": "lib/features/worship/quran_reader_screen.dart",
+          }
+
+          for source, target in mapping.items():
+              src = Path(source)
+              dst = Path(target)
+              if src.exists():
+                  if dst.exists():
+                      raise SystemExit(f"refusing to overwrite existing {dst}")
+                  dst.parent.mkdir(parents=True, exist_ok=True)
+                  src.rename(dst)
+                  print(f"{source} -> {target}")
+              elif dst.exists():
+                  print(f"already organized: {target}")
+              else:
+                  raise SystemExit(f"missing source: {source}")
+
+          flat_build = Path("build.yml")
+          if flat_build.exists():
+              flat_build.unlink()
+              print("removed obsolete root build.yml")
+
+          gitignore = "\n".join([
+              "# Flutter / Dart",
+              ".dart_tool/",
+              ".packages",
+              ".pub-cache/",
+              ".pub/",
+              "build/",
+              ".flutter-plugins",
+              ".flutter-plugins-dependencies",
+              "*.iml",
+              ".idea/",
+              ".vscode/",
+              "",
+              "# Generated platform scaffolding (created by tool/setup_windows.ps1)",
+              "android/",
+              "ios/",
+              "web/*.png",
+              "",
+              "# Local secrets and environment",
+              ".env",
+              "*.jks",
+              "*.keystore",
+              "key.properties",
+              "google-services.json",
+              "google-services.json.example",
+              "",
+              "# OS noise",
+              "Thumbs.db",
+              "desktop.ini",
+              ".DS_Store",
+              "",
+              "# Local sync server data",
+              "server/data/",
+              "server/*.log",
+          ]) + "\n"
+          Path(".gitignore").write_text(gitignore, encoding="utf-8")
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Restore Glowara source directories"
+          git push origin HEAD:main
