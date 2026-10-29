@@ -72,7 +72,7 @@ jobs:
           test -f build/web/index.html
           test -f build/web/main.dart.js
           grep -Fq '<base href="/Glowara/">' build/web/index.html
-          grep -Fq 'main.dart.js' build/web/index.html
+          grep -Fq 'flutter_bootstrap.js' build/web/index.html
           echo "Verified build/web/index.html and the /Glowara/ base path."
 
       - name: Configure GitHub Pages
