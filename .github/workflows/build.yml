@@ -1,0 +1,154 @@
+name: Build Glowara
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Analyze, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Show Flutter and Dart versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+        continue-on-error: true
+
+      - name: Create missing platform scaffolding in a temporary directory
+        run: |
+          set -euo pipefail
+
+          if [ -d android ] && [ -d web ]; then
+            echo "android/ and web/ already exist; leaving them untouched."
+            exit 0
+          fi
+
+          scaffold="$(mktemp -d)"
+          platforms=""
+          if [ ! -d android ]; then
+            platforms="android"
+          fi
+          if [ ! -d web ]; then
+            platforms="${platforms:+$platforms,}web"
+          fi
+
+          flutter create --no-pub --project-name glowara --org com.glowara --platforms="$platforms" "$scaffold"
+
+          if [ ! -d android ]; then
+            cp -R "$scaffold/android" .
+          fi
+          if [ ! -d web ]; then
+            cp -R "$scaffold/web" .
+          fi
+          if [ ! -f .metadata ]; then
+            cp "$scaffold/.metadata" .
+          fi
+
+          rm -rf "$scaffold"
+
+      - name: Allow network access in the Android release manifest
+        run: |
+          set -euo pipefail
+          manifest="android/app/src/main/AndroidManifest.xml"
+          if [ ! -f "$manifest" ]; then
+            echo "Android manifest was not generated" >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('android/app/src/main/AndroidManifest.xml')
+          text = path.read_text(encoding='utf-8')
+          if 'android.permission.INTERNET' not in text:
+              start = text.index('<manifest')
+              end = text.index('>', start) + 1
+              text = text[:end] + '\n    <uses-permission android:name="android.permission.INTERNET" />' + text[end:]
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Resolve dependencies
+        id: pubget
+        continue-on-error: true
+        run: flutter pub get
+
+      - name: Analyze
+        id: analyze
+        continue-on-error: true
+        run: flutter analyze
+
+      - name: Run tests
+        id: test
+        continue-on-error: true
+        run: flutter test
+
+      - name: Build Android release APK
+        id: build_apk
+        continue-on-error: true
+        run: flutter build apk --release
+
+      - name: Build web release
+        id: build_web
+        continue-on-error: true
+        run: flutter build web --release
+
+      - name: Upload Android APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: glowara-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload web build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: glowara-web
+          path: build/web/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce real verification status
+        if: always()
+        run: |
+          failed=0
+          for result in \
+            "pub get:${{ steps.pubget.outcome }}" \
+            "analyze:${{ steps.analyze.outcome }}" \
+            "test:${{ steps.test.outcome }}" \
+            "APK build:${{ steps.build_apk.outcome }}" \
+            "web build:${{ steps.build_web.outcome }}"; do
+            name="${result%%:*}"
+            outcome="${result##*:}"
+            if [ "$outcome" != "success" ]; then
+              echo "::error::$name did not succeed (outcome: $outcome)"
+              failed=1
+            fi
+          done
+          exit "$failed"
