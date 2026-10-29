@@ -1,0 +1,324 @@
+{
+  "locale": "ar",
+  "name": "app_ar",
+  "@appTitle": {
+    "description": "Application title shown in the shell and about screens",
+    "message": "غلوارا"
+  },
+  "@appTagline": {
+    "description": "Short tagline under the title",
+    "message": "مساحة هادئة للعبادة والتخطيط والدراسة والعناية بالنفس"
+  },
+  "@welcome": {
+    "description": "Welcome headline on onboarding",
+    "message": "أهلاً بك في غلوارا"
+  },
+  "@welcomeSub": {
+    "description": "Welcome subtitle on onboarding",
+    "message": "رفيقتك اللطيفة للعبادة والتخطيط والدراسة والعناية بالنفس."
+  },
+  "@getStarted": {
+    "description": "Button to start onboarding",
+    "message": "البدء"
+  },
+  "@login": {
+    "description": "Log in action",
+    "message": "تسجيل الدخول"
+  },
+  "@signup": {
+    "description": "Create account action",
+    "message": "إنشاء حساب"
+  },
+  "@email": {
+    "description": "Email field label",
+    "message": "البريد الإلكتروني"
+  },
+  "@password": {
+    "description": "Password field label",
+    "message": "كلمة المرور"
+  },
+  "@confirmPassword": {
+    "description": "Confirm password field label",
+    "message": "تأكيد كلمة المرور"
+  },
+  "@name": {
+    "description": "Name field label",
+    "message": "الاسم"
+  },
+  "@language": {
+    "description": "Language label",
+    "message": "اللغة"
+  },
+  "@arabic": {
+    "description": "Arabic language option",
+    "message": "العربية"
+  },
+  "@english": {
+    "description": "English language option",
+    "message": "الإنجليزية"
+  },
+  "@theme": {
+    "description": "Theme label",
+    "message": "الثيم"
+  },
+  "@light": {
+    "description": "Light theme option",
+    "message": "نهاري"
+  },
+  "@dark": {
+    "description": "Dark theme option",
+    "message": "ليلي"
+  },
+  "@system": {
+    "description": "System theme option",
+    "message": "نظام الجهاز"
+  },
+  "@home": {
+    "description": "Bottom nav label: Home",
+    "message": "الرئيسية"
+  },
+  "@today": {
+    "description": "Today label",
+    "message": "اليوم"
+  },
+  "@worship": {
+    "description": "Bottom nav label: Worship",
+    "message": "العبادات"
+  },
+  "@calendar": {
+    "description": "Bottom nav label: Calendar",
+    "message": "التقويم"
+  },
+  "@study": {
+    "description": "Bottom nav label: Study",
+    "message": "الدراسة"
+  },
+  "@selfCare": {
+    "description": "Bottom nav label: Self-care",
+    "message": "العناية بالنفس"
+  },
+  "@more": {
+    "description": "Bottom nav label: More",
+    "message": "المزيد"
+  },
+  "@journal": {
+    "description": "Journal label",
+    "message": "المذكرات"
+  },
+  "@languageLearning": {
+    "description": "Language learning label",
+    "message": "تعلّم اللغة"
+  },
+  "@progress": {
+    "description": "Progress & achievements label",
+    "message": "التقدم والإنجازات"
+  },
+  "@settings": {
+    "description": "Settings label",
+    "message": "الإعدادات"
+  },
+  "@logout": {
+    "description": "Log out action",
+    "message": "تسجيل الخروج"
+  },
+  "@deleteAccount": {
+    "description": "Delete account action",
+    "message": "حذف الحساب"
+  },
+  "@save": {
+    "description": "Save action",
+    "message": "حفظ"
+  },
+  "@cancel": {
+    "description": "Cancel action",
+    "message": "إلغاء"
+  },
+  "@delete": {
+    "description": "Delete action",
+    "message": "حذف"
+  },
+  "@edit": {
+    "description": "Edit action",
+    "message": "تعديل"
+  },
+  "@add": {
+    "description": "Add action",
+    "message": "إضافة"
+  },
+  "@done": {
+    "description": "Done action",
+    "message": "تم"
+  },
+  "@close": {
+    "description": "Close action",
+    "message": "إغلاق"
+  },
+  "@back": {
+    "description": "Back action",
+    "message": "رجوع"
+  },
+  "@next": {
+    "description": "Next action",
+    "message": "التالي"
+  },
+  "@skip": {
+    "description": "Skip action",
+    "message": "تخطي"
+  },
+  "@sync": {
+    "description": "Synchronize action",
+    "message": "مزامنة"
+  },
+  "@syncStatus": {
+    "description": "Synchronization status label",
+    "message": "حالة المزامنة"
+  },
+  "@synced": {
+    "description": "Synced status",
+    "message": "تمت المزامنة"
+  },
+  "@syncing": {
+    "description": "Syncing status",
+    "message": "جارٍ المزامنة..."
+  },
+  "@offline": {
+    "description": "Offline status",
+    "message": "غير متصل"
+  },
+  "@online": {
+    "description": "Online status",
+    "message": "متصل"
+  },
+  "@savedLocally": {
+    "description": "Saved locally message",
+    "message": "محفوظ على هذا الجهاز"
+  },
+  "@noInternet": {
+    "description": "No internet message",
+    "message": "لا يوجد اتصال بالإنترنت"
+  },
+  "@tryAgain": {
+    "description": "Try again button",
+    "message": "محاولة مرة أخرى"
+  },
+  "@error": {
+    "description": "Error title",
+    "message": "خطأ"
+  },
+  "@success": {
+    "description": "Success title",
+    "message": "نجاح"
+  },
+  "@loading": {
+    "description": "Loading indicator label",
+    "message": "جارٍ التحميل..."
+  },
+  "@empty": {
+    "description": "Empty state title",
+    "message": "لا توجد عناصر بعد"
+  },
+  "@emptySub": {
+    "description": "Empty state subtitle",
+    "message": "لا يوجد شيء هنا بعد. أضِفي عنصرك الأول."
+  },
+  "@confirmDelete": {
+    "description": "Delete confirmation title",
+    "message": "حذف هذا العنصر؟"
+  },
+  "@confirmDeleteSub": {
+    "description": "Delete confirmation subtitle",
+    "message": "لا يمكن التراجع عن هذا الإجراء."
+  },
+  "@prayerTimes": {
+    "description": "Prayer times label",
+    "message": "مواقيت الصلاة"
+  },
+  "@nextPrayer": {
+    "description": "Next prayer label",
+    "message": "الصلاة التالية"
+  },
+  "@quran": {
+    "description": "Quran label",
+    "message": "القرآن الكريم"
+  },
+  "@adhkar": {
+    "description": "Adhkar label",
+    "message": "الأذكار"
+  },
+  "@tasbih": {
+    "description": "Tasbih label",
+    "message": "التسبيح"
+  },
+  "@istighfar": {
+    "description": "Istighfar label",
+    "message": "الاستغفار"
+  },
+  "@dua": {
+    "description": "Dua label",
+    "message": "الدعاء"
+  },
+  "@morning": {
+    "description": "Morning label",
+    "message": "صباحاً"
+  },
+  "@evening": {
+    "description": "Evening label",
+    "message": "مساءً"
+  },
+  "@tasks": {
+    "description": "Tasks label",
+    "message": "المهام"
+  },
+  "@habits": {
+    "description": "Habits label",
+    "message": "العادات"
+  },
+  "@subjects": {
+    "description": "Subjects label",
+    "message": "المواد"
+  },
+  "@sessions": {
+    "description": "Sessions label",
+    "message": "جلسات الدراسة"
+  },
+  "@mood": {
+    "description": "Mood label",
+    "message": "المزاج"
+  },
+  "@water": {
+    "description": "Water label",
+    "message": "الماء"
+  },
+  "@meals": {
+    "description": "Meals label",
+    "message": "الوجبات"
+  },
+  "@achievements": {
+    "description": "Achievements label",
+    "message": "الإنجازات"
+  },
+  "@statistics": {
+    "description": "Statistics label",
+    "message": "الإحصائيات"
+  },
+  "@privacy": {
+    "description": "Privacy label",
+    "message": "الخصوصية"
+  },
+  "@private": {
+    "description": "Private label",
+    "message": "خاص"
+  },
+  "@notMedicalAdvice": {
+    "description": "Medical disclaimer",
+    "message": "هذا التطبيق ليس بديلاً عن الاستشارة الطبية."
+  },
+  "@version": {
+    "description": "Version label",
+    "message": "الإصدار"
+  },
+  "@about": {
+    "description": "About label",
+    "message": "حول التطبيق"
+  }
+}

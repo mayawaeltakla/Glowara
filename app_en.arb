@@ -1,0 +1,324 @@
+{
+  "locale": "en",
+  "name": "app_en",
+  "@appTitle": {
+    "description": "Application title shown in the shell and about screens",
+    "message": "Glowara"
+  },
+  "@appTagline": {
+    "description": "Short tagline under the title",
+    "message": "A calm space for worship, planning, study and self-care"
+  },
+  "@welcome": {
+    "description": "Welcome headline on onboarding",
+    "message": "Welcome to Glowara"
+  },
+  "@welcomeSub": {
+    "description": "Welcome subtitle on onboarding",
+    "message": "Your gentle companion for worship, planning, study and self-care."
+  },
+  "@getStarted": {
+    "description": "Button to start onboarding",
+    "message": "Get started"
+  },
+  "@login": {
+    "description": "Log in action",
+    "message": "Log in"
+  },
+  "@signup": {
+    "description": "Create account action",
+    "message": "Create account"
+  },
+  "@email": {
+    "description": "Email field label",
+    "message": "Email"
+  },
+  "@password": {
+    "description": "Password field label",
+    "message": "Password"
+  },
+  "@confirmPassword": {
+    "description": "Confirm password field label",
+    "message": "Confirm password"
+  },
+  "@name": {
+    "description": "Name field label",
+    "message": "Name"
+  },
+  "@language": {
+    "description": "Language label",
+    "message": "Language"
+  },
+  "@arabic": {
+    "description": "Arabic language option",
+    "message": "Arabic"
+  },
+  "@english": {
+    "description": "English language option",
+    "message": "English"
+  },
+  "@theme": {
+    "description": "Theme label",
+    "message": "Theme"
+  },
+  "@light": {
+    "description": "Light theme option",
+    "message": "Light"
+  },
+  "@dark": {
+    "description": "Dark theme option",
+    "message": "Dark"
+  },
+  "@system": {
+    "description": "System theme option",
+    "message": "System"
+  },
+  "@home": {
+    "description": "Bottom nav label: Home",
+    "message": "Home"
+  },
+  "@today": {
+    "description": "Today label",
+    "message": "Today"
+  },
+  "@worship": {
+    "description": "Bottom nav label: Worship",
+    "message": "Worship"
+  },
+  "@calendar": {
+    "description": "Bottom nav label: Calendar",
+    "message": "Calendar"
+  },
+  "@study": {
+    "description": "Bottom nav label: Study",
+    "message": "Study"
+  },
+  "@selfCare": {
+    "description": "Bottom nav label: Self-care",
+    "message": "Self-care"
+  },
+  "@more": {
+    "description": "Bottom nav label: More",
+    "message": "More"
+  },
+  "@journal": {
+    "description": "Journal label",
+    "message": "Journal"
+  },
+  "@languageLearning": {
+    "description": "Language learning label",
+    "message": "Language learning"
+  },
+  "@progress": {
+    "description": "Progress & achievements label",
+    "message": "Progress & achievements"
+  },
+  "@settings": {
+    "description": "Settings label",
+    "message": "Settings"
+  },
+  "@logout": {
+    "description": "Log out action",
+    "message": "Log out"
+  },
+  "@deleteAccount": {
+    "description": "Delete account action",
+    "message": "Delete account"
+  },
+  "@save": {
+    "description": "Save action",
+    "message": "Save"
+  },
+  "@cancel": {
+    "description": "Cancel action",
+    "message": "Cancel"
+  },
+  "@delete": {
+    "description": "Delete action",
+    "message": "Delete"
+  },
+  "@edit": {
+    "description": "Edit action",
+    "message": "Edit"
+  },
+  "@add": {
+    "description": "Add action",
+    "message": "Add"
+  },
+  "@done": {
+    "description": "Done action",
+    "message": "Done"
+  },
+  "@close": {
+    "description": "Close action",
+    "message": "Close"
+  },
+  "@back": {
+    "description": "Back action",
+    "message": "Back"
+  },
+  "@next": {
+    "description": "Next action",
+    "message": "Next"
+  },
+  "@skip": {
+    "description": "Skip action",
+    "message": "Skip"
+  },
+  "@sync": {
+    "description": "Synchronize action",
+    "message": "Sync"
+  },
+  "@syncStatus": {
+    "description": "Synchronization status label",
+    "message": "Sync status"
+  },
+  "@synced": {
+    "description": "Synced status",
+    "message": "Synced"
+  },
+  "@syncing": {
+    "description": "Syncing status",
+    "message": "Syncing..."
+  },
+  "@offline": {
+    "description": "Offline status",
+    "message": "Offline"
+  },
+  "@online": {
+    "description": "Online status",
+    "message": "Online"
+  },
+  "@savedLocally": {
+    "description": "Saved locally message",
+    "message": "Saved on this device"
+  },
+  "@noInternet": {
+    "description": "No internet message",
+    "message": "No internet connection"
+  },
+  "@tryAgain": {
+    "description": "Try again button",
+    "message": "Try again"
+  },
+  "@error": {
+    "description": "Error title",
+    "message": "Error"
+  },
+  "@success": {
+    "description": "Success title",
+    "message": "Success"
+  },
+  "@loading": {
+    "description": "Loading indicator label",
+    "message": "Loading..."
+  },
+  "@empty": {
+    "description": "Empty state title",
+    "message": "No items yet"
+  },
+  "@emptySub": {
+    "description": "Empty state subtitle",
+    "message": "There is nothing here yet. Add your first item."
+  },
+  "@confirmDelete": {
+    "description": "Delete confirmation title",
+    "message": "Delete this item?"
+  },
+  "@confirmDeleteSub": {
+    "description": "Delete confirmation subtitle",
+    "message": "This cannot be undone."
+  },
+  "@prayerTimes": {
+    "description": "Prayer times label",
+    "message": "Prayer times"
+  },
+  "@nextPrayer": {
+    "description": "Next prayer label",
+    "message": "Next prayer"
+  },
+  "@quran": {
+    "description": "Quran label",
+    "message": "Quran"
+  },
+  "@adhkar": {
+    "description": "Adhkar label",
+    "message": "Adhkar"
+  },
+  "@tasbih": {
+    "description": "Tasbih label",
+    "message": "Tasbih"
+  },
+  "@istighfar": {
+    "description": "Istighfar label",
+    "message": "Istighfar"
+  },
+  "@dua": {
+    "description": "Dua label",
+    "message": "Dua"
+  },
+  "@morning": {
+    "description": "Morning label",
+    "message": "Morning"
+  },
+  "@evening": {
+    "description": "Evening label",
+    "message": "Evening"
+  },
+  "@tasks": {
+    "description": "Tasks label",
+    "message": "Tasks"
+  },
+  "@habits": {
+    "description": "Habits label",
+    "message": "Habits"
+  },
+  "@subjects": {
+    "description": "Subjects label",
+    "message": "Subjects"
+  },
+  "@sessions": {
+    "description": "Sessions label",
+    "message": "Sessions"
+  },
+  "@mood": {
+    "description": "Mood label",
+    "message": "Mood"
+  },
+  "@water": {
+    "description": "Water label",
+    "message": "Water"
+  },
+  "@meals": {
+    "description": "Meals label",
+    "message": "Meals"
+  },
+  "@achievements": {
+    "description": "Achievements label",
+    "message": "Achievements"
+  },
+  "@statistics": {
+    "description": "Statistics label",
+    "message": "Statistics"
+  },
+  "@privacy": {
+    "description": "Privacy label",
+    "message": "Privacy"
+  },
+  "@private": {
+    "description": "Private label",
+    "message": "Private"
+  },
+  "@notMedicalAdvice": {
+    "description": "Medical disclaimer",
+    "message": "This app is not a substitute for medical advice."
+  },
+  "@version": {
+    "description": "Version label",
+    "message": "Version"
+  },
+  "@about": {
+    "description": "About label",
+    "message": "About"
+  }
+}
