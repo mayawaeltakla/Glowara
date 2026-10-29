@@ -15,7 +15,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
-    final strings = await _loadStrings(locale.languageCode);
+    final strings = await AppLocalizations._loadStrings(locale.languageCode);
     return AppLocalizations(locale, strings);
   }
 

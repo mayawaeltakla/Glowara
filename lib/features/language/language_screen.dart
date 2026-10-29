@@ -348,7 +348,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => _deleteDeck(deck),
+                    onPressed: () => _deleteDeck(deck!),
                     icon: Icon(Icons.delete_outline, size: 18, color: c.onSurfaceVariant),
                   ),
                 ],
@@ -359,7 +359,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               children: <Widget>[
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _cards.length < 2 ? null : () => _openQuiz(deck.id),
+                    onPressed: _cards.length < 2 ? null : () => _openQuiz(deck!.id),
                     icon: const Icon(Icons.quiz_outlined, size: 18),
                     label: Text(context.tr('startQuiz')),
                   ),

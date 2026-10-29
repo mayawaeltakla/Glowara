@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 
 /// نتيجة جلب نص read-only.
 class QuranResult {
-  const QuranResult._({required this.ok, required this.data, this.error});
+  const QuranResult._({required this.ok, this.data, this.error});
   final bool ok;
   final Map<String, dynamic>? data;
   final String? error;

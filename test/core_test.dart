@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glowara/core/models/app_models.dart';
 import 'package:glowara/core/models/feature_models.dart';
+import 'package:glowara/core/repositories/settings_repository.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 
 void main() {

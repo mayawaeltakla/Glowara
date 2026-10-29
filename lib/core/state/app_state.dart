@@ -290,6 +290,9 @@ class AppState extends ChangeNotifier {
 
   /// تُستدعى بعد أي تعديل في البيانات لإعادة بناء الشاشات المعتمدة.
   void refresh() => notifyListeners();
+
+  /// الوصول إلى الحالة المشتركة من شجرة الواجهة.
+  static AppState of(BuildContext context) => AppStateProvider.of(context);
 }
 
 /// توفير AppState للشجرة عبر InheritedNotifier.

@@ -33,7 +33,8 @@ class AppThemes {
 
   /// بناء ThemeData من لوحة وسطوع معين.
   static ThemeData material(String paletteId, Brightness brightness) {
-    final c = palette(paletteId).colors(brightness);
+    final p = palette(paletteId);
+    final c = brightness == Brightness.light ? p.light : p.dark;
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,
