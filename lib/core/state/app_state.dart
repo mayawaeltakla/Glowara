@@ -61,7 +61,7 @@ class AppState extends ChangeNotifier {
   String? _initError;
 
   String _locale = 'ar';
-  String _themeId = 'rose';
+  String _themeId = 'serene';
   ThemeMode _themeMode = ThemeMode.system;
   ReminderSettings _reminders = const ReminderSettings();
   DisplaySettings _display = const DisplaySettings();
@@ -98,7 +98,7 @@ class AppState extends ChangeNotifier {
     try {
       _user = await auth.currentUser();
       _locale = (await settings.get<String>('locale')) ?? 'ar';
-      _themeId = (await settings.get<String>('themeId')) ?? 'rose';
+      _themeId = (await settings.get<String>('themeId')) ?? 'serene';
       final mode = await settings.get<String>('themeMode');
       _themeMode = switch (mode) {
         'light' => ThemeMode.light,
@@ -297,7 +297,7 @@ class AppState extends ChangeNotifier {
   void _resetDevicePreferences() {
     _pinSet = false;
     _locale = 'ar';
-    _themeId = 'rose';
+    _themeId = 'serene';
     _themeMode = ThemeMode.system;
     _reminders = const ReminderSettings();
     _display = const DisplaySettings();

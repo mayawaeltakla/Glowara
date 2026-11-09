@@ -57,6 +57,7 @@ class GlowCard extends StatelessWidget {
     this.color,
     this.gradient,
     this.margin,
+    this.radius = GlowRadius.card,
   });
 
   final Widget child;
@@ -65,6 +66,9 @@ class GlowCard extends StatelessWidget {
   final Color? color;
   final Gradient? gradient;
   final EdgeInsets? margin;
+
+  /// نصف قطر الزوايا (24 افتراضيًا؛ 28–32 للبطاقات الكبيرة).
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -75,17 +79,18 @@ class GlowCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: gradient == null ? (color ?? c.surface) : null,
         gradient: gradient,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: c.border),
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(color: c.border.withValues(alpha: 0.8)),
+        // ظل موف واسع وناعم بدل الظل القاسي.
         boxShadow: <BoxShadow>[
-          BoxShadow(color: c.shadow, blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: c.shadow, blurRadius: 24, offset: const Offset(0, 8)),
         ],
       ),
       child: child,
     );
     if (onTap == null) return card;
     return InkWell(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(radius),
       onTap: onTap,
       child: card,
     );
@@ -224,16 +229,28 @@ class GlowStatTile extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: c.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: c.border),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.border.withValues(alpha: 0.8)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(color: c.shadow, blurRadius: 20, offset: const Offset(0, 6)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
-              if (icon != null) Icon(icon, size: 16, color: color),
-              if (icon != null) const SizedBox(width: 6),
+              if (icon != null)
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.14),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 15, color: color),
+                ),
+              if (icon != null) const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   label,
@@ -299,12 +316,21 @@ class GlowChoiceChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? c.primary : c.surface,
-          borderRadius: BorderRadius.circular(30),
+          color: selected ? c.primary : c.surfaceAlt,
+          borderRadius: BorderRadius.circular(GlowRadius.pill),
           border: Border.all(color: selected ? c.primary : c.border),
+          boxShadow: selected
+              ? <BoxShadow>[
+                  BoxShadow(
+                    color: c.primary.withValues(alpha: 0.30),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -318,7 +344,7 @@ class GlowChoiceChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
-                color: selected ? c.onPrimary : c.onSurfaceVariant,
+                color: selected ? c.onPrimary : c.onSurface,
               ),
             ),
           ],
@@ -455,6 +481,55 @@ class GlowLabeledProgress extends StatelessWidget {
         const SizedBox(height: 6),
         GlowProgress(value: value),
       ],
+    );
+  }
+}
+
+/// شعار غلوارا داخل مربع مدوّر بتوهّج وردي/ذهبي ناعم (شاشة الترحيب).
+class GlowEmblem extends StatelessWidget {
+  const GlowEmblem({super.key, this.size = 132});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.glowColors;
+    final radius = BorderRadius.circular(size * 0.27);
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: radius,
+        boxShadow: <BoxShadow>[
+          BoxShadow(color: c.blush.withValues(alpha: 0.55), blurRadius: 44, spreadRadius: 4),
+          BoxShadow(
+            color: c.gold.withValues(alpha: 0.28),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: radius,
+        child: Image.asset(
+          'assets/images/glowara_logo.png',
+          fit: BoxFit.cover,
+          semanticLabel: 'Glowara',
+          errorBuilder: (context, error, stackTrace) => DecoratedBox(
+            decoration: BoxDecoration(gradient: c.heroGradient),
+            child: Center(
+              child: Text(
+                'G',
+                style: TextStyle(
+                  fontSize: size * 0.4,
+                  fontWeight: FontWeight.w800,
+                  color: c.onPrimary,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

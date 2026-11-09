@@ -1,5 +1,5 @@
-/// مكتبة ثيم غلوارا — لوحة ألوان أنثوية راقية (وردي غباري، ذهبي، كريمي)
-/// مع دعم كامل للوضعين النهاري والليلي وثلاثة ثيمات قابلة للتغيير.
+/// مكتبة ثيم غلوارا — نظام «Serene Glow»: برقوقي وردي دافئ، ذهبي شمبانيا،
+/// ولافندر على كريمي هادئ، مع وضعين نهاري وليلي وأربعة ثيمات قابلة للتغيير.
 library glowara.theme;
 
 import 'package:flutter/material.dart';
@@ -45,6 +45,8 @@ class GlowColors {
     required this.border,
     required this.shadow,
     required this.heroGradient,
+    this.blush = const Color(0xFFDDA7A5),
+    this.lilac = const Color(0xFFC5B3D1),
   });
 
   /// خلفية الشاشة الأساسية.
@@ -83,11 +85,61 @@ class GlowColors {
 
   /// تدرج بطلي من لونين (أعلى→أسفل).
   final LinearGradient heroGradient;
+
+  /// وردي «blush» ناعم: حلقات التقدم وبطاقات ثانوية وشارات.
+  final Color blush;
+
+  /// لافندر مميِّز: وسوم التأمل والأقسام المسائية.
+  final Color lilac;
 }
 
 /// السجل المركزي لجميع الثيمات المدعومة.
 class GlowThemes {
   GlowThemes._();
+
+  // ---- Serene Glow (الافتراضي) ----
+  // نسب التباين محسوبة (WCAG AA ≥ 4.5:1 للنص) ومغطاة باختبار test/theme_test.dart.
+  static const _sereneLight = GlowColors(
+    scaffold: Color(0xFFFAF6F0), // كريمي دافئ
+    surface: Color(0xFFFFFFFF), // بورسلين
+    surfaceAlt: Color(0xFFF4EDE4), // كريمي همس
+    onSurface: Color(0xFF36282E), // كاكاو إسبريسو بدل الأسود
+    onSurfaceVariant: Color(0xFF6B5560),
+    primary: Color(0xFF8A4F6E), // برقوقي وردي غامق
+    onPrimary: Color(0xFFFFFFFF),
+    primaryContainer: Color(0xFFF6E4EC),
+    gold: Color(0xFFD4AF7A), // ذهبي شمبانيا
+    onGold: Color(0xFF3A2A14),
+    success: Color(0xFF4F7F5F),
+    warning: Color(0xFF9A6B1E),
+    danger: Color(0xFFB3475A),
+    border: Color(0xFFE8DCD6),
+    shadow: Color(0x0F8A4F6E), // ظل موف شفاف (6%)
+    heroGradient: GlowGradient.serene,
+    blush: Color(0xFFDDA7A5),
+    lilac: Color(0xFFC5B3D1),
+  );
+
+  static const _sereneDark = GlowColors(
+    scaffold: Color(0xFF191216),
+    surface: Color(0xFF241B21),
+    surfaceAlt: Color(0xFF2F242B),
+    onSurface: Color(0xFFF4EAE6),
+    onSurfaceVariant: Color(0xFFC9B5BE),
+    primary: Color(0xFFEDB1CD),
+    onPrimary: Color(0xFF3A1428),
+    primaryContainer: Color(0xFF4A2A3C),
+    gold: Color(0xFFE3C795),
+    onGold: Color(0xFF2A1C08),
+    success: Color(0xFF8FBF9D),
+    warning: Color(0xFFE3BE7A),
+    danger: Color(0xFFF0909F),
+    border: Color(0xFF3B2D35),
+    shadow: Color(0x40000000),
+    heroGradient: GlowGradient.sereneDark,
+    blush: Color(0xFFC98E8C),
+    lilac: Color(0xFFB6A3C6),
+  );
 
   static const _roseLight = GlowColors(
     scaffold: Color(0xFFFBF6F2),
@@ -206,6 +258,13 @@ class GlowThemes {
   /// كل الثيمات المتاحة.
   static const List<GlowPalette> all = <GlowPalette>[
     GlowPalette(
+      id: 'serene',
+      nameAr: 'الوهج الهادئ',
+      nameEn: 'Serene Glow',
+      light: _sereneLight,
+      dark: _sereneDark,
+    ),
+    GlowPalette(
       id: 'rose',
       nameAr: 'الوردي الغباري',
       nameEn: 'Dusty Rose',
@@ -245,6 +304,23 @@ class GlowThemes {
 class GlowGradient {
   GlowGradient._();
 
+  /// تدرج بطاقات البطولة في Serene Glow (النص الأبيض عليها ≥ 6:1).
+  static const LinearGradient serene = LinearGradient(
+    colors: <Color>[
+      Color(0xFF8A4F6E),
+      Color(0xFF6F3856),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+  static const LinearGradient sereneDark = LinearGradient(
+    colors: <Color>[
+      Color(0xFF7A4262),
+      Color(0xFF4D2840),
+    ],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
   static const LinearGradient rose = LinearGradient(
     colors: <Color>[
       Color(0xFFC77E90),

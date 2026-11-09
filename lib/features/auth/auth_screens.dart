@@ -34,36 +34,57 @@ class WelcomeScreen extends StatelessWidget {
     final c = context.glowColors;
     return Scaffold(
       backgroundColor: c.scaffold,
-      body: SafeArea(
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(0, -0.55),
+            radius: 1.0,
+            colors: <Color>[c.blush.withValues(alpha: 0.26), c.scaffold],
+          ),
+        ),
+        child: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: 110,
-                  height: 110,
-                  decoration: BoxDecoration(
-                    gradient: c.heroGradient,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(color: c.shadow, blurRadius: 24, offset: const Offset(0, 12)),
-                    ],
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'G',
-                    style: TextStyle(fontSize: 44, fontWeight: FontWeight.w800, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 32),
+                const GlowEmblem(),
+                const SizedBox(height: 28),
                 Text(
-                  l10n.welcome,
-                  style: Theme.of(context).textTheme.displaySmall,
+                  l10n.appTitle,
+                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                        color: c.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(width: 36, height: 1.2, color: c.gold),
+                    const SizedBox(width: 12),
+                    Text(
+                      'GLOWARA',
+                      style: TextStyle(
+                        fontSize: 12,
+                        letterSpacing: 3,
+                        fontWeight: FontWeight.w600,
+                        color: c.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(width: 36, height: 1.2, color: c.gold),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  l10n.welcome,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
                 Text(
                   l10n.welcomeSub,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: c.onSurfaceVariant),
@@ -105,6 +126,7 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
         ),
       ),
     );
