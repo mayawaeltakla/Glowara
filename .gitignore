@@ -11,7 +11,7 @@ build/
 .vscode/
 
 # Generated platform scaffolding (created by tool/setup_windows.ps1)
-android/
+/android/
 ios/
 web/*.png
 

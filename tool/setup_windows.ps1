@@ -122,6 +122,15 @@ if (Test-Path $manifestPath) {
   Write-Host "تحذير: لم يُعثر على AndroidManifest.xml لإضافة إذن الإنترنت." -ForegroundColor Yellow
 }
 
+# 2c) أيقونة غلوارا واسم التطبيق (يحتاج Python؛ إن لم يتوفر يُتخطّى بتحذير).
+$python = Get-Command python -ErrorAction SilentlyContinue
+if (-not $python) { $python = Get-Command py -ErrorAction SilentlyContinue }
+if ($python) {
+  & $python.Source (Join-Path $projectRoot 'tool\apply_branding.py')
+} else {
+  Write-Host "تحذير: Python غير مثبت، لم تُطبَّق الأيقونة. شغّل tool/apply_branding.py لاحقًا." -ForegroundColor Yellow
+}
+
 # 3) جلب الحزم
 Write-Host "جلب الحزم (flutter pub get) ..." -ForegroundColor Yellow
 Run-Cmd -Command "flutter pub get" -Critical
