@@ -54,6 +54,9 @@ jobs:
           fi
           rm -rf "$scaffold"
 
+      - name: Apply Glowara icons and branding
+        run: python3 tool/apply_branding.py
+
       - name: Resolve dependencies
         run: flutter pub get
 

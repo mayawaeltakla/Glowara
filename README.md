@@ -75,7 +75,12 @@ glowara/
 │   ├── CONTENT_SOURCES.md
 │   ├── STORAGE_AND_LIMITATIONS.md
 │   └── FINAL_REPORT_AR.md            # تقرير التسليم وحالة التحقق
-├── tool/setup_windows.ps1
+├── assets/icon/                      # مصدر الأيقونة والنسخة الجاهزة
+├── tool/
+│   ├── setup_windows.ps1
+│   ├── generate_icons.py         # توليد أحجام الأيقونة
+│   ├── apply_branding.py         # تطبيق الأيقونة والاسم على android/ وweb/
+│   └── icons/                    # الأيقونات الجاهزة
 ├── pubspec.yaml
 ├── analysis_options.yaml
 └── l10n.yaml                          # غير مستخدم حاليًا (التعريب مدمج)
@@ -84,6 +89,12 @@ glowara/
 مجلدا `android/` و`web/` **غير موجودين بعد**؛ ينشئهما سكربت الإعداد أو أمر `flutter create --platforms android,web .`. راجع التحذير في دليل التثبيت قبل تشغيل `flutter create` مباشرة.
 
 التعريب مكتوب داخل `lib/core/localization/` ولا يعتمد على توليد ARB وقت التشغيل. ملفات `l10n.yaml` و`lib/l10n/*.arb` باقية كمرجع/أساس محتمل لاحقًا، لكنها **غير مستخدمة** حاليًا؛ لا تعدّلها وتتوقع ظهور النص في التطبيق.
+
+## الأيقونة والهوية
+
+- المصدر: `assets/icon/glowara_icon_source.png`. يولّد `tool/generate_icons.py` (يحتاج Pillow وnumpy) نسخة شفافة الزوايا `assets/icon/glowara_icon.png` وكل الأحجام في `tool/icons/` (Android mipmap، أيقونات الويب، نسخ maskable، favicon).
+- `tool/apply_branding.py` ينسخ الأيقونات إلى `android/` و`web/` بعد توليدهما بـ `flutter create`، ويضبط اسم التطبيق وألوانه في `AndroidManifest.xml` و`web/manifest.json` و`web/index.html`. تستدعيه workflows البناء والنشر وسكربت `tool/setup_windows.ps1` تلقائيًا، ويمكن تشغيله يدويًا بأمان أكثر من مرة.
+- لتغيير الأيقونة: استبدلي ملف المصدر ثم شغّلي `python3 tool/generate_icons.py` وارفعي الناتج.
 
 ## الاختبارات
 

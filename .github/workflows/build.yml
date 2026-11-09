@@ -91,6 +91,9 @@ jobs:
               path.write_text(text, encoding='utf-8')
           PY
 
+      - name: Apply Glowara icons and branding
+        run: python3 tool/apply_branding.py
+
       - name: Resolve dependencies
         id: pubget
         continue-on-error: true
