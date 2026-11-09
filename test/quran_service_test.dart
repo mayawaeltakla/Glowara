@@ -21,6 +21,8 @@ String _surahBody() => jsonEncode(<String, dynamic>{
       },
     });
 
+http.Response _okResponse() => http.Response.bytes(utf8.encode(_surahBody()), 200);
+
 RemoteQuranService _service(http.Client client, {int maxAttempts = 3}) =>
     RemoteQuranService(
       client: client,
@@ -33,7 +35,7 @@ void main() {
     final requested = <Uri>[];
     final service = _service(MockClient((request) async {
       requested.add(request.url);
-      return http.Response(_surahBody(), 200);
+      return _okResponse();
     }));
 
     final result = await service.getSurah(2);
@@ -60,7 +62,7 @@ void main() {
     var calls = 0;
     final service = _service(MockClient((request) async {
       calls++;
-      return http.Response(_surahBody(), 200);
+      return _okResponse();
     }));
 
     expect((await service.getSurah(0)).errorType, QuranErrorType.invalidRequest);
@@ -89,7 +91,7 @@ void main() {
       calls++;
       return calls < 3
           ? http.Response('busy', 503)
-          : http.Response(_surahBody(), 200);
+          : _okResponse();
     }));
 
     final result = await service.getSurah(2);

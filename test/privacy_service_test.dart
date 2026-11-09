@@ -67,7 +67,7 @@ void main() {
   test('a legacy SHA-256 PIN is accepted and upgraded to PBKDF2', () async {
     const pin = '1357';
     const salt = 'bGVnYWN5LXNhbHQ=';
-    var bytes = utf8.encode('$salt:$pin');
+    List<int> bytes = utf8.encode('$salt:$pin');
     for (var i = 0; i < 10000; i++) {
       bytes = sha256.convert(bytes).bytes;
     }

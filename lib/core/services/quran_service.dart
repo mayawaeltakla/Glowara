@@ -97,7 +97,7 @@ class RemoteQuranService implements QuranService {
       try {
         final response = await _client.get(uri).timeout(timeout);
         if (response.statusCode == 200) {
-          return _parse(response.body);
+          return _parse(response.bodyBytes);
         }
         last = QuranResult.failure(
           QuranErrorType.server,
@@ -117,9 +117,10 @@ class RemoteQuranService implements QuranService {
     return last;
   }
 
-  QuranResult _parse(String body) {
+  QuranResult _parse(List<int> bodyBytes) {
     try {
-      final decoded = jsonDecode(body);
+      // JSON هو UTF-8 دائمًا؛ لا نعتمد على ترويسة charset التي قد تغيب فيفسد النص العربي.
+      final decoded = jsonDecode(utf8.decode(bodyBytes));
       if (decoded is! Map) {
         return const QuranResult.failure(
           QuranErrorType.invalidResponse,
