@@ -20,6 +20,8 @@ import 'package:glowara/core/repositories/study_repository.dart';
 import 'package:glowara/core/repositories/task_repository.dart';
 import 'package:glowara/core/repositories/worship_repository.dart';
 import 'package:glowara/core/security/privacy_service.dart';
+import 'package:glowara/core/services/quran_service.dart';
+import 'package:glowara/core/utils/app_log.dart';
 
 class AppState extends ChangeNotifier {
   AppState({
@@ -36,9 +38,11 @@ class AppState extends ChangeNotifier {
     required this.health,
     required this.language,
     required this.progress,
-  });
+    QuranService? quran,
+  }) : quran = quran ?? RemoteQuranService();
 
   final LocalDatabase db;
+  final QuranService quran;
   final AuthRepository auth;
   final SettingsRepository settings;
   final PrivacyService privacy;
@@ -147,23 +151,21 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// حذف الحساب المحلي وكل البيانات.
+  /// حذف الحساب الحالي وبياناته فقط.
+  ///
+  /// إن لم يبقَ أي حساب على الجهاز بعد الحذف تُمسح أيضًا التفضيلات المشتركة
+  /// (اللغة، الثيم، الرمز...) فيعود التطبيق كأنه جديد. أما إن بقيت حسابات
+  /// أخرى فتبقى تفضيلات الجهاز كما هي.
   Future<void> deleteAccount() async {
-    await auth.deleteAccount();
-    try {
-      await LegacyMigration.clearLegacy();
-    } catch (_) {
-      // الحذف الأساسي تم؛ تعذّر تنظيف مفاتيح النسخة القديمة لا يغيّر النتيجة.
+    final id = _user?.id;
+    if (id == null) return;
+    await auth.deleteAccount(id);
+    if (!await auth.hasAccounts()) {
+      await db.clearAll();
+      await _clearLegacyData();
+      _resetDevicePreferences();
     }
     _user = null;
-    _pinSet = false;
-    _locale = 'ar';
-    _themeId = 'rose';
-    _themeMode = ThemeMode.system;
-    _reminders = const ReminderSettings();
-    _display = const DisplaySettings();
-    _waterGoalMl = 2000;
-    _cupSizeMl = 250;
     notifyListeners();
   }
 
@@ -231,6 +233,13 @@ class AppState extends ChangeNotifier {
 
   Future<bool> verifyPin(String pin) => privacy.verifyPin(pin);
 
+  /// مفتاح رسالة الخطأ المناسبة بعد فشل التحقق من الرمز:
+  /// `pinLocked` أثناء القفل المؤقت، وإلا `wrongPin`.
+  Future<String> pinFailureMessageKey() async {
+    final remaining = await privacy.lockRemaining();
+    return remaining > Duration.zero ? 'pinLocked' : 'wrongPin';
+  }
+
   Future<void> removePin() async {
     await privacy.removePin();
     _pinSet = false;
@@ -269,12 +278,23 @@ class AppState extends ChangeNotifier {
 
   Future<void> clearAllData() async {
     await db.clearAll();
+    await _clearLegacyData();
+    _user = null;
+    _resetDevicePreferences();
+    notifyListeners();
+  }
+
+  /// يمسح مفاتيح النسخة القديمة (shared_preferences). فشله لا يمنع اكتمال الحذف.
+  Future<void> _clearLegacyData() async {
     try {
       await LegacyMigration.clearLegacy();
-    } catch (_) {
-      // لا نمنع اكتمال الحذف إذا تعذّر الوصول إلى SharedPreferences.
+    } catch (e, st) {
+      logError('AppState.clearLegacy', e, st);
     }
-    _user = null;
+  }
+
+  /// يعيد تفضيلات الجهاز في الذاكرة إلى قيمها الافتراضية.
+  void _resetDevicePreferences() {
     _pinSet = false;
     _locale = 'ar';
     _themeId = 'rose';
@@ -283,7 +303,6 @@ class AppState extends ChangeNotifier {
     _display = const DisplaySettings();
     _waterGoalMl = 2000;
     _cupSizeMl = 250;
-    notifyListeners();
   }
 
   Future<int> storageBytes() => db.estimatedSizeBytes();

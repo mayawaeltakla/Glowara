@@ -7,10 +7,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/models/app_models.dart';
+import 'package:glowara/core/services/quran_service.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/core/utils/app_log.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
-import 'package:glowara/features/worship/quran_service.dart';
 
 class QuranReaderScreen extends StatefulWidget {
   const QuranReaderScreen({super.key});
@@ -20,7 +21,6 @@ class QuranReaderScreen extends StatefulWidget {
 }
 
 class _QuranReaderScreenState extends State<QuranReaderScreen> {
-  final QuranService _service = RemoteQuranService();
   bool _didLoad = false;
   bool _loading = true;
   bool _offlineCopy = false;
@@ -62,7 +62,8 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
     if (cachedRaw != null) {
       try {
         cached = Surah.fromApi(jsonDecode(cachedRaw) as Map<String, dynamic>);
-      } catch (_) {
+      } catch (e, st) {
+        logError('QuranReader.readCache', e, st);
         cached = null;
       }
     }
@@ -82,7 +83,7 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       }
     }
 
-    final result = await _service.getSurah(_surahNumber);
+    final result = await state.quran.getSurah(_surahNumber);
     if (!mounted) return;
 
     if (result.ok && result.data != null) {
@@ -100,8 +101,9 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
           _loading = false;
         });
         return;
-      } catch (_) {
+      } catch (e, st) {
         // استجابة غير مكتملة: نكمل إلى النسخة المحلية إن وُجدت.
+        logError('QuranReader.parseSurah', e, st);
       }
     }
 
@@ -115,8 +117,10 @@ class _QuranReaderScreenState extends State<QuranReaderScreen> {
       return;
     }
 
+    // التفاصيل التقنية للسجل فقط؛ المستخدمة ترى رسالة عامة مفهومة.
+    logError('QuranReader.load', result.error ?? result.errorType ?? 'unknown');
     setState(() {
-      _error = result.error ?? context.tr('somethingWentWrong');
+      _error = context.tr('somethingWentWrong');
       _loading = false;
     });
   }

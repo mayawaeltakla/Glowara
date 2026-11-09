@@ -7,6 +7,7 @@ import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/core/utils/app_log.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -118,9 +119,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (current == null || !mounted) return;
       final valid = await state.verifyPin(current);
       if (!valid) {
+        final messageKey = await state.pinFailureMessageKey();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.tr('wrongPin'))),
+            SnackBar(content: Text(context.tr(messageKey))),
           );
         }
         return;
@@ -150,9 +152,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (current == null || !mounted) return;
     final valid = await state.verifyPin(current);
     if (!valid) {
+      final messageKey = await state.pinFailureMessageKey();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.tr('wrongPin'))),
+          SnackBar(content: Text(context.tr(messageKey))),
         );
       }
       return;
@@ -239,7 +242,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(content: Text(context.tr('importSuccess'))),
       );
       _loadSize();
-    } catch (_) {
+    } catch (e, st) {
+      logError('Settings.importData', e, st);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.tr('importError'))),
