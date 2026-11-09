@@ -3,6 +3,7 @@
 /// للتخزين المحلي والمزامنة السحابية مستقبلاً.
 library glowara.models;
 
+import 'dart:math' show Random;
 
 /// مساعدة للتحويل من/to تاريخ ISO8601.
 class _DateTimeHelper {
@@ -905,9 +906,9 @@ class SyncRecord {
       );
 }
 
-/// معرف فريد بسيط (بدون حزمة خارجية).
+/// معرف فريد بسيط (بدون حزمة خارجية): الوقت بالميكروثانية + رقم عشوائي آمن.
 String uniqueId() {
   final now = DateTime.now().microsecondsSinceEpoch;
-  final random = (now * 1000 + DateTime.now().millisecond) % 900000 + 100000;
+  final random = Random.secure().nextInt(0x7fffffff);
   return '${now}_$random';
 }

@@ -15,6 +15,7 @@ import 'package:glowara/core/repositories/task_repository.dart';
 import 'package:glowara/core/repositories/worship_repository.dart';
 import 'package:glowara/core/security/privacy_service.dart';
 import 'package:glowara/core/state/app_state.dart';
+import 'package:glowara/core/utils/app_log.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
@@ -26,8 +27,9 @@ Future<void> main() async {
     final db = await LocalDatabase.open();
     try {
       await LegacyMigration.runIfNeeded(db);
-    } catch (_) {
+    } catch (e, st) {
       // ترحيل اختياري من النسخة القديمة: فشله لا يمنع فتح قاعدة البيانات.
+      logError('main.legacyMigration', e, st);
     }
 
     final settings = SettingsRepository(db);
@@ -49,7 +51,8 @@ Future<void> main() async {
     await state.initialize();
 
     runApp(AppStateProvider(state: state, child: const GlowaraApp()));
-  } catch (error) {
+  } catch (error, stackTrace) {
+    logError('main.bootstrap', error, stackTrace);
     runApp(_BootstrapErrorApp(message: error.toString()));
   }
 }

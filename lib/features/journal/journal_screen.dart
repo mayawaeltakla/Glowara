@@ -89,7 +89,9 @@ class _JournalScreenState extends State<JournalScreen> {
       });
       _load();
     } else {
-      setState(() => _pinError = context.tr('wrongPin'));
+      final messageKey = await state.pinFailureMessageKey();
+      if (!mounted) return;
+      setState(() => _pinError = context.tr(messageKey));
     }
   }
 

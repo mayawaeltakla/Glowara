@@ -6,6 +6,7 @@ library glowara.db.migration;
 
 import 'dart:convert';
 
+import 'package:glowara/core/utils/app_log.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'local_database.dart';
@@ -66,8 +67,9 @@ class LegacyMigration {
           await db.put(entry.value, id, map);
           imported++;
         }
-      } catch (_) {
+      } catch (e, st) {
         // سجل تالف لا يجب أن يمنع تشغيل التطبيق.
+        logError('LegacyMigration.collection(${entry.key})', e, st);
       }
     }
 
@@ -77,7 +79,9 @@ class LegacyMigration {
       try {
         final map = Map<String, dynamic>.from(jsonDecode(user) as Map);
         await db.setSetting('current_user', map);
-      } catch (_) {}
+      } catch (e, st) {
+        logError('LegacyMigration.currentUser', e, st);
+      }
     }
 
     // الإعدادات القديمة
@@ -86,7 +90,9 @@ class LegacyMigration {
       if (raw == null) continue;
       try {
         await db.setSetting(key, jsonDecode(raw));
-      } catch (_) {}
+      } catch (e, st) {
+        logError('LegacyMigration.setting($key)', e, st);
+      }
     }
 
     await db.setSetting(_flag, true);

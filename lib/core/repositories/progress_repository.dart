@@ -42,21 +42,31 @@ class ProgressRepository {
         Filter.equals('isActive', true),
       ]),
     );
-    final logs = await _db.list('habitLogs', HabitLog.fromJson);
-    final periodLogs = logs
-        .where((l) => l.date.compareTo(fromKey) >= 0 && l.date.compareTo(toKey) <= 0)
-        .toList();
+    // نجلب سجلات عادات هذه المستخدمة فقط (لا سجلات كل الحسابات).
+    final habitIds = habits.map((h) => h.id).toList();
+    final logs = habitIds.isEmpty
+        ? const <HabitLog>[]
+        : await _db.list(
+            'habitLogs',
+            HabitLog.fromJson,
+            filter: Filter.inList('habitId', habitIds),
+          );
+    // مجموعة مفاتيح "عادة|تاريخ" المنجزة: بحث ثابت الزمن بدل مسح القائمة كل مرة.
+    final completedKeys = <String>{
+      for (final l in logs)
+        if (l.state == WorshipState.completed &&
+            l.date.compareTo(fromKey) >= 0 &&
+            l.date.compareTo(toKey) <= 0)
+          '${l.habitId}|${l.date}',
+    };
     var scheduled = 0;
     var habitsDone = 0;
     for (var day = start; !day.isAfter(end); day = day.add(const Duration(days: 1))) {
+      final key = dateKey(day);
       for (final habit in habits) {
         if (_isScheduled(habit, day)) {
           scheduled++;
-          final key = dateKey(day);
-          if (periodLogs.any((l) =>
-              l.habitId == habit.id &&
-              l.date == key &&
-              l.state == WorshipState.completed)) {
+          if (completedKeys.contains('${habit.id}|$key')) {
             habitsDone++;
           }
         }
@@ -114,7 +124,11 @@ class ProgressRepository {
         Filter.equals('isActive', true),
       ]),
     );
-    final careLogs = await _db.list('careLogs', SelfCareLog.fromJson);
+    final careLogs = await _db.list(
+      'careLogs',
+      SelfCareLog.fromJson,
+      filter: Filter.equals('userId', userId),
+    );
     final periodCare = careLogs
         .where((l) =>
             l.userId == userId &&
@@ -160,7 +174,14 @@ class ProgressRepository {
 
   Future<Map<String, StudyProgress>> subjectProgress(String userId) async {
     final subjects = await _db.list('subjects', StudySubject.fromJson, filter: Filter.equals('userId', userId));
-    final units = await _db.list('units', StudyUnit.fromJson);
+    final subjectIds = subjects.map((s) => s.id).toList();
+    final units = subjectIds.isEmpty
+        ? const <StudyUnit>[]
+        : await _db.list(
+            'units',
+            StudyUnit.fromJson,
+            filter: Filter.inList('subjectId', subjectIds),
+          );
     final result = <String, StudyProgress>{};
     for (final subject in subjects) {
       final subjectUnits = units.where((u) => u.subjectId == subject.id).toList();
