@@ -200,12 +200,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: <Widget>[
                                   Icon(Icons.calendar_today_outlined, size: 13, color: c.primary),
                                   const SizedBox(width: 6),
-                                  Text(
-                                    formatFullDate(now, locale),
-                                    style: TextStyle(
-                                      color: c.onSurfaceVariant,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
+                                  Flexible(
+                                    child: Text(
+                                      formatFullDate(now, locale),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: c.onSurfaceVariant,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -571,12 +575,16 @@ class _DayGlowCard extends StatelessWidget {
                     children: <Widget>[
                       const Icon(Icons.auto_awesome, color: Colors.white, size: 18),
                       const SizedBox(width: 8),
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ],
