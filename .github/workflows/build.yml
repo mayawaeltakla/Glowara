@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -136,6 +136,17 @@ jobs:
           path: build/web/
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Publish APK as a direct-download release
+        if: github.ref == 'refs/heads/main' && steps.build_apk.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk Glowara.apk
+          gh release view latest >/dev/null 2>&1 || gh release create latest \
+            --title "Glowara (latest Android build)" \
+            --notes "Always the newest build from main. Download Glowara.apk and install it."
+          gh release upload latest Glowara.apk --clobber
 
       - name: Enforce real verification status
         if: always()
