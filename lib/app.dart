@@ -44,8 +44,8 @@ class GlowaraApp extends StatelessWidget {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       locale: locale,
-      theme: AppThemes.material(state.themeId, Brightness.light),
-      darkTheme: AppThemes.material(state.themeId, Brightness.dark),
+      theme: AppThemes.material(state.themeId, Brightness.light, locale: state.locale),
+      darkTheme: AppThemes.material(state.themeId, Brightness.dark, locale: state.locale),
       themeMode: state.themeMode,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
@@ -197,20 +197,142 @@ class _HomeShellState extends State<HomeShell> {
     return Scaffold(
       backgroundColor: c.scaffold,
       body: IndexedStack(index: _index, children: pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        backgroundColor: c.surface,
-        indicatorColor: c.primaryContainer,
-        height: 68,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: List<NavigationDestination>.generate(
-          5,
-          (i) => NavigationDestination(
-            icon: Icon(icons[i]),
-            selectedIcon: Icon(selectedIcons[i], color: c.primary),
-            label: labels[i],
+      bottomNavigationBar: _GlowDock(
+        index: _index,
+        onSelect: (i) => setState(() => _index = i),
+        labels: labels,
+        icons: icons,
+        selectedIcons: selectedIcons,
+      ),
+    );
+  }
+}
+
+/// شريط التنقل العائم: كبسولة مرتفعة عن الحافة بظل موف ناعم، ونقطة ذهبية
+/// تحت التبويب النشط.
+class _GlowDock extends StatelessWidget {
+  const _GlowDock({
+    required this.index,
+    required this.onSelect,
+    required this.labels,
+    required this.icons,
+    required this.selectedIcons,
+  });
+
+  final int index;
+  final ValueChanged<int> onSelect;
+  final List<String> labels;
+  final List<IconData> icons;
+  final List<IconData> selectedIcons;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.glowColors;
+    final light = Theme.of(context).brightness == Brightness.light;
+    return SafeArea(
+      top: false,
+      child: Center(
+        heightFactor: 1,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: c.surface.withValues(alpha: light ? 0.94 : 0.96),
+                borderRadius: BorderRadius.circular(GlowRadius.sheet),
+                border: Border.all(
+                  color: light ? Colors.white.withValues(alpha: 0.7) : c.border,
+                ),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: c.primary.withValues(alpha: light ? 0.14 : 0.22),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: SizedBox(
+                height: 68,
+                child: Row(
+                  children: List<Widget>.generate(
+                    labels.length,
+                    (i) => Expanded(
+                      child: _DockItem(
+                        label: labels[i],
+                        icon: i == index ? selectedIcons[i] : icons[i],
+                        selected: i == index,
+                        onTap: () => onSelect(i),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DockItem extends StatelessWidget {
+  const _DockItem({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.glowColors;
+    final color = selected ? c.primary : c.onSurfaceVariant;
+    return Semantics(
+      button: true,
+      selected: selected,
+      label: label,
+      excludeSemantics: true,
+      child: InkResponse(
+        onTap: onTap,
+        radius: 36,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, size: 24, color: color),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 3),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              width: selected ? 16 : 4,
+              height: 4,
+              decoration: BoxDecoration(
+                color: selected ? c.gold : Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+                boxShadow: selected
+                    ? <BoxShadow>[
+                        BoxShadow(color: c.gold.withValues(alpha: 0.6), blurRadius: 6),
+                      ]
+                    : null,
+              ),
+            ),
+          ],
         ),
       ),
     );

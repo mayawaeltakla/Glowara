@@ -106,7 +106,7 @@ class AppUser {
     this.displayName,
     required this.createdAt,
     this.language = 'ar',
-    this.themeId = 'rose',
+    this.themeId = 'serene',
     this.themeMode = 'system', // system | light | dark
     this.timeZone = 'UTC',
     this.syncStatus = SyncStatus.synced,
@@ -143,7 +143,7 @@ class AppUser {
         displayName: json['displayName'] as String?,
         createdAt: _DateTimeHelper.fromJson(json['createdAt']) ?? DateTime.now(),
         language: (json['language'] as String?) ?? 'ar',
-        themeId: (json['themeId'] as String?) ?? 'rose',
+        themeId: (json['themeId'] as String?) ?? 'serene',
         themeMode: (json['themeMode'] as String?) ?? 'system',
         timeZone: (json['timeZone'] as String?) ?? 'UTC',
         syncStatus: SyncStatusX.fromJsonValue(json['syncStatus'] as String? ?? 'synced'),

@@ -24,6 +24,9 @@ dependencies:
   crypto: ^3.0.3
   http: ^1.2.2
   go_router: ^13.2.0
+  # خطوط Tajawal وPlus Jakarta Sans: تُجلب عند أول استخدام وتُخزَّن محليًا،
+  # ويُعرض خط النظام إلى أن تصل أو دون إنترنت.
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +37,5 @@ flutter:
   generate: true
   uses-material-design: true
 
-  # الخطوط غير مضمنة عمدًا: يستخدم التطبيق خطوط النظام العربية المريحة
-  # مع اللاتينية المنسقة. راجع docs/CONTENT_SOURCES.md لإضافة Amiri/Tajawal.
+  assets:
+    - assets/images/glowara_logo.png

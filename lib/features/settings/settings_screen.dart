@@ -275,6 +275,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   String _paletteName(BuildContext context, String id) {
     switch (id) {
+      case 'serene':
+        return context.tr('themeSerene');
       case 'lilac':
         return context.tr('themeLilac');
       case 'sand':
