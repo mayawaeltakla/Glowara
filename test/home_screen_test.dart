@@ -142,13 +142,13 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text(language == 'ar' ? 'إشراقة يومك' : 'Your day’s glow'), findsOneWidget);
       // أيقونة تبديل إنجاز المهمة ظاهرة، والبيانات المحمّلة حقيقية.
+      // نسبة التوازن: مهمة من اثنتين + ماء 750 من 2000 → متوسط ≈ 44%.
+      expect(find.textContaining('%'), findsWidgets);
       // القائمة كسولة: نمرّر حتى تظهر المهمة (وهذا يختبر بقية الصفحة أيضًا).
       await tester.scrollUntilVisible(find.text('Call the clinic'), 200,
           scrollable: find.byType(Scrollable).first);
       expect(find.text('Call the clinic'), findsOneWidget);
       expect(tester.takeException(), isNull);
-      // نسبة التوازن: مهمة من اثنتين + ماء 750 من 2000 → متوسط ≈ 44%.
-      expect(find.textContaining('%'), findsWidgets);
     });
   }
 }
