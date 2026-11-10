@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:go_router/go_router.dart';
 
 String? authErrorText(BuildContext context, String? code) {
