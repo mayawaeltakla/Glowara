@@ -133,9 +133,16 @@ class GlowSectionTitle extends StatelessWidget {
             ),
           ),
           if (actionLabel != null && onAction != null)
-            TextButton(
-              onPressed: onAction,
-              child: Text(actionLabel!),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 150),
+              child: TextButton(
+                onPressed: onAction,
+                child: Text(
+                  actionLabel!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
         ],
       ),
