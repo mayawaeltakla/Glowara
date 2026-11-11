@@ -78,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _toggleTask(TaskItem task) async {
     final state = AppState.of(context);
-    await state.tasks.toggle(task);
+    await state.tasks.toggle(task, day: DateTime.now());
     if (mounted) _load();
   }
 
@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final state = AppState.of(context);
     final now = DateTime.now();
     final locale = Localizations.localeOf(context).languageCode;
-    final tasksDone = _tasks.where((t) => t.state == TaskState.done).length;
+    final tasksDone = _tasks.where((t) => t.isDoneOn(now)).length;
     final habitsDone = _habits.where((h) => _doneHabits.contains(h.id)).length;
     final greeting = now.hour < 12 ? context.tr('goodMorning') : context.tr('goodEvening');
     final name = state.user?.displayName?.trim();
@@ -439,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               subtitle: task.dueDateTime == null
                                   ? null
                                   : formatTime(task.dueDateTime!, locale),
-                              done: task.state == TaskState.done,
+                              done: task.isDoneOn(now),
                               onTap: () => _toggleTask(task),
                             ),
                           ),

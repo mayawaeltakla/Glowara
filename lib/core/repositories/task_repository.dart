@@ -71,9 +71,18 @@ class TaskRepository {
     ).toJson());
   }
 
-  Future<void> toggle(TaskItem task) async {
-    final next = task.state == TaskState.done ? TaskState.open : TaskState.done;
-    await save(task.copyWith(state: next));
+  /// تبديل الإنجاز. المهمة المتكررة تُنجَز لليوم المحدد فقط فتتجدد في اليوم التالي.
+  Future<void> toggle(TaskItem task, {DateTime? day}) async {
+    if (task.repeat == RepeatPattern.none) {
+      final next = task.state == TaskState.done ? TaskState.open : TaskState.done;
+      await save(task.copyWith(state: next));
+      return;
+    }
+    final target = day ?? DateTime.now();
+    final key = dateKey(target);
+    final days = List<String>.of(task.doneDays);
+    if (!days.remove(key)) days.add(key);
+    await save(task.copyWith(doneDays: days));
   }
 
   Future<void> delete(String id) => _db.delete(_collection, id);
@@ -84,7 +93,10 @@ class TaskRepository {
     final now = DateTime.now();
     return all.where((t) {
       final due = t.dueDateTime;
-      return due != null && due.isBefore(now) && t.state != TaskState.done;
+      return due != null &&
+          t.repeat == RepeatPattern.none &&
+          due.isBefore(now) &&
+          t.state != TaskState.done;
     }).toList();
   }
 }

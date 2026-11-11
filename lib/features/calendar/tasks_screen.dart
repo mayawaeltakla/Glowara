@@ -47,7 +47,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Future<void> _toggle(TaskItem task) async {
     final state = AppState.of(context);
-    await state.tasks.toggle(task);
+    await state.tasks.toggle(task, day: _selectedDay);
     if (mounted) _load();
   }
 
@@ -249,7 +249,7 @@ class _TasksScreenState extends State<TasksScreen> {
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
                               leading: Checkbox(
-                                value: task.state == TaskState.done,
+                                value: task.isDoneOn(_selectedDay),
                                 onChanged: (_) => _toggle(task),
                               ),
                               title: Text(
@@ -281,7 +281,7 @@ class _TasksScreenState extends State<TasksScreen> {
                         )
                       else
                         ..._tasks.map((task) {
-                          final done = task.state == TaskState.done;
+                          final done = task.isDoneOn(_selectedDay);
                           final time = task.dueDateTime;
                           final hasTime = time != null && (time.hour != 0 || time.minute != 0);
                           return GlowCard(
@@ -484,6 +484,7 @@ class _TaskDialogState extends State<_TaskDialog> {
         customDays: repeat == RepeatPattern.customDays
             ? (_customDays.toList()..sort())
             : const <int>[],
+        doneDays: existing?.doneDays ?? const <String>[],
         createdAt: existing?.createdAt ?? now,
         updatedAt: now,
         syncStatus: SyncStatus.local,
