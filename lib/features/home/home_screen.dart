@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _morningDone = false;
   bool _eveningDone = false;
   int _duaDone = 0;
+  bool _backupDue = false;
   int _studyMinutes = 0;
   MoodEntry? _mood;
   String? _lastSurah;
@@ -60,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       state.settings.get<String>(doneFlagKey(true, now)),
       state.settings.get<String>(doneFlagKey(false, now)),
       state.settings.get<String>('dua_done_${dateKey(now)}'),
+      state.settings.get<String>('last_export_at'),
     ]);
     if (!mounted) return;
     final habits = results[1] as List<Habit>;
@@ -77,6 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _lastSurah = results[6] as String?;
       _morningDone = results[7] == '1';
       _eveningDone = results[8] == '1';
+      final lastExport = DateTime.tryParse((results[10] as String?) ?? '');
+      final accountAge = now.difference(state.user?.createdAt ?? now);
+      _backupDue = lastExport == null
+          ? accountAge >= const Duration(days: 3)
+          : now.difference(lastExport) >= const Duration(days: 7);
       final duaRaw = results[9] as String?;
       _duaDone = (duaRaw == null || duaRaw.isEmpty)
           ? 0
@@ -489,6 +496,34 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                   const SizedBox(height: 12),
 
+                  if (_backupDue) ...<Widget>[
+                    GlowCard(
+                      onTap: () => _open('/settings'),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.cloud_upload_outlined, color: c.gold),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  context.tr('backupDue'),
+                                  style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  context.tr('backupDueSub'),
+                                  style: TextStyle(fontSize: 12, color: c.onSurfaceVariant, height: 1.5),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   // عبادة اليوم
                   GlowSectionTitle(
                     title: context.tr('worshipToday'),
