@@ -14,6 +14,7 @@ import 'package:glowara/core/repositories/study_repository.dart';
 import 'package:glowara/core/repositories/task_repository.dart';
 import 'package:glowara/core/repositories/worship_repository.dart';
 import 'package:glowara/core/security/privacy_service.dart';
+import 'package:glowara/core/services/notification_service.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/utils/app_log.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -47,6 +48,7 @@ Future<void> main() async {
       health: HealthRepository(db),
       language: LanguageRepository(db),
       progress: ProgressRepository(db, settings),
+      scheduler: LocalReminderScheduler(),
     );
     await state.initialize();
 

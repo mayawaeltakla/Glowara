@@ -27,6 +27,9 @@ dependencies:
   # خطوط Tajawal وPlus Jakarta Sans: تُجلب عند أول استخدام وتُخزَّن محليًا،
   # ويُعرض خط النظام إلى أن تصل أو دون إنترنت.
   google_fonts: ^6.2.1
+  # تذكيرات محلية مجدولة (أذكار، أدعية، ماء). لا تعمل على الويب.
+  flutter_local_notifications: 17.2.4
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:

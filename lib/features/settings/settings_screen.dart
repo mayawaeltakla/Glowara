@@ -428,6 +428,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(fontSize: 11, color: c.onSurfaceVariant),
                 ),
               ),
+              _ReminderHourRow(
+                title: context.tr('remMorning'),
+                enabled: reminders.morningAdhkarEnabled,
+                hour: reminders.morningAdhkarHour,
+                onEnabled: (v) => _saveReminders(reminders.copyWith(morningAdhkarEnabled: v)),
+                onHour: (v) => _saveReminders(reminders.copyWith(morningAdhkarHour: v)),
+              ),
+              _ReminderHourRow(
+                title: context.tr('remEvening'),
+                enabled: reminders.eveningAdhkarEnabled,
+                hour: reminders.eveningAdhkarHour,
+                onEnabled: (v) => _saveReminders(reminders.copyWith(eveningAdhkarEnabled: v)),
+                onHour: (v) => _saveReminders(reminders.copyWith(eveningAdhkarHour: v)),
+              ),
+              _ReminderHourRow(
+                title: context.tr('remDua'),
+                enabled: reminders.duaEnabled,
+                hour: reminders.duaHour,
+                onEnabled: (v) => _saveReminders(reminders.copyWith(duaEnabled: v)),
+                onHour: (v) => _saveReminders(reminders.copyWith(duaHour: v)),
+              ),
               SwitchListTile(
                 value: reminders.quietHoursEnabled,
                 onChanged: (value) => _saveReminders(reminders.copyWith(quietHoursEnabled: value)),
@@ -691,6 +712,51 @@ class _PinDialogState extends State<_PinDialog> {
       actions: <Widget>[
         TextButton(onPressed: () => Navigator.of(context).pop(null), child: Text(l10n.cancel)),
         FilledButton(onPressed: _save, child: Text(l10n.save)),
+      ],
+    );
+  }
+}
+
+
+/// مفتاح تفعيل تذكير مع اختيار الساعة.
+class _ReminderHourRow extends StatelessWidget {
+  const _ReminderHourRow({
+    required this.title,
+    required this.enabled,
+    required this.hour,
+    required this.onEnabled,
+    required this.onHour,
+  });
+
+  final String title;
+  final bool enabled;
+  final int hour;
+  final ValueChanged<bool> onEnabled;
+  final ValueChanged<int> onHour;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        SwitchListTile(
+          value: enabled,
+          onChanged: onEnabled,
+          title: Text(title),
+        ),
+        if (enabled)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            child: DropdownButtonFormField<int>(
+              initialValue: hour,
+              decoration: InputDecoration(labelText: context.tr('remHour')),
+              items: List<int>.generate(24, (i) => i).map((h) {
+                return DropdownMenuItem<int>(value: h, child: Text('$h:00'));
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) onHour(value);
+              },
+            ),
+          ),
       ],
     );
   }
