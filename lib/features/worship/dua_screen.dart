@@ -3,7 +3,9 @@ library glowara.feature.worship.dua_screen;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 
 class Dua {
@@ -52,24 +54,158 @@ const List<Dua> kDuas = <Dua>[
         'وأعوذ بك من: ٣١- جَهْدِ الْبَلاَءِ، ٣٢- وَدَرَكِ الشَّقَاءِ، ٣٣- وَسُوءِ الْقَضَاءِ، ٣٤- وَشَمَاتَةِ الأَعْدَاءِ.\n'
         'واعوذ بك من فتنة الدنيا ومن فتنة القبر',
   ),
+  Dua(
+    text: 'الحمدُ للهِ الذي عافانِى في جَسَدِي ، ورَدَّ عَلَيَّ رُوحِي ، وأَذِنَ لي بذِكْرِه',
+  ),
+  Dua(
+    text: 'بسم اللّٰه توكلت على اللّٰه..يارب احتسب يومي هذا لوجهك الكريم فتقبله مني ويسر لي أمري وارزقني وبارك لي فيه..اللهم اني استودعتك نفسي وأهلي وديني ...',
+  ),
+  Dua(
+    text: '- اللهُم إني أسألك حُسنٌ الخَاتمة .\n- اللهُم ارزقنيِ توبة نصوحة قبل الموت .\n- اللهُم يا مُقلب القلوب ثبت قلبي على دينك .\n- اللَّهم إنَّك عفوٌ كريمٌ تحبُّ العفوَ فاعفُ عنّا .',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنَ عِبَادَتِكَ.',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ ارْحَمْنِي ، فَأَنْتَ خَيْرُ الرَّاحِمِينَ وَارْزُقْنِي ، فَأَنْتَ خَيْرُ الرَّازِقِينَ ، وَاغْفِرْ لِي فَأَنْتَ خَيْرُ الغَافِرِينَ ، وَانْصُرْنِي ، فَأَنْتَ خَيْرُ النَّاصِرِينَ.',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ رَحْمَتَكَ أَرْجُو فَلا تَكِلْني إِلى نَفْسِي طَرْفَةَ عَيْنٍ ، وَأَصْلِحْ لِي شَأْنِي كُلَّهُ ، لا إِلَهَ إِلاَّ أَنْتَ',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ زِدْنَا وَلا تَنْقُصْنَا ، وَأَكْرِمْنَا وَلا تُهِنَّا وَأَعْطِنَا وَلا تَحْرِمْنَا وَآثِرْنَا وَلا تُؤْثِرْ عَلَينَا وَأَرْضِنَا وَارْضَ عَنَّا.',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِيشَةً نَقِيَّةً وَمِيتَةً سَوِيَّةً وَمَرَدّاً غَيْرَ مُخْزٍ وَلا فَاضِحٍ',
+  ),
+  Dua(
+    text: 'اللهم ان كان رزقي في السماء ف أنزله، وان كان في الأرض فأخرجه، وان كان بعيداً فقربه، وان كان قريباً فعجله، وان عجلته فبارك فيه وأدمه يارب العالمين..',
+  ),
+  Dua(
+    intro: 'دعاء المعجزات',
+    text: '(حسبنا الله سيؤتينا الله من فضله ورسوله إنا الي الله راغبون ) اللهم اليك مددت يدي وفيها عندك عظمت رغبتي فاقبل توبتي وارحم ضعف قوتي واغفر خطيئتي واقبل معذرتي واجعل لي من كل خير نصيبا والي كل خيرسبيلا برحمتك ياارحم الراحمين اللَّهُمَّ إني ظلمتُ نَفسي ظلماً كثيراً، ولَا يغفِرُ الذنُوبَ إِلَّا أَنْتَ، فَاغْفِر لي مَغْفِرَةً من عِنْدِكَ وارْحَمْنِي إِنَّك أَنْتَ الْغَفُورُ الرَّحِيمُ',
+  ),
+  Dua(
+    intro: '3 آيات احرصي على قراءتها صباح كل يوم',
+    text: '(رب اوزعني ان اشكر نعمتك التي انعمت على وعلى والدي وان اعمل صالحا ترضاه واصلح لي في ذريتي إني تبت إليك واني من المسلمين )\n(ربنا هب لنا من ازواجنا وذريتنا قرة اعين واجعلنا للمتقين إماما)\n(رب هب لي حكما والحقني بالصالحين واجعل لي لسان صدق في الاخرين واجعلني من ورثة جنة النعيم )\nسترى عجبا في سبيل هداية اولادك ان شاء الله',
+  ),
+  Dua(
+    text: 'أعوذ بكلمات الله التامات ، التي لايجاوزهن بر ولافاجر ، من شر ماخلق ، وذرا وبرا ، ومن شر ماينزل من السماء ، ومن شر ما يعرج فيها ، ومن شر ما ذرا في الارض وبرا ، ومن شر مايخرج منها ، ومن شر فتن الليل والنهار، ومن شر كل طارق يطرق ، الا طارقا يطرق بخير يارحمان',
+  ),
+  Dua(
+    text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْعَجْزِ وَالْكَسَلِ، وَالْجُبْنِ وَالْبُخْلِ، وَالْهَرَمِ وَعَذَابِ الْقَبْرِ، اللَّهُمَّ آتِ نَفْسِي تَقْوَاهَا وَزَكِّهَا أَنْتَ خَيْرُ مَنْ زَكَّاهَا، أَنْتَ وَلِيُّهَا وَمَوْلَاهَا، اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عِلْمٍ لَا يَنْفَعُ، وَمِنْ قَلْبٍ لَا يَخْشَعُ، وَمِنْ نَفْسٍ لَا تَشْبَعُ، وَمِنْ دَعْوَةٍ لَا يستجاب لها',
+  ),
+  Dua(
+    text: 'رب اعني ولا تعن علي وامكر لشي ولا تمكر علي وانصرني ولا تنصر علي واهدني ويسر الهدى لِي، وَانْصُرْنِي عَلَى مَنْ بَغَى عَلَيَّ، رَبِّ اجْعَلْنِي لَكَ شَكَّارًا، لَكَ ذَكَّارًا، لَكَ رَهَّابًا، لَكَ مِطْوَاعًا، لَكَ مُخْبِتًا إِلَيْكَ أَوَّاهًا مُنِيبًا، رَبِّ تَقَبَّلْ تَوْبَتِي وَاغْسِلْ حَوْبَتِي وَأَجِبْ دَعْوَتِي وَثَبِّتْ حُجَّتِي وَسَدِّدْ لِسَانِي وَاهْدِ قَلْبِي وَاسْلُلْ سَخِيمَةَ صَدْرِي (رواه الترمذي)',
+  ),
+  Dua(
+    text: 'اللهم اني لا اصلح للفقر\nولايصلح الفقر لي\nاللهم اغنني من فضلك\nحتى اكون دائما غنيا\nمستغنيا منفقا مكتفيا\nاللهم اغنني من فضلك',
+  ),
+  Dua(
+    text: 'اللهم اني وليتك امري فأعوذ بك من سوء حظي وضيق صدري وفراغ صبري واجعلني يارب ممن نظرت اليه فرحمته وسمعت دعائه فأجبته',
+  ),
+  Dua(
+    text: 'اللهم إني وكلتك أمري فكن لي خير وكيل ودبر لي أمري فإني لا أُحسن التدبير',
+  ),
+  Dua(
+    text: 'اللهم ذكرني ما نسيت وعلمني ما جهلت',
+  ),
+  Dua(
+    text: 'اعوذ بالله من الشيطان الرجيم\nبسم الله الرحمن الرحيم\n(وجعلنا من بين أيديهم سدا ومن خلفهم سدا فأغشيناهم فهم لا يبصرون)\nصدق الله العلي العظيم ٣ مرات',
+  ),
+  Dua(
+    text: 'اعوذ بالله من الشيطان الرجيم\nبسم الله الرحمن الرحيم\n(رب اشرح لي صدري ويسر لي امري واحلل العقدة من لساني يفقهوا قولي)\nصدق الله العلي العظيم ٣ مرات',
+  ),
+  Dua(
+    text: 'الله يقدس أرواحكم الطاهرة ويرزقنا رضاكم ٣ مرات',
+  ),
 ];
 
-class DuaScreen extends StatelessWidget {
+class DuaScreen extends StatefulWidget {
   const DuaScreen({super.key});
+
+  @override
+  State<DuaScreen> createState() => _DuaScreenState();
+}
+
+class _DuaScreenState extends State<DuaScreen> {
+  bool _loaded = false;
+  Set<int> _done = <int>{};
+
+  /// يتجدد كل يوم لأن المفتاح يحمل تاريخ اليوم.
+  String get _key => 'dua_done_${dateKey(DateTime.now())}';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_loaded) {
+      _loaded = true;
+      _load();
+    }
+  }
+
+  Future<void> _load() async {
+    final raw = await AppState.of(context).settings.get<String>(_key);
+    if (!mounted || raw == null || raw.isEmpty) return;
+    setState(() => _done = raw.split(',').map(int.tryParse).whereType<int>().toSet());
+  }
+
+  Future<void> _toggle(int i) async {
+    setState(() => _done.contains(i) ? _done.remove(i) : _done.add(i));
+    final list = _done.toList()..sort();
+    await AppState.of(context).settings.set(_key, list.join(','));
+  }
 
   @override
   Widget build(BuildContext context) {
     final c = context.glowColors;
+    final total = kDuas.length;
     return GlowPage(
       title: 'الدعاء',
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 24),
-        itemCount: kDuas.length,
-        itemBuilder: (context, i) {
+        itemCount: total + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GlowCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            _done.length >= total
+                                ? 'أتممتِ أدعية اليوم، تقبّل الله منك'
+                                : 'ضعي علامة على كل دعاء بعد قراءته',
+                            style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                          ),
+                        ),
+                        Text('${_done.length}/$total',
+                            style: TextStyle(fontWeight: FontWeight.w700, color: c.primary)),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    GlowProgress(value: total == 0 ? 0 : _done.length / total),
+                    const SizedBox(height: 6),
+                    Text(
+                      'تُمسح العلامات تلقائيًا كل يوم لتقرئيها من جديد.',
+                      style: TextStyle(fontSize: 11.5, color: c.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+          final i = index - 1;
           final dua = kDuas[i];
+          final done = _done.contains(i);
           return Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: GlowCard(
+              color: done ? c.primaryContainer : null,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -86,19 +222,27 @@ class DuaScreen extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     style: TextStyle(fontSize: 17, height: 2, color: c.onSurface),
                   ),
-                  Align(
-                    alignment: AlignmentDirectional.centerEnd,
-                    child: IconButton(
-                      tooltip: 'نسخ',
-                      icon: Icon(Icons.copy_rounded, size: 20, color: c.onSurfaceVariant),
-                      onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: dua.text));
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('تم النسخ')),
-                        );
-                      },
-                    ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        tooltip: 'نسخ',
+                        icon: Icon(Icons.copy_rounded, size: 20, color: c.onSurfaceVariant),
+                        onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: dua.text));
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('تم النسخ')),
+                          );
+                        },
+                      ),
+                      const Spacer(),
+                      FilledButton.tonalIcon(
+                        onPressed: () => _toggle(i),
+                        icon: Icon(done ? Icons.check_circle : Icons.radio_button_unchecked),
+                        label: Text(done ? 'قرأته' : 'علّمي كمقروء'),
+                      ),
+                    ],
                   ),
                 ],
               ),
