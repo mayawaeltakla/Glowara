@@ -218,6 +218,10 @@ const List<Dhikr> kEveningAdhkar = <Dhikr>[
   ),
 ];
 
+/// مفتاح علامة إتمام أذكار اليوم (تقرؤها الشاشة الرئيسية).
+String doneFlagKey(bool morning, DateTime day) =>
+    'adhkar_done_${morning ? 'morning' : 'evening'}_${dateKey(day)}';
+
 class AdhkarScreen extends StatefulWidget {
   const AdhkarScreen({super.key, required this.morning});
 
@@ -269,6 +273,7 @@ class _AdhkarScreenState extends State<AdhkarScreen> {
     await state.settings.set(_key, _counts.join(','));
     if (_allDone && !_logged) {
       _logged = true;
+      await state.settings.set(doneFlagKey(widget.morning, DateTime.now()), '1');
       await state.worship.saveReading(
         ReadingLog(
           id: uniqueId(),
@@ -285,7 +290,9 @@ class _AdhkarScreenState extends State<AdhkarScreen> {
       _counts = List<int>.filled(_items.length, 0);
       _logged = false;
     });
-    await AppState.of(context).settings.set(_key, _counts.join(','));
+    final settings = AppState.of(context).settings;
+    await settings.set(_key, _counts.join(','));
+    await settings.set(doneFlagKey(widget.morning, DateTime.now()), '0');
   }
 
   @override
