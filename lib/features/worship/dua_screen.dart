@@ -246,7 +246,7 @@ class DuaScreen extends StatefulWidget {
 class _DuaScreenState extends State<DuaScreen> {
   bool _loaded = false;
   Set<int> _done = <int>{};
-  Map<int, int> _counts = <int, int>{};
+  final Map<int, int> _counts = <int, int>{};
 
   /// يتجدد كل يوم لأن المفتاح يحمل تاريخ اليوم.
   String get _key => 'dua_done_${dateKey(DateTime.now())}';
