@@ -10,6 +10,8 @@ import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:glowara/features/worship/adhkar_screen.dart' show doneFlagKey;
+import 'package:glowara/features/worship/dua_screen.dart' show kDuas;
 import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,6 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Habit> _habits = <Habit>[];
   Set<String> _doneHabits = <String>{};
   int _waterMl = 0;
+  bool _morningDone = false;
+  bool _eveningDone = false;
+  int _duaDone = 0;
   int _studyMinutes = 0;
   MoodEntry? _mood;
   String? _lastSurah;
@@ -52,6 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
       state.study.minutesForRange(now, now, userId: uid),
       state.journal.moodFor(uid, now),
       state.settings.get<String>('quran_last_surah'),
+      state.settings.get<String>(doneFlagKey(true, now)),
+      state.settings.get<String>(doneFlagKey(false, now)),
+      state.settings.get<String>('dua_done_${dateKey(now)}'),
     ]);
     if (!mounted) return;
     final habits = results[1] as List<Habit>;
@@ -67,6 +75,12 @@ class _HomeScreenState extends State<HomeScreen> {
       _studyMinutes = results[4] as int;
       _mood = results[5] as MoodEntry?;
       _lastSurah = results[6] as String?;
+      _morningDone = results[7] == '1';
+      _eveningDone = results[8] == '1';
+      final duaRaw = results[9] as String?;
+      _duaDone = (duaRaw == null || duaRaw.isEmpty)
+          ? 0
+          : duaRaw.split(',').map(int.tryParse).whereType<int>().where((i) => i < kDuas.length).length;
       _loading = false;
     });
   }
@@ -151,6 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (_tasks.isNotEmpty) tasksDone / _tasks.length,
       if (_habits.isNotEmpty) habitsDone / _habits.length,
       if (waterGoal > 0) (_waterMl / waterGoal).clamp(0.0, 1.0).toDouble(),
+      ((_morningDone ? 1 : 0) + (_eveningDone ? 1 : 0)) / 2,
+      if (kDuas.isNotEmpty) _duaDone / kDuas.length,
     ];
     if (parts.isEmpty) return 0;
     return parts.reduce((a, b) => a + b) / parts.length;
@@ -471,6 +487,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
+                  const SizedBox(height: 12),
+
+                  // عبادة اليوم
+                  GlowSectionTitle(
+                    title: context.tr('worshipToday'),
+                    icon: Icons.mosque,
+                    actionLabel: context.tr('viewAll'),
+                    onAction: () => _open('/worship'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _CheckRow(
+                      title: context.tr('morningAdhkar'),
+                      done: _morningDone,
+                      onTap: () => _open('/worship'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _CheckRow(
+                      title: context.tr('eveningAdhkar'),
+                      done: _eveningDone,
+                      onTap: () => _open('/worship'),
+                    ),
+                  ),
+                  _CheckRow(
+                    title: context.tr('duaToday'),
+                    subtitle: '$_duaDone/${kDuas.length}',
+                    done: _duaDone >= kDuas.length,
+                    onTap: () => _open('/worship'),
+                  ),
                 ],
               ),
             ),
