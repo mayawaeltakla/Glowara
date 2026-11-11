@@ -31,3 +31,4 @@ desktop.ini
 # Local sync server data
 server/data/
 server/*.log
+assets/google_fonts/*.ttf

@@ -39,3 +39,4 @@ flutter:
 
   assets:
     - assets/images/glowara_logo.png
+    - assets/google_fonts/
