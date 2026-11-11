@@ -173,6 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final state = AppState.of(context);
     final data = await state.exportData();
     await Clipboard.setData(ClipboardData(text: data));
+    await state.settings.set('last_export_at', DateTime.now().toIso8601String());
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(context.tr('copied'))),
