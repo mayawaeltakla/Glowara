@@ -94,6 +94,10 @@ jobs:
       - name: Apply Glowara icons and branding
         run: python3 tool/apply_branding.py
 
+      - name: Bundle fonts
+        continue-on-error: true
+        run: bash tool/fetch_fonts.sh
+
       - name: Resolve dependencies
         id: pubget
         continue-on-error: true
