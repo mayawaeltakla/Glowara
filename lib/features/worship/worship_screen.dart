@@ -9,6 +9,7 @@ import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:glowara/features/worship/adhkar_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class WorshipScreen extends StatefulWidget {
@@ -124,7 +125,9 @@ class _WorshipScreenState extends State<WorshipScreen> {
     );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.tr('tasbihSaved'))),
+      SnackBar(
+        content: Text(isArabic ? 'تم حفظ ${item.titleAr}' : '${item.titleEn} saved'),
+      ),
     );
   }
 
@@ -276,18 +279,25 @@ class _WorshipScreenState extends State<WorshipScreen> {
                   icon: Icons.rss_feed,
                 ),
                 ..._adhkar.map((item) {
+                  final isDhikr = item.type == 'adkar';
                   return GlowCard(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     child: ListTile(
-                      leading: Icon(Icons.info_outline, color: c.gold),
+                      leading: Icon(isDhikr ? Icons.wb_twilight : Icons.info_outline, color: c.gold),
                       title: Text(isArabic ? item.titleAr : item.titleEn),
                       subtitle: Text(
-                        context.tr('sourcePending'),
+                        isDhikr ? 'نصوص مع مصدرها وعدّاد يومي' : context.tr('sourcePending'),
                         style: TextStyle(fontSize: 10.5, color: c.onSurfaceVariant),
                       ),
                       trailing: Icon(Icons.chevron_right, color: c.onSurfaceVariant),
-                      onTap: () => _showSourcePending(item),
+                      onTap: () async {
+                        if (!isDhikr) return _showSourcePending(item);
+                        await Navigator.of(context).push(MaterialPageRoute<void>(
+                          builder: (_) => AdhkarScreen(morning: item.reference == 'morning'),
+                        ));
+                        if (mounted) _load();
+                      },
                     ),
                   );
                 }),
