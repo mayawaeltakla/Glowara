@@ -112,7 +112,7 @@ jobs:
       - name: Build Android release APK
         id: build_apk
         continue-on-error: true
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
 
       - name: Build web release
         id: build_web
@@ -124,7 +124,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: glowara-android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/*-release.apk
           if-no-files-found: warn
           retention-days: 14
 
@@ -142,11 +142,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk Glowara.apk
+          out=build/app/outputs/flutter-apk
+          cp "$out/app-arm64-v8a-release.apk" Glowara.apk
+          cp "$out/app-armeabi-v7a-release.apk" Glowara-32bit.apk
+          ls -l Glowara*.apk
           gh release view latest >/dev/null 2>&1 || gh release create latest \
             --title "Glowara (latest Android build)" \
-            --notes "Always the newest build from main. Download Glowara.apk and install it."
-          gh release upload latest Glowara.apk --clobber
+            --notes "Always the newest build from main. Download Glowara.apk (most phones) or Glowara-32bit.apk (older phones)."
+          gh release upload latest Glowara.apk Glowara-32bit.apk --clobber
 
       - name: Enforce real verification status
         if: always()

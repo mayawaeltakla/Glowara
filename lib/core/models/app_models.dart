@@ -184,6 +184,7 @@ class TaskItem {
     this.state = TaskState.open,
     this.repeat = RepeatPattern.none,
     this.customDays = const <int>[],
+    this.doneDays = const <String>[],
     required this.createdAt,
     this.updatedAt,
     this.deletedAt,
@@ -201,6 +202,8 @@ class TaskItem {
   final TaskState state;
   final RepeatPattern repeat;
   final List<int> customDays; // أيام الأسبوع 1=الاثنين .. 7=الأحد (مطابق لـ DateTime.weekday)
+  /// أيام الإنجاز للمهام المتكررة (yyyy-MM-dd): الإنجاز لكل يوم على حدة.
+  final List<String> doneDays;
   final DateTime createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
@@ -213,6 +216,7 @@ class TaskItem {
         'priority': priority, 'state': state.toJsonValue(),
         'repeat': repeat.toJsonValue(),
         'customDays': customDays.map((d) => d).toList(),
+        'doneDays': doneDays,
         'createdAt': _DateTimeHelper.toJson(createdAt),
         'updatedAt': _DateTimeHelper.toJson(updatedAt),
         'deletedAt': _DateTimeHelper.toJson(deletedAt),
@@ -234,6 +238,8 @@ class TaskItem {
                 ?.map((e) => (e as num).toInt())
                 .toList() ??
             const [],
+        doneDays: (json['doneDays'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+            const <String>[],
         createdAt: _DateTimeHelper.fromJson(json['createdAt']) ?? DateTime.now(),
         updatedAt: _DateTimeHelper.fromJson(json['updatedAt']),
         deletedAt: _DateTimeHelper.fromJson(json['deletedAt']),
@@ -241,10 +247,20 @@ class TaskItem {
         lastModified: _DateTimeHelper.fromJson(json['lastModified']),
       );
 
+  /// هل أُنجزت المهمة في هذا اليوم؟ المتكررة تُحسب لكل يوم، وغيرها بحالتها.
+  bool isDoneOn(DateTime day) {
+    if (repeat == RepeatPattern.none) return state == TaskState.done;
+    final d = day;
+    final key =
+        '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return doneDays.contains(key);
+  }
+
   TaskItem copyWith({
     String? id, String? userId, String? title, String? description,
     DateTime? dueDateTime, String? category, int? priority, TaskState? state,
-    RepeatPattern? repeat, List<int>? customDays, DateTime? createdAt,
+    RepeatPattern? repeat, List<int>? customDays, List<String>? doneDays,
+    DateTime? createdAt,
     DateTime? updatedAt, DateTime? deletedAt, SyncStatus? syncStatus,
     DateTime? lastModified,
   }) {
@@ -257,6 +273,7 @@ class TaskItem {
       state: state ?? this.state,
       repeat: repeat ?? this.repeat,
       customDays: customDays ?? this.customDays,
+      doneDays: doneDays ?? this.doneDays,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
