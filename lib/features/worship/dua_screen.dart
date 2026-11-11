@@ -9,11 +9,14 @@ import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 
 class Dua {
-  const Dua({required this.text, this.intro, this.note});
+  const Dua({required this.text, this.intro, this.note, this.times = 1});
 
   final String text;
   final String? intro;
   final String? note;
+
+  /// عدد مرات القراءة المطلوبة.
+  final int times;
 }
 
 const List<Dua> kDuas = <Dua>[
@@ -222,8 +225,14 @@ const List<Dua> kDuas = <Dua>[
     text: 'سورة الفلق وسورة الناس',
     note: 'كرريهم دائمًا للحفظ من شرّ ما خلق',
   ),
+  Dua(text: 'سورة الفاتحة', times: 1),
+  Dua(text: 'سورة الإخلاص', times: 2),
+  Dua(text: 'المعوذتان (سورة الفلق وسورة الناس)', times: 3),
   Dua(
-    text: 'سورة الفاتحة ١\nسورة الاخلاص ٢\nالمعوذتين٣\nاعوذُ بكلماتِ الله التامة من كل شيطانٍ وهامه ومن كل عينٍ لامة\nبسم الله ارقيك من كل شيٍ يؤذيك من شرِ كُلِ نفسٍ او عين حاسد الله يشفيك بسم الله ارقيك\nبسم الله الذي لايضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم\nرب اني مغلوبا فانتصر',
+    text: 'اعوذُ بكلماتِ الله التامة من كل شيطانٍ وهامه ومن كل عينٍ لامة\n'
+        'بسم الله ارقيك من كل شيٍ يؤذيك من شرِ كُلِ نفسٍ او عين حاسد الله يشفيك بسم الله ارقيك\n'
+        'بسم الله الذي لايضر مع اسمه شيء في الارض ولا في السماء وهو السميع العليم\n'
+        'رب اني مغلوبا فانتصر',
   ),
 ];
 
@@ -237,9 +246,11 @@ class DuaScreen extends StatefulWidget {
 class _DuaScreenState extends State<DuaScreen> {
   bool _loaded = false;
   Set<int> _done = <int>{};
+  Map<int, int> _counts = <int, int>{};
 
   /// يتجدد كل يوم لأن المفتاح يحمل تاريخ اليوم.
   String get _key => 'dua_done_${dateKey(DateTime.now())}';
+  String get _countsKey => 'dua_counts_${dateKey(DateTime.now())}';
 
   @override
   void didChangeDependencies() {
@@ -251,15 +262,46 @@ class _DuaScreenState extends State<DuaScreen> {
   }
 
   Future<void> _load() async {
-    final raw = await AppState.of(context).settings.get<String>(_key);
-    if (!mounted || raw == null || raw.isEmpty) return;
-    setState(() => _done = raw.split(',').map(int.tryParse).whereType<int>().toSet());
+    final settings = AppState.of(context).settings;
+    final raw = await settings.get<String>(_key);
+    final rawCounts = await settings.get<String>(_countsKey);
+    if (!mounted) return;
+    setState(() {
+      if (raw != null && raw.isNotEmpty) {
+        _done = raw.split(',').map(int.tryParse).whereType<int>().toSet();
+      }
+      if (rawCounts != null && rawCounts.isNotEmpty) {
+        for (final part in rawCounts.split(',')) {
+          final kv = part.split(':');
+          if (kv.length != 2) continue;
+          final k = int.tryParse(kv[0]);
+          final v = int.tryParse(kv[1]);
+          if (k != null && v != null) _counts[k] = v;
+        }
+      }
+    });
   }
 
   Future<void> _toggle(int i) async {
-    setState(() => _done.contains(i) ? _done.remove(i) : _done.add(i));
+    final times = kDuas[i].times;
+    setState(() {
+      if (times <= 1) {
+        _done.contains(i) ? _done.remove(i) : _done.add(i);
+      } else {
+        final next = (_counts[i] ?? 0) + 1;
+        if (next > times) {
+          _counts.remove(i);
+          _done.remove(i);
+        } else {
+          _counts[i] = next;
+          if (next >= times) _done.add(i);
+        }
+      }
+    });
+    final settings = AppState.of(context).settings;
     final list = _done.toList()..sort();
-    await AppState.of(context).settings.set(_key, list.join(','));
+    await settings.set(_key, list.join(','));
+    await settings.set(_countsKey, _counts.entries.map((e) => '${e.key}:${e.value}').join(','));
   }
 
   @override
@@ -354,7 +396,13 @@ class _DuaScreenState extends State<DuaScreen> {
                       FilledButton.tonalIcon(
                         onPressed: () => _toggle(i),
                         icon: Icon(done ? Icons.check_circle : Icons.radio_button_unchecked),
-                        label: Text(done ? 'قرأته' : 'علّمي كمقروء'),
+                        label: Text(
+                          dua.times <= 1
+                              ? (done ? 'قرأته' : 'علّمي كمقروء')
+                              : (done
+                                  ? 'تمّت ${dua.times}/${dua.times}'
+                                  : 'اضغطي عند كل مرة ${_counts[i] ?? 0}/${dua.times}'),
+                        ),
                       ),
                     ],
                   ),
