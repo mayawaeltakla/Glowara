@@ -10,6 +10,7 @@ import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:glowara/features/worship/adhkar_screen.dart';
+import 'package:glowara/features/worship/dua_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class WorshipScreen extends StatefulWidget {
@@ -280,18 +281,25 @@ class _WorshipScreenState extends State<WorshipScreen> {
                 ),
                 ..._adhkar.map((item) {
                   final isDhikr = item.type == 'adkar';
+                  final isDua = item.type == 'dua';
                   return GlowCard(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     child: ListTile(
-                      leading: Icon(isDhikr ? Icons.wb_twilight : Icons.info_outline, color: c.gold),
+                      leading: Icon(isDhikr ? Icons.wb_twilight : (isDua ? Icons.front_hand_outlined : Icons.info_outline), color: c.gold),
                       title: Text(isArabic ? item.titleAr : item.titleEn),
                       subtitle: Text(
-                        isDhikr ? 'نصوص مع مصدرها وعدّاد يومي' : context.tr('sourcePending'),
+                        isDhikr ? 'نصوص وعدّاد يومي' : (isDua ? 'أدعية للقراءة والنسخ' : context.tr('sourcePending')),
                         style: TextStyle(fontSize: 10.5, color: c.onSurfaceVariant),
                       ),
                       trailing: Icon(Icons.chevron_right, color: c.onSurfaceVariant),
                       onTap: () async {
+                        if (isDua) {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(builder: (_) => const DuaScreen()),
+                          );
+                          return;
+                        }
                         if (!isDhikr) return _showSourcePending(item);
                         await Navigator.of(context).push(MaterialPageRoute<void>(
                           builder: (_) => AdhkarScreen(morning: item.reference == 'morning'),
