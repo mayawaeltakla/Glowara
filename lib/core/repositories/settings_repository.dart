@@ -3,7 +3,7 @@ library glowara.repositories.settings;
 
 import 'package:glowara/core/db/local_database.dart';
 
-/// إعدادات التذكيرات (تُحفظ وتُطبَّق داخل التطبيق حاليًا).
+/// إعدادات التذكيرات (تُحفظ وتُجدوَل كإشعارات محلية على أندرويد).
 class ReminderSettings {
   const ReminderSettings({
     this.waterEnabled = false,
@@ -12,6 +12,12 @@ class ReminderSettings {
     this.quietHoursEnabled = false,
     this.quietStartHour = 22,
     this.quietEndHour = 7,
+    this.morningAdhkarEnabled = false,
+    this.morningAdhkarHour = 6,
+    this.eveningAdhkarEnabled = false,
+    this.eveningAdhkarHour = 17,
+    this.duaEnabled = false,
+    this.duaHour = 21,
   });
 
   final bool waterEnabled;
@@ -20,6 +26,12 @@ class ReminderSettings {
   final bool quietHoursEnabled;
   final int quietStartHour;
   final int quietEndHour;
+  final bool morningAdhkarEnabled;
+  final int morningAdhkarHour;
+  final bool eveningAdhkarEnabled;
+  final int eveningAdhkarHour;
+  final bool duaEnabled;
+  final int duaHour;
 
   ReminderSettings copyWith({
     bool? waterEnabled,
@@ -28,6 +40,12 @@ class ReminderSettings {
     bool? quietHoursEnabled,
     int? quietStartHour,
     int? quietEndHour,
+    bool? morningAdhkarEnabled,
+    int? morningAdhkarHour,
+    bool? eveningAdhkarEnabled,
+    int? eveningAdhkarHour,
+    bool? duaEnabled,
+    int? duaHour,
   }) =>
       ReminderSettings(
         waterEnabled: waterEnabled ?? this.waterEnabled,
@@ -36,6 +54,12 @@ class ReminderSettings {
         quietHoursEnabled: quietHoursEnabled ?? this.quietHoursEnabled,
         quietStartHour: quietStartHour ?? this.quietStartHour,
         quietEndHour: quietEndHour ?? this.quietEndHour,
+        morningAdhkarEnabled: morningAdhkarEnabled ?? this.morningAdhkarEnabled,
+        morningAdhkarHour: morningAdhkarHour ?? this.morningAdhkarHour,
+        eveningAdhkarEnabled: eveningAdhkarEnabled ?? this.eveningAdhkarEnabled,
+        eveningAdhkarHour: eveningAdhkarHour ?? this.eveningAdhkarHour,
+        duaEnabled: duaEnabled ?? this.duaEnabled,
+        duaHour: duaHour ?? this.duaHour,
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -45,6 +69,12 @@ class ReminderSettings {
         'quietHoursEnabled': quietHoursEnabled,
         'quietStartHour': quietStartHour,
         'quietEndHour': quietEndHour,
+        'morningAdhkarEnabled': morningAdhkarEnabled,
+        'morningAdhkarHour': morningAdhkarHour,
+        'eveningAdhkarEnabled': eveningAdhkarEnabled,
+        'eveningAdhkarHour': eveningAdhkarHour,
+        'duaEnabled': duaEnabled,
+        'duaHour': duaHour,
       };
 
   factory ReminderSettings.fromJson(Map<String, dynamic> j) => ReminderSettings(
@@ -54,6 +84,12 @@ class ReminderSettings {
         quietHoursEnabled: (j['quietHoursEnabled'] as bool?) ?? false,
         quietStartHour: (j['quietStartHour'] as num?)?.toInt() ?? 22,
         quietEndHour: (j['quietEndHour'] as num?)?.toInt() ?? 7,
+        morningAdhkarEnabled: (j['morningAdhkarEnabled'] as bool?) ?? false,
+        morningAdhkarHour: (j['morningAdhkarHour'] as num?)?.toInt() ?? 6,
+        eveningAdhkarEnabled: (j['eveningAdhkarEnabled'] as bool?) ?? false,
+        eveningAdhkarHour: (j['eveningAdhkarHour'] as num?)?.toInt() ?? 17,
+        duaEnabled: (j['duaEnabled'] as bool?) ?? false,
+        duaHour: (j['duaHour'] as num?)?.toInt() ?? 21,
       );
 }
 

@@ -20,6 +20,7 @@ import 'package:glowara/core/repositories/study_repository.dart';
 import 'package:glowara/core/repositories/task_repository.dart';
 import 'package:glowara/core/repositories/worship_repository.dart';
 import 'package:glowara/core/security/privacy_service.dart';
+import 'package:glowara/core/services/notification_service.dart';
 import 'package:glowara/core/services/quran_service.dart';
 import 'package:glowara/core/utils/app_log.dart';
 
@@ -39,10 +40,14 @@ class AppState extends ChangeNotifier {
     required this.language,
     required this.progress,
     QuranService? quran,
+    this.scheduler,
   }) : quran = quran ?? RemoteQuranService();
 
   final LocalDatabase db;
   final QuranService quran;
+
+  /// مجدول التذكيرات (اختياري؛ لا يوجد في الاختبارات).
+  final ReminderScheduler? scheduler;
   final AuthRepository auth;
   final SettingsRepository settings;
   final PrivacyService privacy;
@@ -111,6 +116,7 @@ class AppState extends ChangeNotifier {
       _cupSizeMl = await settings.cupSizeMl();
       _pinSet = await privacy.isPinSet();
       _initError = null;
+      _applyReminders();
     } catch (e) {
       _initError = e.toString();
     } finally {
@@ -183,6 +189,7 @@ class AppState extends ChangeNotifier {
   Future<void> setLocale(String locale) async {
     _locale = locale;
     await settings.set('locale', locale);
+    _applyReminders();
     notifyListeners();
   }
 
@@ -200,7 +207,15 @@ class AppState extends ChangeNotifier {
   Future<void> setReminders(ReminderSettings value) async {
     _reminders = value;
     await settings.saveReminders(value);
+    await scheduler?.apply(value, arabic: _locale == 'ar');
     notifyListeners();
+  }
+
+  /// يعيد جدولة التذكيرات دون انتظار (عند فتح التطبيق وتغيير اللغة).
+  void _applyReminders() {
+    final sched = scheduler;
+    if (sched == null) return;
+    sched.apply(_reminders, arabic: _locale == 'ar');
   }
 
   Future<void> setDisplay(DisplaySettings value) async {
