@@ -1,6 +1,10 @@
 /// الإعدادات: الحساب، اللغة، الثيم، التذكيرات، الخصوصية والبيانات.
 library glowara.feature.settings;
 
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
@@ -10,6 +14,7 @@ import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/app_log.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -169,6 +174,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  /// يشارك النسخة الاحتياطية كملف JSON (حفظ في الملفات أو Drive أو إرسال لنفسك).
+  Future<void> _exportFile() async {
+    final state = AppState.of(context);
+    try {
+      final data = await state.exportData();
+      final stamp = DateTime.now().toIso8601String().substring(0, 10);
+      await Share.shareXFiles(
+        <XFile>[
+          XFile.fromData(
+            Uint8List.fromList(utf8.encode(data)),
+            mimeType: 'application/json',
+            name: 'glowara-backup-$stamp.json',
+          ),
+        ],
+        subject: 'Glowara backup',
+      );
+      await state.settings.set('last_export_at', DateTime.now().toIso8601String());
+    } catch (e, st) {
+      logError('Settings.exportFile', e, st);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.tr('exportFileError'))),
+      );
+    }
+  }
+
   Future<void> _exportData() async {
     final state = AppState.of(context);
     final data = await state.exportData();
@@ -201,6 +232,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 controller: controller,
                 maxLines: 6,
                 decoration: const InputDecoration(hintText: '{ ... }'),
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () async {
+                    final picked = await FilePicker.platform.pickFiles(withData: true);
+                    final bytes = picked?.files.single.bytes;
+                    if (bytes != null) {
+                      setDialogState(() => controller.text = utf8.decode(bytes));
+                    }
+                  },
+                  icon: const Icon(Icons.folder_open, size: 16),
+                  label: Text(context.tr('pickBackupFile')),
+                ),
               ),
               Align(
                 alignment: AlignmentDirectional.centerEnd,
@@ -540,6 +585,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _Section(
             title: context.tr('dataPrivacy'),
             children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.save_alt, color: c.primary),
+                title: Text(context.tr('exportFile')),
+                subtitle: Text(
+                  context.tr('exportFileHint'),
+                  style: TextStyle(fontSize: 11, color: c.onSurfaceVariant),
+                ),
+                onTap: _exportFile,
+              ),
               ListTile(
                 leading: Icon(Icons.download_outlined, color: c.primary),
                 title: Text(context.tr('exportData')),

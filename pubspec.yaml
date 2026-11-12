@@ -30,6 +30,9 @@ dependencies:
   # تذكيرات محلية مجدولة (أذكار، أدعية، ماء). لا تعمل على الويب.
   flutter_local_notifications: 17.2.4
   timezone: ^0.9.4
+  # حفظ/مشاركة النسخة الاحتياطية كملف واختيار ملف للاستيراد.
+  share_plus: ^10.1.4
+  file_picker: ^8.1.6
 
 dev_dependencies:
   flutter_test:
