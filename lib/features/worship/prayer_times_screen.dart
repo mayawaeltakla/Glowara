@@ -56,12 +56,12 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   }
 
   Future<void> _save() async {
-    final s = AppState.of(context).settings;
+    final state = AppState.of(context);
+    final s = state.settings;
     await s.set('prayer_city', _cityId);
     await s.set('prayer_method', _method);
     await s.set('prayer_madhab', _hanafi ? 'hanafi' : 'shafi');
     // يعيد جدولة تذكيرات الصلاة بالمواقيت الجديدة.
-    final state = AppState.of(context);
     await state.setReminders(state.reminders);
   }
 
