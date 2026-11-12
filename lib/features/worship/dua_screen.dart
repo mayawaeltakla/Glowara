@@ -245,6 +245,7 @@ class DuaScreen extends StatefulWidget {
 
 class _DuaScreenState extends State<DuaScreen> {
   bool _loaded = false;
+  String _query = '';
   Set<int> _done = <int>{};
   final Map<int, int> _counts = <int, int>{};
 
@@ -308,11 +309,17 @@ class _DuaScreenState extends State<DuaScreen> {
   Widget build(BuildContext context) {
     final c = context.glowColors;
     final total = kDuas.length;
+    final q = _query.trim();
+    // فهارس الأدعية المطابقة للبحث (نحتفظ بالفهرس الأصلي لأن الحالة محفوظة به).
+    final visible = <int>[
+      for (var k = 0; k < total; k++)
+        if (q.isEmpty || kDuas[k].text.contains(q) || (kDuas[k].intro ?? '').contains(q)) k,
+    ];
     return GlowPage(
       title: 'الدعاء',
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 24),
-        itemCount: total + 1,
+        itemCount: visible.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
             return Padding(
@@ -342,12 +349,21 @@ class _DuaScreenState extends State<DuaScreen> {
                       'تُمسح العلامات تلقائيًا كل يوم لتقرئيها من جديد.',
                       style: TextStyle(fontSize: 11.5, color: c.onSurfaceVariant),
                     ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      onChanged: (v) => setState(() => _query = v),
+                      decoration: const InputDecoration(
+                        hintText: 'ابحثي في الأدعية',
+                        prefixIcon: Icon(Icons.search),
+                        isDense: true,
+                      ),
+                    ),
                   ],
                 ),
               ),
             );
           }
-          final i = index - 1;
+          final i = visible[index - 1];
           final dua = kDuas[i];
           final done = _done.contains(i);
           return Padding(

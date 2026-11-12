@@ -482,6 +482,8 @@ class PeriodStats {
     this.lessonsCompleted = 0,
     this.careStepsDone = 0,
     this.careStepsTotal = 0,
+    this.adhkarCompleted = 0,
+    this.duaChecks = 0,
   });
 
   final int tasksTotal;
@@ -499,6 +501,12 @@ class PeriodStats {
   final int careStepsDone;
   final int careStepsTotal;
 
+  /// عدد مرات إتمام أذكار الصباح/المساء في الفترة.
+  final int adhkarCompleted;
+
+  /// عدد علامات «قرأته» على الأدعية في الفترة.
+  final int duaChecks;
+
   double get taskRate => tasksTotal == 0 ? 0.0 : tasksDone / tasksTotal;
   double get habitRate => habitsScheduled == 0 ? 0.0 : habitsDone / habitsScheduled;
   double get careRate => careStepsTotal == 0 ? 0.0 : careStepsDone / careStepsTotal;
@@ -513,7 +521,9 @@ class PeriodStats {
       journalEntries > 0 ||
       moodEntries > 0 ||
       lessonsCompleted > 0 ||
-      careStepsDone > 0;
+      careStepsDone > 0 ||
+      adhkarCompleted > 0 ||
+      duaChecks > 0;
 }
 
 /// نتيجة اختبار قصير.

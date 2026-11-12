@@ -141,7 +141,20 @@ class ProgressRepository {
       careTotal += steps.length;
     }
 
+    // الأذكار والأدعية: علامات يومية محفوظة في الإعدادات.
+    var adhkarCompleted = 0;
+    var duaChecks = 0;
+    for (var day = start; !day.isAfter(end); day = day.add(const Duration(days: 1))) {
+      final key = dateKey(day);
+      if (await _settings.get<String>('adhkar_done_morning_$key') == '1') adhkarCompleted++;
+      if (await _settings.get<String>('adhkar_done_evening_$key') == '1') adhkarCompleted++;
+      final dua = await _settings.get<String>('dua_done_$key');
+      if (dua != null && dua.isNotEmpty) duaChecks += dua.split(',').length;
+    }
+
     return PeriodStats(
+      adhkarCompleted: adhkarCompleted,
+      duaChecks: duaChecks,
       tasksTotal: periodTasks.length,
       tasksDone: tasksDone,
       habitsScheduled: scheduled,
