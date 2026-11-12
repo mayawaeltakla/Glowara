@@ -261,6 +261,17 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         icon: Icons.edit_note,
                         accent: c.gold,
                       ),
+                      GlowStatTile(
+                        label: context.tr('adhkarCompleted'),
+                        value: '${_stats.adhkarCompleted}',
+                        icon: Icons.wb_twilight,
+                      ),
+                      GlowStatTile(
+                        label: context.tr('duaRead'),
+                        value: '${_stats.duaChecks}',
+                        icon: Icons.front_hand_outlined,
+                        accent: c.gold,
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
