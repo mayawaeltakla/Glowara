@@ -179,15 +179,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final data = await state.exportData();
       final stamp = DateTime.now().toIso8601String().substring(0, 10);
-      await Share.shareXFiles(
-        <XFile>[
-          XFile.fromData(
-            Uint8List.fromList(utf8.encode(data)),
-            mimeType: 'application/json',
-            name: 'glowara-backup-$stamp.json',
-          ),
-        ],
-        subject: 'Glowara backup',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: <XFile>[
+            XFile.fromData(
+              Uint8List.fromList(utf8.encode(data)),
+              mimeType: 'application/json',
+              name: 'glowara-backup-$stamp.json',
+            ),
+          ],
+          fileNameOverrides: <String>['glowara-backup-$stamp.json'],
+          subject: 'Glowara backup',
+        ),
       );
       await state.settings.set('last_export_at', DateTime.now().toIso8601String());
     } catch (e, st) {
