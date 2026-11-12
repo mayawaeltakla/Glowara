@@ -11,6 +11,7 @@ import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:glowara/features/worship/adhkar_screen.dart';
 import 'package:glowara/features/worship/dua_screen.dart';
+import 'package:glowara/features/worship/prayer_times_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class WorshipScreen extends StatefulWidget {
@@ -169,6 +170,34 @@ class _WorshipScreenState extends State<WorshipScreen> {
           : ListView(
               padding: const EdgeInsets.only(bottom: 24),
               children: <Widget>[
+                GlowCard(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const PrayerTimesScreen()),
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.access_time_filled, color: c.gold),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'مواقيت الصلاة والقبلة',
+                              style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                            ),
+                            Text(
+                              'المواقيت واتجاه القبلة والتاريخ الهجري',
+                              style: TextStyle(fontSize: 11.5, color: c.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, color: c.onSurfaceVariant),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
                 GlowCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
