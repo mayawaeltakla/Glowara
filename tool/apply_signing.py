@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""يوقّع نسخة release بمفتاح ثابت بدل مفتاح التجربة الذي يتغير مع كل بناء.
+"""يوقّع نسخة release ويعطيها معرّف تطبيق جديدًا (com.glowara.app) كي تُثبَّت
+بجانب النسخة القديمة الموقَّعة بمفتاح التجربة دون حذفها، فتنقلين بياناتك بأمان.
+
+يوقّع نسخة release بمفتاح ثابت بدل مفتاح التجربة الذي يتغير مع كل بناء.
 
 بدون مفتاح ثابت يرفض أندرويد تثبيت النسخة الجديدة فوق القديمة. المفتاح هنا
 للاستخدام الشخصي خارج المتاجر، وهو في مستودع عام، فلا تعتمدي عليه لنشر تطبيق.
@@ -36,6 +39,9 @@ if kts.exists():
         g, n = re.subn(r'signingConfigs\.getByName\("debug"\)', 'signingConfigs.getByName("glowara")', g)
         if n == 0:
             sys.exit('debug signing line not found')
+    g, n = re.subn(r'applicationId\s*=\s*"[^"]+"', 'applicationId = "com.glowara.app"', g, count=1)
+    if n == 0:
+        sys.exit('applicationId not found')
     kts.write_text(g, encoding='utf-8')
     print('signing kts ok')
 elif groovy.exists():
@@ -57,6 +63,9 @@ elif groovy.exists():
         g, n = re.subn(r'signingConfigs\.debug', 'signingConfigs.glowara', g)
         if n == 0:
             sys.exit('debug signing line not found')
+    g, n = re.subn(r'applicationId\s*=?\s*"[^"]+"', 'applicationId "com.glowara.app"', g, count=1)
+    if n == 0:
+        sys.exit('applicationId not found')
     groovy.write_text(g, encoding='utf-8')
     print('signing groovy ok')
 else:
