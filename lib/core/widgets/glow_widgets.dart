@@ -25,14 +25,59 @@ class GlowPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.glowColors;
+    final theme = Theme.of(context);
+    final canPop = Navigator.of(context).canPop();
+    // أزرار دائرية ناعمة بنفس لغة الشاشة الرئيسية.
+    final roundButtons = IconButtonThemeData(
+      style: IconButton.styleFrom(
+        backgroundColor: c.surface,
+        foregroundColor: c.primary,
+        side: BorderSide(color: c.border),
+        minimumSize: const Size(44, 44),
+      ),
+    );
     return Scaffold(
       backgroundColor: c.scaffold,
       appBar: AppBar(
-        title: Text(title),
+        toolbarHeight: 68,
+        automaticallyImplyLeading: false,
+        leadingWidth: canPop ? 64 : 0,
+        leading: canPop
+            ? Padding(
+                padding: const EdgeInsetsDirectional.only(start: 16),
+                child: Theme(
+                  data: theme.copyWith(iconButtonTheme: roundButtons),
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).maybePop(),
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                    tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  ),
+                ),
+              )
+            : null,
+        titleSpacing: canPop ? 4 : 20,
+        title: Text(
+          title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: c.onSurface,
+          ),
+        ),
         backgroundColor: c.scaffold,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
-        actions: actions,
+        actions: actions == null
+            ? null
+            : <Widget>[
+                Theme(
+                  data: theme.copyWith(iconButtonTheme: roundButtons),
+                  child: Row(children: actions!),
+                ),
+                const SizedBox(width: 12),
+              ],
       ),
       floatingActionButton: fab,
       body: SafeArea(
