@@ -98,6 +98,9 @@ jobs:
       - name: Prepare Android for local notifications
         run: python3 tool/apply_android_notifications.py
 
+      - name: Sign the release with the fixed Glowara key
+        run: python3 tool/apply_signing.py
+
       - name: Bundle fonts
         continue-on-error: true
         run: bash tool/fetch_fonts.sh
@@ -121,6 +124,13 @@ jobs:
         id: build_apk
         continue-on-error: true
         run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
+
+      - name: Show APK signing certificate
+        if: always()
+        continue-on-error: true
+        run: |
+          apksigner=$(ls $ANDROID_HOME/build-tools/*/apksigner | tail -1)
+          "$apksigner" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk | head -5
 
       - name: Build web release
         id: build_web
