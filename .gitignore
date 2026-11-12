@@ -32,3 +32,6 @@ desktop.ini
 server/data/
 server/*.log
 assets/google_fonts/*.ttf
+
+# المفتاح الثابت للاستخدام الشخصي (انظر tool/apply_signing.py)
+!tool/signing/glowara-release.jks
