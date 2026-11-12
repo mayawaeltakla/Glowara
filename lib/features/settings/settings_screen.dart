@@ -476,6 +476,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(fontSize: 11, color: c.onSurfaceVariant),
                 ),
               ),
+              SwitchListTile(
+                value: reminders.prayerNotifyEnabled,
+                onChanged: (v) => _saveReminders(reminders.copyWith(prayerNotifyEnabled: v)),
+                title: Text(context.tr('remPrayer')),
+                subtitle: Text(
+                  context.tr('remPrayerSub'),
+                  style: TextStyle(fontSize: 11, color: c.onSurfaceVariant),
+                ),
+              ),
               _ReminderHourRow(
                 title: context.tr('remMorning'),
                 enabled: reminders.morningAdhkarEnabled,

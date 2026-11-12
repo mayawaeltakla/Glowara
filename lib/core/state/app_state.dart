@@ -21,6 +21,7 @@ import 'package:glowara/core/repositories/task_repository.dart';
 import 'package:glowara/core/repositories/worship_repository.dart';
 import 'package:glowara/core/security/privacy_service.dart';
 import 'package:glowara/core/services/notification_service.dart';
+import 'package:glowara/core/services/prayer_service.dart';
 import 'package:glowara/core/services/quran_service.dart';
 import 'package:glowara/core/utils/app_log.dart';
 
@@ -207,15 +208,29 @@ class AppState extends ChangeNotifier {
   Future<void> setReminders(ReminderSettings value) async {
     _reminders = value;
     await settings.saveReminders(value);
-    await scheduler?.apply(value, arabic: _locale == 'ar');
+    await _applyRemindersNow();
     notifyListeners();
   }
 
   /// يعيد جدولة التذكيرات دون انتظار (عند فتح التطبيق وتغيير اللغة).
   void _applyReminders() {
+    _applyRemindersNow();
+  }
+
+  Future<void> _applyRemindersNow() async {
     final sched = scheduler;
     if (sched == null) return;
-    sched.apply(_reminders, arabic: _locale == 'ar');
+    try {
+      final method = await settings.get<String>('prayer_method');
+      final plan = PrayerPlan(
+        cityId: (await settings.get<String>('prayer_city')) ?? kDefaultPrayerCity,
+        method: kPrayerMethods.containsKey(method) ? method! : kDefaultPrayerMethod,
+        hanafi: (await settings.get<String>('prayer_madhab')) == 'hanafi',
+      );
+      await sched.apply(_reminders, arabic: _locale == 'ar', prayer: plan);
+    } catch (e, st) {
+      logError('AppState.applyReminders', e, st);
+    }
   }
 
   Future<void> setDisplay(DisplaySettings value) async {

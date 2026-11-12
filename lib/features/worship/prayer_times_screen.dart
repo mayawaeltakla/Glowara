@@ -60,6 +60,9 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
     await s.set('prayer_city', _cityId);
     await s.set('prayer_method', _method);
     await s.set('prayer_madhab', _hanafi ? 'hanafi' : 'shafi');
+    // يعيد جدولة تذكيرات الصلاة بالمواقيت الجديدة.
+    final state = AppState.of(context);
+    await state.setReminders(state.reminders);
   }
 
   String _hijriText() {
