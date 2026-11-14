@@ -6,14 +6,24 @@ library glowara.services.notifications;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
+import 'package:glowara/core/services/prayer_service.dart';
 import 'package:glowara/core/utils/app_log.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
 /// واجهة مجدول التذكيرات (تُستبدل بنسخة وهمية في الاختبارات).
 abstract class ReminderScheduler {
-  /// يلغي المجدول السابق ويجدول حسب [settings].
-  Future<void> apply(ReminderSettings settings, {required bool arabic});
+  /// يلغي المجدول السابق ويجدول حسب [settings] (و[prayer] لتذكير أوقات الصلاة).
+  Future<void> apply(ReminderSettings settings, {required bool arabic, PrayerPlan? prayer});
+}
+
+/// اختيارات المستخدمة لحساب المواقيت (مدينة، طريقة، مذهب).
+class PrayerPlan {
+  const PrayerPlan({required this.cityId, required this.method, required this.hanafi});
+
+  final String cityId;
+  final String method;
+  final bool hanafi;
 }
 
 class LocalReminderScheduler implements ReminderScheduler {
@@ -72,14 +82,62 @@ class LocalReminderScheduler implements ReminderScheduler {
     );
   }
 
+  static const int _prayerBase = 200;
+
+  /// تذكير بكل صلاة للأيام السبعة القادمة (تتغير المواقيت يوميًا فلا يصح تكرار ثابت).
+  /// يُعاد الجدول كلما فُتح التطبيق، فيتجدد الأفق تلقائيًا.
+  Future<void> _prayers(PrayerPlan plan, bool arabic) async {
+    final city = prayerCityById(plan.cityId);
+    const names = <String, (String, String)>{
+      'fajr': ('الفجر', 'Fajr'),
+      'dhuhr': ('الظهر', 'Dhuhr'),
+      'asr': ('العصر', 'Asr'),
+      'maghrib': ('المغرب', 'Maghrib'),
+      'isha': ('العشاء', 'Isha'),
+    };
+    final now = DateTime.now();
+    for (var d = 0; d < 7; d++) {
+      final date = now.add(Duration(days: d));
+      final day = computePrayerDay(city: city, method: plan.method, hanafi: plan.hanafi, date: date);
+      var i = 0;
+      for (final (id, time) in day.entries) {
+        if (id == 'sunrise') continue;
+        final idx = i++;
+        if (!time.isAfter(now)) continue;
+        final label = names[id]!;
+        await _plugin.zonedSchedule(
+          _prayerBase + d * 10 + idx,
+          arabic ? 'حان وقت صلاة ${label.$1}' : '${label.$2} prayer time',
+          arabic ? city.nameAr : city.nameEn,
+          tz.TZDateTime.from(time, tz.UTC),
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+              'glowara_prayer',
+              'Prayer times',
+              channelDescription: 'Prayer time reminders',
+              importance: Importance.high,
+              priority: Priority.high,
+            ),
+          ),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        );
+      }
+    }
+  }
+
   @override
-  Future<void> apply(ReminderSettings s, {required bool arabic}) async {
+  Future<void> apply(ReminderSettings s, {required bool arabic, PrayerPlan? prayer}) async {
     if (kIsWeb) return;
     try {
       await _init();
       await _plugin.cancelAll();
 
-      final any = s.morningAdhkarEnabled || s.eveningAdhkarEnabled || s.duaEnabled || s.waterEnabled;
+      final any = s.morningAdhkarEnabled ||
+          s.eveningAdhkarEnabled ||
+          s.duaEnabled ||
+          s.waterEnabled ||
+          s.prayerNotifyEnabled;
       if (!any) return;
       await _requestPermission();
 
@@ -109,6 +167,9 @@ class LocalReminderScheduler implements ReminderScheduler {
           arabic ? 'الدعاء' : 'Dua',
           arabic ? 'لا تنسي أدعية اليوم' : 'Do not forget today’s duas',
         );
+      }
+      if (s.prayerNotifyEnabled && prayer != null) {
+        await _prayers(prayer, arabic);
       }
       if (s.waterEnabled) {
         // نوزّع التذكيرات على ساعات اليقظة (خارج ساعات الهدوء) بفاصل الماء.

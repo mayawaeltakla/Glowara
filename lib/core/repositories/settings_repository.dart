@@ -18,6 +18,7 @@ class ReminderSettings {
     this.eveningAdhkarHour = 17,
     this.duaEnabled = false,
     this.duaHour = 21,
+    this.prayerNotifyEnabled = false,
   });
 
   final bool waterEnabled;
@@ -32,6 +33,7 @@ class ReminderSettings {
   final int eveningAdhkarHour;
   final bool duaEnabled;
   final int duaHour;
+  final bool prayerNotifyEnabled;
 
   ReminderSettings copyWith({
     bool? waterEnabled,
@@ -46,6 +48,7 @@ class ReminderSettings {
     int? eveningAdhkarHour,
     bool? duaEnabled,
     int? duaHour,
+    bool? prayerNotifyEnabled,
   }) =>
       ReminderSettings(
         waterEnabled: waterEnabled ?? this.waterEnabled,
@@ -60,6 +63,7 @@ class ReminderSettings {
         eveningAdhkarHour: eveningAdhkarHour ?? this.eveningAdhkarHour,
         duaEnabled: duaEnabled ?? this.duaEnabled,
         duaHour: duaHour ?? this.duaHour,
+        prayerNotifyEnabled: prayerNotifyEnabled ?? this.prayerNotifyEnabled,
       );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -75,6 +79,7 @@ class ReminderSettings {
         'eveningAdhkarHour': eveningAdhkarHour,
         'duaEnabled': duaEnabled,
         'duaHour': duaHour,
+        'prayerNotifyEnabled': prayerNotifyEnabled,
       };
 
   factory ReminderSettings.fromJson(Map<String, dynamic> j) => ReminderSettings(
@@ -90,6 +95,7 @@ class ReminderSettings {
         eveningAdhkarHour: (j['eveningAdhkarHour'] as num?)?.toInt() ?? 17,
         duaEnabled: (j['duaEnabled'] as bool?) ?? false,
         duaHour: (j['duaHour'] as num?)?.toInt() ?? 21,
+        prayerNotifyEnabled: (j['prayerNotifyEnabled'] as bool?) ?? false,
       );
 }
 
