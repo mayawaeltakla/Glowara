@@ -16,7 +16,7 @@ class JournalScreen extends StatefulWidget {
   State<JournalScreen> createState() => _JournalScreenState();
 }
 
-class _JournalScreenState extends State<JournalScreen> {
+class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserver {
   bool _didLoad = false;
   bool _loading = true;
   bool _unlocked = false;
@@ -31,6 +31,24 @@ class _JournalScreenState extends State<JournalScreen> {
   final _search = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  /// يقفل المذكرات ويمسح ما عُرض منها عند مغادرة التطبيق للخلفية.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
+    if (lifecycle == AppLifecycleState.resumed || !mounted) return;
+    if (!AppState.of(context).pinSet || !_unlocked) return;
+    setState(() {
+      _unlocked = false;
+      _journals = <JournalEntry>[];
+      _moodNote.clear();
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_didLoad) {
@@ -41,6 +59,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pin.dispose();
     _moodNote.dispose();
     _search.dispose();

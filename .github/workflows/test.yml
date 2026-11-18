@@ -18,6 +18,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check no sensitive files are tracked
+        run: bash tool/check_no_secrets.sh
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:

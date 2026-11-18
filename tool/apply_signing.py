@@ -7,13 +7,28 @@
 بدون مفتاح ثابت يرفض أندرويد تثبيت النسخة الجديدة فوق القديمة. المفتاح هنا
 للاستخدام الشخصي خارج المتاجر، وهو في مستودع عام، فلا تعتمدي عليه لنشر تطبيق.
 """
+import os
 import re
 import shutil
 import sys
 from pathlib import Path
 
-src = Path('tool/signing/glowara-release.jks')
+# كلمات المرور تُقرأ من متغيرات البيئة (أسرار GitHub Actions) إن وُجدت.
+# وإلا تُستعمل قيم المفتاح الحالي المكشوف كي لا تنكسر تحديثات النسخ المثبتة.
+# تدوير المفتاح يحتاج موافقة صريحة وخطة انتقال، راجع docs/SIGNING_AND_SECURITY.md.
+STORE_PASSWORD = os.environ.get('GLOWARA_STORE_PASSWORD', 'glowara-local')
+KEY_PASSWORD = os.environ.get('GLOWARA_KEY_PASSWORD', STORE_PASSWORD)
+KEY_ALIAS = os.environ.get('GLOWARA_KEY_ALIAS', 'glowara')
+src = Path(os.environ.get('GLOWARA_KEYSTORE_PATH', 'tool/signing/glowara-release.jks'))
 app = Path('android/app')
+
+
+def fill(block):
+    return (block.replace('@@SP@@', STORE_PASSWORD)
+            .replace('@@KP@@', KEY_PASSWORD)
+            .replace('@@KA@@', KEY_ALIAS))
+
+
 if not src.exists() or not app.exists():
     sys.exit('keystore or android/app missing')
 shutil.copy(src, app / 'glowara-release.jks')
@@ -27,13 +42,13 @@ if kts.exists():
     signingConfigs {
         create("glowara") {
             storeFile = file("glowara-release.jks")
-            storePassword = "glowara-local"
-            keyAlias = "glowara"
-            keyPassword = "glowara-local"
+            storePassword = "@@SP@@"
+            keyAlias = "@@KA@@"
+            keyPassword = "@@KP@@"
         }
     }
 '''
-        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + block, g, count=1)
+        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + fill(block), g, count=1)
         if n == 0:
             sys.exit('android block not found')
         g, n = re.subn(r'signingConfigs\.getByName\("debug"\)', 'signingConfigs.getByName("glowara")', g)
@@ -51,13 +66,13 @@ elif groovy.exists():
     signingConfigs {
         glowara {
             storeFile file("glowara-release.jks")
-            storePassword "glowara-local"
-            keyAlias "glowara"
-            keyPassword "glowara-local"
+            storePassword "@@SP@@"
+            keyAlias "@@KA@@"
+            keyPassword "@@KP@@"
         }
     }
 '''
-        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + block, g, count=1)
+        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + fill(block), g, count=1)
         if n == 0:
             sys.exit('android block not found')
         g, n = re.subn(r'signingConfigs\.debug', 'signingConfigs.glowara', g)
