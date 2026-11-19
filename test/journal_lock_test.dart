@@ -107,7 +107,7 @@ void main() {
   });
 
   testWidgets('journals stay hidden until the PIN is entered', (tester) async {
-    final state = await _stateWithPinAndJournal();
+    final state = (await tester.runAsync(_stateWithPinAndJournal))!;
     await _pumpJournal(tester, state);
 
     expect(find.byIcon(Icons.lock_outline), findsOneWidget);
@@ -115,7 +115,7 @@ void main() {
   });
 
   testWidgets('going to the background relocks and clears what was shown', (tester) async {
-    final state = await _stateWithPinAndJournal();
+    final state = (await tester.runAsync(_stateWithPinAndJournal))!;
     await _pumpJournal(tester, state);
     await _unlock(tester);
     expect(find.textContaining(_secretTitle), findsOneWidget);
@@ -147,7 +147,7 @@ void main() {
   });
 
   testWidgets('an open editor with unsaved text is closed on lock', (tester) async {
-    final state = await _stateWithPinAndJournal();
+    final state = (await tester.runAsync(_stateWithPinAndJournal))!;
     await _pumpJournal(tester, state);
     await _unlock(tester);
 
@@ -172,7 +172,7 @@ void main() {
   });
 
   testWidgets('without a PIN nothing locks', (tester) async {
-    final state = await _stateWithPinAndJournal(withPin: false);
+    final state = (await tester.runAsync(() => _stateWithPinAndJournal(withPin: false)))!;
     await _pumpJournal(tester, state);
     expect(find.textContaining(_secretTitle), findsOneWidget);
 
