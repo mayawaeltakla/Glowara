@@ -56,7 +56,7 @@ Future<AppState> _stateWithPinAndJournal({bool withPin = true}) async {
 }
 
 Future<void> _pumpJournal(WidgetTester tester, AppState state) async {
-  tester.view.physicalSize = const Size(400, 900);
+  tester.view.physicalSize = const Size(400, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
