@@ -280,8 +280,12 @@ class AppState extends ChangeNotifier {
   // إدارة البيانات
   // ---------------------------------------------------------------------------
 
-  Future<String> exportData() async {
-    final data = await db.exportAll();
+  /// يصدّر بيانات **الحساب الحالي فقط**. الملف JSON نصي غير مشفّر.
+  /// [includeAllAccounts] يصدّر بيانات كل الحسابات المحلية ولا يُستعمل في الواجهة.
+  Future<String> exportData({bool includeAllAccounts = false}) async {
+    final data = await db.exportAll(
+      onlyUserId: includeAllAccounts || _user == null ? null : _user!.id,
+    );
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
@@ -296,10 +300,6 @@ class AppState extends ChangeNotifier {
     final data = Map<String, dynamic>.from(decoded);
     if (data['app'] != 'glowara') {
       throw const FormatException('This is not a Glowara backup');
-    }
-    final version = data['schemaVersion'];
-    if (version is int && version > 2) {
-      throw const FormatException('Unsupported backup schema version');
     }
     final count = await db.importAll(data, targetUserId: userId);
     await initialize();

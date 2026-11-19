@@ -1,87 +1,153 @@
 #!/usr/bin/env python3
-"""يوقّع نسخة release ويعطيها معرّف تطبيق جديدًا (com.glowara.app) كي تُثبَّت
-بجانب النسخة القديمة الموقَّعة بمفتاح التجربة دون حذفها، فتنقلين بياناتك بأمان.
+"""يهيّئ مشروع Android المولَّد في CI: معرّف التطبيق والتوقيع.
 
-يوقّع نسخة release بمفتاح ثابت بدل مفتاح التجربة الذي يتغير مع كل بناء.
+الوضعان:
 
-بدون مفتاح ثابت يرفض أندرويد تثبيت النسخة الجديدة فوق القديمة. المفتاح هنا
-للاستخدام الشخصي خارج المتاجر، وهو في مستودع عام، فلا تعتمدي عليه لنشر تطبيق.
+* ``--test``: يضبط ``applicationId`` فقط ويُبقي توقيع التجربة (debug) الذي يضعه
+  Flutter. يُستعمل في بناء PR والاختبار. النتيجة **ليست إصدارًا رسميًا**.
+* بدون ``--test`` (وضع الإصدار): يتطلب كل بيانات الاعتماد من متغيرات البيئة
+  (أسرار GitHub Actions) ويفشل بوضوح إن نقص أي منها. لا توجد قيم افتراضية ولا
+  رجوع إلى أي مفتاح قديم.
+
+متغيرات وضع الإصدار (كلها إلزامية):
+
+* ``GLOWARA_KEYSTORE_B64``: ملف keystore مشفّر Base64.
+* ``GLOWARA_STORE_PASSWORD`` و``GLOWARA_KEY_PASSWORD`` و``GLOWARA_KEY_ALIAS``.
+* ``GLOWARA_KEYSTORE_PATH``: مسار ملف مؤقت خارج المستودع (مثل ``$RUNNER_TEMP``)
+  يُكتب إليه المفتاح بصلاحيات 600. يحذفه الـworkflow في خطوة ``if: always()``.
+
+اختياري: ``GLOWARA_EXPECTED_SHA256`` للتحقق من بصمة الشهادة.
+
+لا تُكتب كلمات المرور في أي ملف ولا تُطبع في السجلات: يقرأها Gradle من البيئة.
 """
+import base64
+import binascii
 import os
 import re
-import shutil
+import subprocess
 import sys
 from pathlib import Path
 
-# كلمات المرور تُقرأ من متغيرات البيئة (أسرار GitHub Actions) إن وُجدت.
-# وإلا تُستعمل قيم المفتاح الحالي المكشوف كي لا تنكسر تحديثات النسخ المثبتة.
-# تدوير المفتاح يحتاج موافقة صريحة وخطة انتقال، راجع docs/SIGNING_AND_SECURITY.md.
-STORE_PASSWORD = os.environ.get('GLOWARA_STORE_PASSWORD', 'glowara-local')
-KEY_PASSWORD = os.environ.get('GLOWARA_KEY_PASSWORD', STORE_PASSWORD)
-KEY_ALIAS = os.environ.get('GLOWARA_KEY_ALIAS', 'glowara')
-src = Path(os.environ.get('GLOWARA_KEYSTORE_PATH', 'tool/signing/glowara-release.jks'))
+# بصمة المفتاح الذي نُشر في المستودع العام. مرفوضة دائمًا في وضع الإصدار.
+EXPOSED_SHA256 = (
+    '75:ED:C7:BF:2B:8F:41:84:4F:82:AF:CF:BE:B9:80:09:09:E3:20:A7:8F:A0:C6:FF:5C:52:70:FF:E1:A3:0F:05'
+)
+APPLICATION_ID = 'com.glowara.app'
+REQUIRED = (
+    'GLOWARA_KEYSTORE_B64',
+    'GLOWARA_STORE_PASSWORD',
+    'GLOWARA_KEY_PASSWORD',
+    'GLOWARA_KEY_ALIAS',
+    'GLOWARA_KEYSTORE_PATH',
+)
+
 app = Path('android/app')
+test_mode = '--test' in sys.argv[1:]
 
 
-def fill(block):
-    return (block.replace('@@SP@@', STORE_PASSWORD)
-            .replace('@@KP@@', KEY_PASSWORD)
-            .replace('@@KA@@', KEY_ALIAS))
+def fail(message):
+    print(f'::error::{message}', file=sys.stderr)
+    sys.exit(1)
 
 
-if not src.exists() or not app.exists():
-    sys.exit('keystore or android/app missing')
-shutil.copy(src, app / 'glowara-release.jks')
+def prepare_keystore():
+    """يتحقق من الأسرار ويكتب الـkeystore لملف مؤقت ويتحقق من بصمته."""
+    missing = [name for name in REQUIRED if not os.environ.get(name)]
+    if missing:
+        fail('Release signing credentials are missing: ' + ', '.join(missing))
+    path = Path(os.environ['GLOWARA_KEYSTORE_PATH']).resolve()
+    if Path.cwd().resolve() in path.parents:
+        fail('GLOWARA_KEYSTORE_PATH must be outside the repository checkout')
+    try:
+        data = base64.b64decode(os.environ['GLOWARA_KEYSTORE_B64'], validate=False)
+    except (binascii.Error, ValueError):
+        fail('GLOWARA_KEYSTORE_B64 is not valid Base64')
+    if not data:
+        fail('GLOWARA_KEYSTORE_B64 decoded to an empty file')
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, 'wb') as handle:
+        handle.write(data)
+    os.chmod(path, 0o600)
 
-kts = app / 'build.gradle.kts'
-groovy = app / 'build.gradle'
-if kts.exists():
-    g = kts.read_text(encoding='utf-8')
-    if 'glowara-release.jks' not in g:
-        block = '''
+    result = subprocess.run(
+        ['keytool', '-list', '-v', '-keystore', str(path),
+         '-storepass:env', 'GLOWARA_STORE_PASSWORD',
+         '-alias', os.environ['GLOWARA_KEY_ALIAS']],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        fail('keystore could not be opened with the given password and alias')
+    match = re.search(r'SHA256:\s*([0-9A-F:]{95})', result.stdout)
+    if not match:
+        fail('could not read the certificate fingerprint')
+    fingerprint = match.group(1)
+    if fingerprint == EXPOSED_SHA256:
+        fail('this keystore is the publicly exposed Glowara key and must not be used')
+    expected = os.environ.get('GLOWARA_EXPECTED_SHA256', '').strip().upper()
+    if expected and expected != fingerprint:
+        fail('keystore fingerprint does not match GLOWARA_EXPECTED_SHA256')
+    print(f'Release certificate SHA-256: {fingerprint}')
+
+
+def patch_gradle():
+    kts = app / 'build.gradle.kts'
+    groovy = app / 'build.gradle'
+    if kts.exists():
+        text = kts.read_text(encoding='utf-8')
+        if not test_mode and 'GLOWARA_KEYSTORE_PATH' not in text:
+            block = '''
     signingConfigs {
         create("glowara") {
-            storeFile = file("glowara-release.jks")
-            storePassword = "@@SP@@"
-            keyAlias = "@@KA@@"
-            keyPassword = "@@KP@@"
+            storeFile = file(System.getenv("GLOWARA_KEYSTORE_PATH"))
+            storePassword = System.getenv("GLOWARA_STORE_PASSWORD")
+            keyAlias = System.getenv("GLOWARA_KEY_ALIAS")
+            keyPassword = System.getenv("GLOWARA_KEY_PASSWORD")
         }
     }
 '''
-        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + fill(block), g, count=1)
+            text, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + block, text, count=1)
+            if n == 0:
+                fail('android block not found')
+            text, n = re.subn(r'signingConfigs\.getByName\("debug"\)',
+                              'signingConfigs.getByName("glowara")', text)
+            if n == 0:
+                fail('debug signing line not found')
+        text, n = re.subn(r'applicationId\s*=\s*"[^"]+"',
+                          f'applicationId = "{APPLICATION_ID}"', text, count=1)
         if n == 0:
-            sys.exit('android block not found')
-        g, n = re.subn(r'signingConfigs\.getByName\("debug"\)', 'signingConfigs.getByName("glowara")', g)
-        if n == 0:
-            sys.exit('debug signing line not found')
-    g, n = re.subn(r'applicationId\s*=\s*"[^"]+"', 'applicationId = "com.glowara.app"', g, count=1)
-    if n == 0:
-        sys.exit('applicationId not found')
-    kts.write_text(g, encoding='utf-8')
-    print('signing kts ok')
-elif groovy.exists():
-    g = groovy.read_text(encoding='utf-8')
-    if 'glowara-release.jks' not in g:
-        block = '''
+            fail('applicationId not found')
+        kts.write_text(text, encoding='utf-8')
+    elif groovy.exists():
+        text = groovy.read_text(encoding='utf-8')
+        if not test_mode and 'GLOWARA_KEYSTORE_PATH' not in text:
+            block = '''
     signingConfigs {
         glowara {
-            storeFile file("glowara-release.jks")
-            storePassword "@@SP@@"
-            keyAlias "@@KA@@"
-            keyPassword "@@KP@@"
+            storeFile file(System.getenv("GLOWARA_KEYSTORE_PATH"))
+            storePassword System.getenv("GLOWARA_STORE_PASSWORD")
+            keyAlias System.getenv("GLOWARA_KEY_ALIAS")
+            keyPassword System.getenv("GLOWARA_KEY_PASSWORD")
         }
     }
 '''
-        g, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + fill(block), g, count=1)
+            text, n = re.subn(r'(\nandroid\s*\{)', lambda m: m.group(1) + block, text, count=1)
+            if n == 0:
+                fail('android block not found')
+            text, n = re.subn(r'signingConfigs\.debug', 'signingConfigs.glowara', text)
+            if n == 0:
+                fail('debug signing line not found')
+        text, n = re.subn(r'applicationId\s*=?\s*"[^"]+"',
+                          f'applicationId "{APPLICATION_ID}"', text, count=1)
         if n == 0:
-            sys.exit('android block not found')
-        g, n = re.subn(r'signingConfigs\.debug', 'signingConfigs.glowara', g)
-        if n == 0:
-            sys.exit('debug signing line not found')
-    g, n = re.subn(r'applicationId\s*=?\s*"[^"]+"', 'applicationId "com.glowara.app"', g, count=1)
-    if n == 0:
-        sys.exit('applicationId not found')
-    groovy.write_text(g, encoding='utf-8')
-    print('signing groovy ok')
-else:
-    sys.exit('no build.gradle(.kts)')
+            fail('applicationId not found')
+        groovy.write_text(text, encoding='utf-8')
+    else:
+        fail('no build.gradle(.kts) found')
+
+
+if not app.exists():
+    fail('android/app is missing')
+if not test_mode:
+    prepare_keystore()
+patch_gradle()
+print('test build (debug-signed, NOT an official release)' if test_mode else 'release signing configured')

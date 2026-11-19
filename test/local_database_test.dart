@@ -99,6 +99,130 @@ void main() {
     });
   });
 
+  group('account scoped export, import and delete', () {
+    Future<void> seedTwoUsers() async {
+      for (final u in <String>['a_1', 'b_2']) {
+        await db.put('users', u, <String, dynamic>{'id': u});
+        await db.put('tasks', 'task-$u', <String, dynamic>{'id': 'task-$u', 'userId': u});
+        await db.put('habits', 'habit-$u', <String, dynamic>{'id': 'habit-$u', 'userId': u});
+        await db.put('habitLogs', 'log-$u', <String, dynamic>{'id': 'log-$u', 'habitId': 'habit-$u'});
+        await db.put('subjects', 'subj-$u', <String, dynamic>{'id': 'subj-$u', 'userId': u});
+        await db.put('units', 'unit-$u', <String, dynamic>{'id': 'unit-$u', 'subjectId': 'subj-$u'});
+        await db.put('decks', 'deck-$u', <String, dynamic>{'id': 'deck-$u', 'userId': u});
+        await db.put('cards', 'card-$u', <String, dynamic>{'id': 'card-$u', 'deckId': 'deck-$u'});
+        await db.put('water', '${u}_2026-11-01', <String, dynamic>{'id': '${u}_2026-11-01', 'userId': u});
+        await db.put('profiles', 'profile_$u', <String, dynamic>{'id': 'profile_$u', 'userId': u});
+        await db.put('journals', 'j-$u', <String, dynamic>{'id': 'j-$u', 'userId': u, 'body': 'secret of $u'});
+      }
+    }
+
+    test('account export contains only that account and its dependents', () async {
+      await seedTwoUsers();
+      final data = await db.exportAll(onlyUserId: 'a_1');
+      expect(data['scope'], 'account');
+      expect(data['schemaVersion'], 2);
+      for (final name in <String>[
+        'tasks', 'habits', 'habitLogs', 'subjects', 'units', 'decks', 'cards', 'water', 'profiles', 'journals',
+      ]) {
+        final records = data[name] as Map<String, dynamic>;
+        expect(records, hasLength(1), reason: name);
+        expect(records.keys.single, isNot(contains('b_2')), reason: name);
+      }
+      expect(data.containsKey('users'), isFalse);
+      expect(data.toString(), isNot(contains('secret of b_2')));
+    });
+
+    test('device export still includes every account', () async {
+      await seedTwoUsers();
+      final data = await db.exportAll();
+      expect(data['scope'], 'device');
+      expect(data['tasks'] as Map, hasLength(2));
+    });
+
+    test('importing another account file never takes over its records', () async {
+      await seedTwoUsers();
+      final fileFromA = await db.exportAll(onlyUserId: 'a_1');
+
+      await db.importAll(fileFromA, targetUserId: 'b_2');
+
+      final stillA = await db.byId('tasks', 'task-a_1', (m) => m);
+      expect(stillA!['userId'], 'a_1');
+      expect(db.lastImportSkipped, greaterThan(0));
+    });
+
+    test('importing the same file twice does not duplicate records', () async {
+      await seedTwoUsers();
+      final file = await db.exportAll(onlyUserId: 'a_1');
+      await db.importAll(file, targetUserId: 'a_1');
+      final firstCount = await db.count('tasks');
+      await db.importAll(file, targetUserId: 'a_1');
+      expect(await db.count('tasks'), firstCount);
+      expect(await db.count('journals'), 2);
+    });
+
+    test('merge disabled with a target user keeps other accounts intact', () async {
+      await seedTwoUsers();
+      await db.importAll(
+        <String, dynamic>{
+          'tasks': <String, dynamic>{
+            'fresh': <String, dynamic>{'id': 'fresh', 'userId': 'a_1'},
+          },
+        },
+        merge: false,
+        targetUserId: 'a_1',
+      );
+      expect(await db.byId('tasks', 'task-a_1', (m) => m), isNull);
+      expect(await db.byId('tasks', 'task-b_2', (m) => m), isNotNull);
+      expect(await db.byId('tasks', 'fresh', (m) => m), isNotNull);
+    });
+
+    test('wrong app or unsupported schema is rejected and changes nothing', () async {
+      await seedTwoUsers();
+      final before = await db.count('tasks');
+      await expectLater(
+        db.importAll(<String, dynamic>{'app': 'other'}),
+        throwsFormatException,
+      );
+      await expectLater(
+        db.importAll(<String, dynamic>{'app': 'glowara', 'schemaVersion': 99}),
+        throwsFormatException,
+      );
+      await expectLater(
+        db.importAll(<String, dynamic>{'app': 'glowara', 'schemaVersion': 'two'}),
+        throwsFormatException,
+      );
+      expect(await db.count('tasks'), before);
+    });
+
+    test('an older file without scope still imports', () async {
+      final count = await db.importAll(
+        <String, dynamic>{
+          'app': 'glowara',
+          'schemaVersion': 2,
+          'tasks': <String, dynamic>{
+            't9': <String, dynamic>{'id': 't9', 'userId': 'old'},
+          },
+        },
+        targetUserId: 'a_1',
+      );
+      expect(count, 1);
+    });
+
+    test('deleting one user removes only that user and dependents', () async {
+      await seedTwoUsers();
+      await db.deleteUserData('a_1');
+
+      for (final name in <String>[
+        'tasks', 'habits', 'habitLogs', 'subjects', 'units', 'decks', 'cards', 'water', 'profiles', 'journals',
+      ]) {
+        expect(await db.count(name), 1, reason: name);
+      }
+      expect(await db.byId('users', 'a_1', (m) => m), isNull);
+      expect(await db.byId('users', 'b_2', (m) => m), isNotNull);
+      expect(await db.byId('journals', 'j-b_2', (m) => m), isNotNull);
+    });
+  });
+
   group('clear', () {
     test('clearAll removes records and settings', () async {
       await db.put('tasks', 't1', <String, dynamic>{'id': 't1'});

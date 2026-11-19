@@ -1,0 +1,172 @@
+name: Release Glowara (manual, guarded)
+
+# نشر APK رسمي. مغلق افتراضيًا:
+#  - يعمل يدويًا فقط (workflow_dispatch) ومن فرع main فقط.
+#  - يتطلب كتابة PUBLISH في خانة التأكيد وموافقة بيئة "production-release".
+#  - يتطلب أسرار التوقيع. إن نقص أي سر يفشل قبل أي بناء.
+#  - يرفض المفتاح العلني القديم (انظر tool/apply_signing.py).
+# لا يعمل عند دمج PR أو عند أي push.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type PUBLISH to confirm an official release'
+        required: true
+        type: string
+      tag:
+        description: 'Release tag (must not be "latest")'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build signed APK and publish
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'PUBLISH' && inputs.tag != 'latest'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: production-release
+    env:
+      GLOWARA_KEYSTORE_B64: ${{ secrets.GLOWARA_KEYSTORE_B64 }}
+      GLOWARA_STORE_PASSWORD: ${{ secrets.GLOWARA_STORE_PASSWORD }}
+      GLOWARA_KEY_PASSWORD: ${{ secrets.GLOWARA_KEY_PASSWORD }}
+      GLOWARA_KEY_ALIAS: ${{ secrets.GLOWARA_KEY_ALIAS }}
+      GLOWARA_EXPECTED_SHA256: ${{ secrets.GLOWARA_EXPECTED_SHA256 }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check no secrets are committed
+        run: python3 tool/check_no_secrets.py
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.47.9
+          channel: stable
+          cache: true
+
+      - name: Show Flutter and Dart versions
+        run: |
+          flutter --version
+          dart --version
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+        continue-on-error: true
+
+      - name: Create missing platform scaffolding in a temporary directory
+        run: |
+          set -euo pipefail
+
+          if [ -d android ] && [ -d web ]; then
+            echo "android/ and web/ already exist; leaving them untouched."
+            exit 0
+          fi
+
+          scaffold="$(mktemp -d)"
+          platforms=""
+          if [ ! -d android ]; then
+            platforms="android"
+          fi
+          if [ ! -d web ]; then
+            platforms="${platforms:+$platforms,}web"
+          fi
+
+          flutter create --no-pub --project-name glowara --org com.glowara --platforms="$platforms" "$scaffold"
+
+          if [ ! -d android ]; then
+            cp -R "$scaffold/android" .
+          fi
+          if [ ! -d web ]; then
+            cp -R "$scaffold/web" .
+          fi
+          if [ ! -f .metadata ]; then
+            cp "$scaffold/.metadata" .
+          fi
+
+          rm -rf "$scaffold"
+
+      - name: Allow network access in the Android release manifest
+        run: |
+          set -euo pipefail
+          manifest="android/app/src/main/AndroidManifest.xml"
+          if [ ! -f "$manifest" ]; then
+            echo "Android manifest was not generated" >&2
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('android/app/src/main/AndroidManifest.xml')
+          text = path.read_text(encoding='utf-8')
+          if 'android.permission.INTERNET' not in text:
+              start = text.index('<manifest')
+              end = text.index('>', start) + 1
+              text = text[:end] + '\n    <uses-permission android:name="android.permission.INTERNET" />' + text[end:]
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Apply Glowara icons and branding
+        run: python3 tool/apply_branding.py
+
+      - name: Prepare Android for local notifications
+        run: python3 tool/apply_android_notifications.py
+
+      - name: Configure release signing from secrets (fails if any are missing)
+        run: |
+          set -euo pipefail
+          echo "GLOWARA_KEYSTORE_PATH=$RUNNER_TEMP/glowara-release.jks" >> "$GITHUB_ENV"
+          export GLOWARA_KEYSTORE_PATH="$RUNNER_TEMP/glowara-release.jks"
+          python3 tool/apply_signing.py
+
+      - name: Bundle fonts
+        run: bash tool/fetch_fonts.sh
+
+      - name: Resolve dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build signed Android APK
+        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
+
+      - name: Verify APK certificate is not the exposed key
+        run: |
+          set -euo pipefail
+          apksigner=$(ls $ANDROID_HOME/build-tools/*/apksigner | tail -1)
+          out=$("$apksigner" verify --print-certs build/app/outputs/flutter-apk/app-arm64-v8a-release.apk)
+          echo "$out" | grep -i "SHA-256 digest" | head -1
+          if echo "$out" | tr -d ':' | grep -qi "75edc7bf2b8f41844f82afcfbeb9800909e320a78fa0c6ff5c5270ffe1a30f05"; then
+            echo "::error::APK is signed with the exposed key"
+            exit 1
+          fi
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          out=build/app/outputs/flutter-apk
+          cp "$out/app-arm64-v8a-release.apk" Glowara.apk
+          cp "$out/app-armeabi-v7a-release.apk" Glowara-32bit.apk
+          gh release create "$TAG" Glowara.apk Glowara-32bit.apk \
+            --title "Glowara $TAG" --notes "Official signed build."
+
+      - name: Remove the temporary keystore
+        if: always()
+        run: |
+          rm -f "$RUNNER_TEMP/glowara-release.jks" || true

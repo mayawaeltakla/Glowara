@@ -36,15 +36,43 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
     WidgetsBinding.instance.addObserver(this);
   }
 
-  /// يقفل المذكرات ويمسح ما عُرض منها عند مغادرة التطبيق للخلفية.
+  /// نافذة تحرير المذكرة المفتوحة حاليًا (إن وُجدت)، لإغلاقها عند القفل.
+  BuildContext? _sheetContext;
+
+  /// الحالات التي يُقفل عندها القسم. `inactive` مستثناة عمدًا: تحدث لحظيًا مع
+  /// سحب شريط الإشعارات أو نوافذ النظام فلا تستحق القفل. `hidden` و`paused`
+  /// تعنيان أن التطبيق غادر الواجهة فعلًا.
+  @visibleForTesting
+  static bool locksOn(AppLifecycleState lifecycle) =>
+      lifecycle == AppLifecycleState.hidden ||
+      lifecycle == AppLifecycleState.paused ||
+      lifecycle == AppLifecycleState.detached;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
-    if (lifecycle == AppLifecycleState.resumed || !mounted) return;
+    if (!locksOn(lifecycle) || !mounted) return;
     if (!AppState.of(context).pinSet || !_unlocked) return;
+    _lockNow();
+  }
+
+  /// يقفل المذكرات ويمسح من الذاكرة كل ما عُرض منها (مذكرات، مزاج، ملاحظات،
+  /// بحث، نافذة التحرير). لا يحذف شيئًا من قاعدة البيانات.
+  void _lockNow() {
+    final sheet = _sheetContext;
+    _sheetContext = null;
+    if (sheet != null && sheet.mounted) {
+      Navigator.of(sheet).pop(null); // تُهمل المسودة غير المحفوظة عمدًا.
+    }
     setState(() {
       _unlocked = false;
+      _todayMood = null;
+      _moods = <MoodEntry>[];
       _journals = <JournalEntry>[];
+      _moodValue = 3;
       _moodNote.clear();
+      _search.clear();
+      _pin.clear();
+      _pinError = null;
     });
   }
 
@@ -82,7 +110,8 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
       to: now,
     );
     final journals = await state.journal.journals(state.userId);
-    if (!mounted) return;
+    // قد يُقفل القسم أثناء انتظار القراءة؛ لا نُعيد ملء الذاكرة وهو مقفل.
+    if (!mounted || (state.pinSet && !_unlocked)) return;
     setState(() {
       _todayMood = mood;
       _moods = moods.reversed.toList();
@@ -172,6 +201,7 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
         borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       builder: (sheetContext) {
+        _sheetContext = sheetContext;
         return Padding(
           padding: EdgeInsets.fromLTRB(
             18,
@@ -244,6 +274,7 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
         );
       },
     );
+    _sheetContext = null;
     if (result == null || !mounted) {
       title.dispose();
       content.dispose();
