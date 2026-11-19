@@ -12,6 +12,15 @@ import 'package:glowara/core/widgets/glow_widgets.dart';
 class JournalScreen extends StatefulWidget {
   const JournalScreen({super.key});
 
+  /// الحالات التي يُقفل عندها القسم. `inactive` مستثناة عمدًا: تحدث لحظيًا مع
+  /// سحب شريط الإشعارات أو نوافذ النظام فلا تستحق القفل. `hidden` و`paused`
+  /// تعنيان أن التطبيق غادر الواجهة فعلًا.
+  @visibleForTesting
+  static bool locksOn(AppLifecycleState lifecycle) =>
+      lifecycle == AppLifecycleState.hidden ||
+      lifecycle == AppLifecycleState.paused ||
+      lifecycle == AppLifecycleState.detached;
+
   @override
   State<JournalScreen> createState() => _JournalScreenState();
 }
@@ -39,18 +48,9 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
   /// نافذة تحرير المذكرة المفتوحة حاليًا (إن وُجدت)، لإغلاقها عند القفل.
   BuildContext? _sheetContext;
 
-  /// الحالات التي يُقفل عندها القسم. `inactive` مستثناة عمدًا: تحدث لحظيًا مع
-  /// سحب شريط الإشعارات أو نوافذ النظام فلا تستحق القفل. `hidden` و`paused`
-  /// تعنيان أن التطبيق غادر الواجهة فعلًا.
-  @visibleForTesting
-  static bool locksOn(AppLifecycleState lifecycle) =>
-      lifecycle == AppLifecycleState.hidden ||
-      lifecycle == AppLifecycleState.paused ||
-      lifecycle == AppLifecycleState.detached;
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
-    if (!locksOn(lifecycle) || !mounted) return;
+    if (!JournalScreen.locksOn(lifecycle) || !mounted) return;
     if (!AppState.of(context).pinSet || !_unlocked) return;
     _lockNow();
   }
