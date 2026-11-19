@@ -2,7 +2,9 @@ name: Release Glowara (manual, guarded)
 
 # نشر APK رسمي. مغلق افتراضيًا:
 #  - يعمل يدويًا فقط (workflow_dispatch) ومن فرع main فقط.
-#  - يتطلب كتابة PUBLISH في خانة التأكيد وموافقة بيئة "production-release".
+#  - يتطلب كتابة PUBLISH في خانة التأكيد، ويعمل فقط إن كان المشغِّل مالكة المستودع.
+#  - بيئة "production-release" يجب أن يُفعَّل لها Required reviewers يدويًا من إعدادات
+#    المستودع (Settings > Environments). لا يُفترض أنها مفعّلة؛ لم يمكن التحقق منها آليًا.
 #  - يتطلب أسرار التوقيع. إن نقص أي سر يفشل قبل أي بناء.
 #  - يرفض المفتاح العلني القديم (انظر tool/apply_signing.py).
 # لا يعمل عند دمج PR أو عند أي push.
@@ -24,7 +26,7 @@ permissions:
 jobs:
   release:
     name: Build signed APK and publish
-    if: github.ref == 'refs/heads/main' && inputs.confirm == 'PUBLISH' && inputs.tag != 'latest'
+    if: github.ref == 'refs/heads/main' && inputs.confirm == 'PUBLISH' && inputs.tag != 'latest' && github.actor == github.repository_owner
     runs-on: ubuntu-latest
     timeout-minutes: 60
     environment: production-release

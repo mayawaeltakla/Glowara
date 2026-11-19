@@ -166,6 +166,11 @@ class LocalDatabase {
       'app': 'glowara',
       'schemaVersion': 2,
       'scope': onlyUserId == null ? 'device' : 'account',
+      // مصدر النسخة: يستعمله الاستيراد لمعرفة هل تعود النسخة إلى الحساب نفسه.
+      'source': <String, dynamic>{
+        'kind': 'glowara-export',
+        'accountId': onlyUserId,
+      },
       'exportedAt': DateTime.now().toUtc().toIso8601String(),
     };
     final owned = onlyUserId == null ? null : await _ownedKeys(_db, onlyUserId);
@@ -197,12 +202,26 @@ class LocalDatabase {
   /// إذا مُرّر [targetUserId] تُعاد بيانات كل السجلات إلى هذا المستخدم،
   /// حتى تعمل الاستعادة على جهاز/حساب جديدين. تُعاد أيضًا مفاتيح
   /// السجلات المركّبة (الماء/المزاج/الملف الشخصي) لأنها تحتوي userId.
+  ///
+  /// **مصدر النسخة:** الملف الصادر من حساب معيّن يحمل `source.accountId`.
+  /// إذا كان [targetUserId] يختلف عن مصدر الملف، أو كان المصدر غير معروف (ملف
+  /// قديم أو تصدير كل الحسابات)، يُرفض الاستيراد بـ[ImportSourceMismatch] ولا
+  /// يُكتب شيء، إلا إذا مُرّر [allowDifferentSource] بعد تأكيد صريح من المستخدمة.
+  /// حتى بعد التأكيد لا يُكتب فوق سجلات حساب آخر.
   Future<int> importAll(
     Map<String, dynamic> data, {
     bool merge = true,
     String? targetUserId,
+    bool allowDifferentSource = false,
   }) async {
     _validateImport(data);
+    if (targetUserId != null && !allowDifferentSource) {
+      final source = data['source'];
+      final sourceId = source is Map ? source['accountId'] : null;
+      if (sourceId is! String || sourceId != targetUserId || data['scope'] == 'device') {
+        throw ImportSourceMismatch(sourceId is String ? sourceId : null);
+      }
+    }
     lastImportSkipped = 0;
 
     return _db.transaction<int>((txn) async {
@@ -392,6 +411,19 @@ class LocalDatabase {
       await _settings.delete(txn);
     });
   }
+}
+
+/// يُرمى عند محاولة استعادة نسخة إلى حساب غير مصدرها، أو نسخة مصدرها مجهول.
+/// يحمل [sourceAccountId] (null عندما يكون المصدر غير معروف).
+class ImportSourceMismatch implements Exception {
+  const ImportSourceMismatch(this.sourceAccountId);
+
+  final String? sourceAccountId;
+
+  bool get unknownSource => sourceAccountId == null;
+
+  @override
+  String toString() => 'ImportSourceMismatch(source: ${sourceAccountId ?? 'unknown'})';
 }
 
 /// يحدد ما إذا كان سجل ما يخص حسابًا معيّنًا.

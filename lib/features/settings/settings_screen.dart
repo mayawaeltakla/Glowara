@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:glowara/core/db/local_database.dart' show ImportSourceMismatch;
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
@@ -283,13 +284,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     final source = controller.text;
     controller.dispose();
+    await _runImport(state, source);
+  }
+
+  /// ينفّذ الاستيراد. إن كانت النسخة من حساب آخر أو مصدرها مجهول يُطلب تأكيد
+  /// صريح؛ الرفض لا يغيّر أي بيانات.
+  Future<void> _runImport(AppState state, String source, {bool confirmed = false}) async {
     try {
-      await state.importData(source);
+      await state.importData(source, confirmedDifferentSource: confirmed);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.tr('importSuccess'))),
       );
       _loadSize();
+    } on ImportSourceMismatch catch (mismatch) {
+      if (confirmed || !mounted) return;
+      final ok = await showConfirmDialog(
+        context,
+        title: context.tr('importMismatchTitle'),
+        message: context.tr(
+          mismatch.unknownSource ? 'importMismatchUnknown' : 'importMismatchDifferent',
+        ),
+      );
+      if (!ok || !mounted) return;
+      await _runImport(state, source, confirmed: true);
     } catch (e, st) {
       logError('Settings.importData', e, st);
       if (!mounted) return;

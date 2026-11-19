@@ -51,6 +51,7 @@ void main() {
           },
         },
         targetUserId: 'new_1',
+        allowDifferentSource: true,
       );
 
       expect(imported, 2);
@@ -139,21 +140,79 @@ void main() {
       expect(data['tasks'] as Map, hasLength(2));
     });
 
-    test('importing another account file never takes over its records', () async {
+    test('restoring another account file needs confirmation and writes nothing without it', () async {
+      await seedTwoUsers();
+      final fileFromA = await db.exportAll(onlyUserId: 'a_1');
+      expect((fileFromA['source'] as Map)['accountId'], 'a_1');
+      final before = await db.count('journals');
+
+      await expectLater(
+        db.importAll(fileFromA, targetUserId: 'b_2'),
+        throwsA(isA<ImportSourceMismatch>().having((e) => e.unknownSource, 'unknownSource', false)),
+      );
+
+      expect(await db.count('journals'), before);
+      expect(await db.byId('tasks', 'task-a_1', (m) => m), isNotNull);
+    });
+
+    test('after confirmation it still never takes over the other account records', () async {
       await seedTwoUsers();
       final fileFromA = await db.exportAll(onlyUserId: 'a_1');
 
-      await db.importAll(fileFromA, targetUserId: 'b_2');
+      await db.importAll(fileFromA, targetUserId: 'b_2', allowDifferentSource: true);
 
       final stillA = await db.byId('tasks', 'task-a_1', (m) => m);
       expect(stillA!['userId'], 'a_1');
       expect(db.lastImportSkipped, greaterThan(0));
     });
 
+    test('records with non-colliding ids are not moved silently either', () async {
+      await seedTwoUsers();
+      final fileFromA = await db.exportAll(onlyUserId: 'a_1');
+      await db.deleteUserData('a_1'); // ملفها لم يعد يتعارض مع شيء على الجهاز.
+
+      await expectLater(
+        db.importAll(fileFromA, targetUserId: 'b_2'),
+        throwsA(isA<ImportSourceMismatch>()),
+      );
+      expect(await db.byId('journals', 'j-a_1', (m) => m), isNull,
+          reason: 'declining must leave B without account A data');
+
+      await db.importAll(fileFromA, targetUserId: 'b_2', allowDifferentSource: true);
+      final moved = await db.byId('journals', 'j-a_1', (m) => m);
+      expect(moved!['userId'], 'b_2');
+    });
+
+    test('restoring a file back into its own account needs no confirmation', () async {
+      await seedTwoUsers();
+      final fileFromA = await db.exportAll(onlyUserId: 'a_1');
+      await db.deleteUserData('a_1');
+      await db.put('users', 'a_1', <String, dynamic>{'id': 'a_1'});
+
+      final count = await db.importAll(fileFromA, targetUserId: 'a_1');
+      expect(count, greaterThan(0));
+    });
+
+    test('a file with unknown or device scope source needs confirmation', () async {
+      await seedTwoUsers();
+      final deviceFile = await db.exportAll();
+      await expectLater(
+        db.importAll(deviceFile, targetUserId: 'a_1'),
+        throwsA(isA<ImportSourceMismatch>().having((e) => e.unknownSource, 'unknownSource', true)),
+      );
+      await expectLater(
+        db.importAll(
+          <String, dynamic>{'app': 'glowara', 'schemaVersion': 2},
+          targetUserId: 'a_1',
+        ),
+        throwsA(isA<ImportSourceMismatch>()),
+      );
+    });
+
     test('importing the same file twice does not duplicate records', () async {
       await seedTwoUsers();
       final file = await db.exportAll(onlyUserId: 'a_1');
-      await db.importAll(file, targetUserId: 'a_1');
+      await db.importAll(file, targetUserId: 'a_1'); // مصدرها هذا الحساب نفسه
       final firstCount = await db.count('tasks');
       await db.importAll(file, targetUserId: 'a_1');
       expect(await db.count('tasks'), firstCount);
@@ -170,6 +229,7 @@ void main() {
         },
         merge: false,
         targetUserId: 'a_1',
+        allowDifferentSource: true,
       );
       expect(await db.byId('tasks', 'task-a_1', (m) => m), isNull);
       expect(await db.byId('tasks', 'task-b_2', (m) => m), isNotNull);
@@ -204,6 +264,7 @@ void main() {
           },
         },
         targetUserId: 'a_1',
+        allowDifferentSource: true,
       );
       expect(count, 1);
     });

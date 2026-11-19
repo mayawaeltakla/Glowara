@@ -42,19 +42,23 @@ PATTERNS = [
     ('generic bearer/API secret', re.compile(
         r'(?i)\b(?:api[_-]?key|secret|access[_-]?token|auth[_-]?token)\b\s*[:=]\s*["\'][A-Za-z0-9_\-/+=]{16,}["\']')),
     ('hard-coded password', re.compile(
-        r'(?i)\b(?:store|key|keystore|db|admin)?_?pass(?:word|wd)?\b\s*[:=]\s*["\'](?!\s*["\'])(?![^"\']*(?:\$\{|\$\(|\bgetenv\b|System\.getenv|%s))[^"\']{4,}["\']')),
+        r'(?i)\b(?:store|key|keystore|db|admin)?_?pass(?:word|wd)?\b\s*[:=]\s*["\'](?!\s*["\'])(?![^"\']*(?:\$\{|\$\(|\bgetenv\b|System\.getenv|%s))([^"\']{4,})["\']')),
 ]
 
-# أسطر مسموحة صراحة (اختبارات وبيانات وهمية معلنة).
+# كلمات مرور وهمية محددة بالاسم تستعملها الاختبارات لحسابات اختبار في الذاكرة.
+# تُقبل فقط داخل test/ وفقط بهذه القيم الثلاث؛ أي قيمة أخرى في test/ تُفحص كالمعتاد.
+TEST_DUMMY_PASSWORDS = frozenset({'bad-pass', 'secret1', 'wrong-one'})
+
+# أسطر مسموحة صراحة، سطرًا بسطر (قيم وهمية في الاختبارات مثلًا).
+# لا يُستثنى أي مجلد أو ملف بالكامل، بما فيه test/.
 ALLOW_MARK = 'secret-scan: allow'
 
 TEXT_SUFFIXES = {
     '.dart', '.py', '.sh', '.yml', '.yaml', '.json', '.gradle', '.kts', '.properties',
     '.xml', '.md', '.txt', '.toml', '.cfg', '.ini', '.js', '.html', '.ps1', '.arb',
 }
+# أصول ثنائية ونسخة النصوص الدينية الاحتياطية فقط (لا كود فيها).
 SKIP_DIRS = ('assets/', 'docs/content-backup/')
-# اختبارات تستعمل كلمات مرور وهمية لحسابات الاختبار.
-SKIP_FILES = ('test/',)
 
 
 def tracked_files():
@@ -68,7 +72,7 @@ def main():
         if BAD_NAMES.search(name):
             problems.append(f'{name}: sensitive file type is tracked')
             continue
-        if name.startswith(SKIP_DIRS) or name.startswith(SKIP_FILES):
+        if name.startswith(SKIP_DIRS):
             continue
         path = Path(name)
         if path.suffix.lower() not in TEXT_SUFFIXES or not path.is_file():
@@ -81,8 +85,13 @@ def main():
             if ALLOW_MARK in line:
                 continue
             for label, pattern in PATTERNS:
-                if pattern.search(line):
-                    problems.append(f'{name}:{number}: possible {label}')
+                matches = list(pattern.finditer(line))
+                if not matches:
+                    continue
+                if (label == 'hard-coded password' and name.startswith('test/')
+                        and all(m.group(1) in TEST_DUMMY_PASSWORDS for m in matches)):
+                    continue
+                problems.append(f'{name}:{number}: possible {label}')
     if problems:
         print('Secret scan failed:')
         for item in problems:
