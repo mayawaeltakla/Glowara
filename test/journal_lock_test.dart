@@ -76,8 +76,7 @@ Future<void> _pumpJournal(WidgetTester tester, AppState state) async {
       ),
     ),
   );
-  await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
-  await tester.pump(const Duration(milliseconds: 500));
+  await _settle(tester);
 }
 
 Future<void> _settle(WidgetTester tester) async {
@@ -139,6 +138,8 @@ void main() {
     expect(find.byIcon(Icons.lock_outline), findsOneWidget);
 
     // العودة لا تُظهر المذكرات قبل إدخال الرمز من جديد.
+    // تسلسل صالح للعودة: paused ثم hidden ثم inactive ثم resumed.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
