@@ -86,6 +86,13 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
 }
 
+/// المذكرات في التبويب الثاني؛ تعود الشاشة إلى تبويب المزاج بعد كل فتح.
+Future<void> _openJournalsTab(WidgetTester tester) async {
+  await tester.tap(find.byIcon(Icons.edit_note).first);
+  await tester.pump(const Duration(milliseconds: 500));
+  await tester.pump(const Duration(milliseconds: 500));
+}
+
 Future<void> _unlock(WidgetTester tester) async {
   await tester.enterText(find.byType(TextField), '1234');
   await tester.tap(find.byType(FilledButton));
@@ -118,6 +125,7 @@ void main() {
     final state = (await tester.runAsync(_stateWithPinAndJournal))!;
     await _pumpJournal(tester, state);
     await _unlock(tester);
+    await _openJournalsTab(tester);
     expect(find.textContaining(_secretTitle), findsOneWidget);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
@@ -143,6 +151,7 @@ void main() {
 
     // وبعد إدخال الرمز تعود كما كانت.
     await _unlock(tester);
+    await _openJournalsTab(tester);
     expect(find.textContaining(_secretTitle), findsOneWidget);
   });
 
@@ -150,6 +159,7 @@ void main() {
     final state = (await tester.runAsync(_stateWithPinAndJournal))!;
     await _pumpJournal(tester, state);
     await _unlock(tester);
+    await _openJournalsTab(tester);
 
     await tester.ensureVisible(find.textContaining(_secretTitle));
     await tester.tap(find.textContaining(_secretTitle));
@@ -174,6 +184,7 @@ void main() {
   testWidgets('without a PIN nothing locks', (tester) async {
     final state = (await tester.runAsync(() => _stateWithPinAndJournal(withPin: false)))!;
     await _pumpJournal(tester, state);
+    await _openJournalsTab(tester);
     expect(find.textContaining(_secretTitle), findsOneWidget);
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
