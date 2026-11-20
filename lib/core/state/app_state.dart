@@ -280,12 +280,18 @@ class AppState extends ChangeNotifier {
   // إدارة البيانات
   // ---------------------------------------------------------------------------
 
-  Future<String> exportData() async {
-    final data = await db.exportAll();
+  /// يصدّر بيانات **الحساب الحالي فقط**. الملف JSON نصي غير مشفّر.
+  /// [includeAllAccounts] يصدّر بيانات كل الحسابات المحلية ولا يُستعمل في الواجهة.
+  Future<String> exportData({bool includeAllAccounts = false}) async {
+    final data = await db.exportAll(
+      onlyUserId: includeAllAccounts || _user == null ? null : _user!.id,
+    );
     return const JsonEncoder.withIndent('  ').convert(data);
   }
 
-  Future<int> importData(String source) async {
+  /// يستورد نسخة إلى الحساب الحالي. إن كانت من حساب آخر أو مصدرها مجهول يرمي
+  /// [ImportSourceMismatch] ولا يغيّر شيئًا حتى تؤكد المستخدمة ([confirmedDifferentSource]).
+  Future<int> importData(String source, {bool confirmedDifferentSource = false}) async {
     if (_user == null) {
       throw StateError('Login is required before importing data');
     }
@@ -297,11 +303,11 @@ class AppState extends ChangeNotifier {
     if (data['app'] != 'glowara') {
       throw const FormatException('This is not a Glowara backup');
     }
-    final version = data['schemaVersion'];
-    if (version is int && version > 2) {
-      throw const FormatException('Unsupported backup schema version');
-    }
-    final count = await db.importAll(data, targetUserId: userId);
+    final count = await db.importAll(
+      data,
+      targetUserId: userId,
+      allowDifferentSource: confirmedDifferentSource,
+    );
     await initialize();
     return count;
   }

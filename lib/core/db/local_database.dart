@@ -155,18 +155,31 @@ class LocalDatabase {
   // التصدير والاستيراد
   // ---------------------------------------------------------------------------
 
-  /// تصدير كل البيانات (دون كلمات المرور أو مفاتيح الخصوصية أو الكاش المؤقت).
-  Future<Map<String, dynamic>> exportAll() async {
+  /// تصدير البيانات (دون كلمات المرور أو مفاتيح الخصوصية أو الكاش المؤقت).
+  ///
+  /// بدون [onlyUserId] تُصدَّر بيانات **كل الحسابات** على الجهاز (نطاق
+  /// `device`). مع [onlyUserId] تُصدَّر بيانات ذلك الحساب فقط (نطاق `account`)،
+  /// وهو ما يستعمله التطبيق افتراضيًا. الصيغة والـschemaVersion لم تتغيّرا؛
+  /// حقل `scope` إضافي تتجاهله النسخ القديمة.
+  Future<Map<String, dynamic>> exportAll({String? onlyUserId}) async {
     final output = <String, dynamic>{
       'app': 'glowara',
       'schemaVersion': 2,
+      'scope': onlyUserId == null ? 'device' : 'account',
+      // مصدر النسخة: يستعمله الاستيراد لمعرفة هل تعود النسخة إلى الحساب نفسه.
+      'source': <String, dynamic>{
+        'kind': 'glowara-export',
+        'accountId': onlyUserId,
+      },
       'exportedAt': DateTime.now().toUtc().toIso8601String(),
     };
+    final owned = onlyUserId == null ? null : await _ownedKeys(_db, onlyUserId);
     for (final name in collections) {
       if (name == 'users') continue; // لا تُصدَّر كلمات المرور أو الحسابات.
       final snapshots = await _store(name).find(_db);
       final records = <String, dynamic>{};
       for (final s in snapshots) {
+        if (owned != null && !owned.owns(name, s.key, s.value)) continue;
         records[s.key] = s.value;
       }
       output[name] = records;
@@ -189,20 +202,49 @@ class LocalDatabase {
   /// إذا مُرّر [targetUserId] تُعاد بيانات كل السجلات إلى هذا المستخدم،
   /// حتى تعمل الاستعادة على جهاز/حساب جديدين. تُعاد أيضًا مفاتيح
   /// السجلات المركّبة (الماء/المزاج/الملف الشخصي) لأنها تحتوي userId.
+  ///
+  /// **مصدر النسخة:** الملف الصادر من حساب معيّن يحمل `source.accountId`.
+  /// إذا كان [targetUserId] يختلف عن مصدر الملف، أو كان المصدر غير معروف (ملف
+  /// قديم أو تصدير كل الحسابات)، يُرفض الاستيراد بـ[ImportSourceMismatch] ولا
+  /// يُكتب شيء، إلا إذا مُرّر [allowDifferentSource] بعد تأكيد صريح من المستخدمة.
+  /// حتى بعد التأكيد لا يُكتب فوق سجلات حساب آخر.
   Future<int> importAll(
     Map<String, dynamic> data, {
     bool merge = true,
     String? targetUserId,
+    bool allowDifferentSource = false,
   }) async {
     _validateImport(data);
+    if (targetUserId != null && !allowDifferentSource) {
+      final source = data['source'];
+      final sourceId = source is Map ? source['accountId'] : null;
+      if (sourceId is! String || sourceId != targetUserId || data['scope'] == 'device') {
+        throw ImportSourceMismatch(sourceId is String ? sourceId : null);
+      }
+    }
+    lastImportSkipped = 0;
 
     return _db.transaction<int>((txn) async {
       var imported = 0;
+      var skipped = 0;
       for (final name in collections) {
         if (name == 'users') continue; // لا نستورد حسابات/كلمات مرور.
         final raw = data[name];
         if (raw is! Map) continue;
-        if (!merge) await _store(name).delete(txn);
+        if (!merge) {
+          if (targetUserId == null) {
+            await _store(name).delete(txn);
+          } else {
+            // مع حساب هدف لا نمسح إلا سجلاته، لا سجلات الحسابات الأخرى.
+            final owned = await _ownedKeys(txn, targetUserId);
+            final existing = await _store(name).find(txn);
+            for (final s in existing) {
+              if (owned.owns(name, s.key, s.value)) {
+                await _store(name).record(s.key).delete(txn);
+              }
+            }
+          }
+        }
         for (final entry in raw.entries) {
           final value = entry.value;
           if (value is! Map) continue;
@@ -222,6 +264,16 @@ class LocalDatabase {
               safe['id'] = recordKey;
             }
           }
+          if (targetUserId != null) {
+            // لا نكتب فوق سجل يخص حسابًا آخر على الجهاز (مثلًا عند استيراد ملف
+            // حساب آخر له المعرّفات نفسها): نتجاوزه بدل نقل ملكيته.
+            final existing = await _store(name).record(recordKey).get(txn);
+            final owner = existing?['userId'];
+            if (existing != null && owner is String && owner != targetUserId) {
+              skipped++;
+              continue;
+            }
+          }
           await _store(name)
               .record(recordKey)
               .put(txn, Map<String, Object?>.from(safe));
@@ -236,12 +288,24 @@ class LocalDatabase {
           await _writeSetting(txn, key, entry.value);
         }
       }
+      lastImportSkipped = skipped;
       return imported;
     });
   }
 
+  /// عدد السجلات التي تجاوزها آخر استيراد لأنها تخص حسابًا آخر على الجهاز.
+  int lastImportSkipped = 0;
+
   /// يتحقق من شكل ملف الاستيراد قبل لمس التخزين.
   static void _validateImport(Map<String, dynamic> data) {
+    final app = data['app'];
+    if (app != null && app != 'glowara') {
+      throw const FormatException('This is not a Glowara backup');
+    }
+    final version = data['schemaVersion'];
+    if (version != null && (version is! int || version > 2 || version < 1)) {
+      throw const FormatException('Unsupported backup schema version');
+    }
     for (final name in collections) {
       if (name == 'users') continue;
       final raw = data[name];
@@ -259,6 +323,22 @@ class LocalDatabase {
     if (settings != null && settings is! Map) {
       throw const FormatException('"settings" must be an object');
     }
+  }
+
+  /// مفاتيح السجلات التابعة لحساب [userId]، بما فيها السجلات التي لا تحمل
+  /// userId (سجلات العادات، وحدات الدراسة، بطاقات المفردات).
+  Future<_Owned> _ownedKeys(DatabaseClient client, String userId) async {
+    Future<Set<String>> keysOf(String name) async => (await _store(name).findKeys(
+          client,
+          finder: Finder(filter: Filter.equals('userId', userId)),
+        ))
+            .toSet();
+    return _Owned(
+      userId,
+      habits: await keysOf('habits'),
+      subjects: await keysOf('subjects'),
+      decks: await keysOf('decks'),
+    );
   }
 
   /// حجم البيانات التقريبي بالبايت (للشفافية وإدارة التخزين).
@@ -330,5 +410,43 @@ class LocalDatabase {
       }
       await _settings.delete(txn);
     });
+  }
+}
+
+/// يُرمى عند محاولة استعادة نسخة إلى حساب غير مصدرها، أو نسخة مصدرها مجهول.
+/// يحمل [sourceAccountId] (null عندما يكون المصدر غير معروف).
+class ImportSourceMismatch implements Exception {
+  const ImportSourceMismatch(this.sourceAccountId);
+
+  final String? sourceAccountId;
+
+  bool get unknownSource => sourceAccountId == null;
+
+  @override
+  String toString() => 'ImportSourceMismatch(source: ${sourceAccountId ?? 'unknown'})';
+}
+
+/// يحدد ما إذا كان سجل ما يخص حسابًا معيّنًا.
+class _Owned {
+  _Owned(this.userId, {required this.habits, required this.subjects, required this.decks});
+
+  final String userId;
+  final Set<String> habits;
+  final Set<String> subjects;
+  final Set<String> decks;
+
+  bool owns(String collection, String key, Map<String, Object?> value) {
+    if (value['userId'] == userId) return true;
+    if (key.startsWith('${userId}_')) return true; // ماء/مزاج مركّبة
+    if (collection == 'profiles' && key == 'profile_$userId') return true;
+    switch (collection) {
+      case 'habitLogs':
+        return habits.contains(value['habitId']);
+      case 'units':
+        return subjects.contains(value['subjectId']);
+      case 'cards':
+        return decks.contains(value['deckId']);
+    }
+    return false;
   }
 }
