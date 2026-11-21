@@ -14,6 +14,7 @@ import 'dart:convert';
 
 import 'package:sembast/sembast.dart';
 
+import 'collection_registry.dart';
 import 'db_factory_stub.dart'
     if (dart.library.io) 'db_factory_io.dart'
     if (dart.library.html) 'db_factory_web.dart';
@@ -23,31 +24,9 @@ class LocalDatabase {
 
   final Database _db;
 
-  /// المجموعات المعروفة (تُستخدم في التصدير والمسح).
-  static const List<String> collections = <String>[
-    'tasks',
-    'habits',
-    'habitLogs',
-    'worship',
-    'readingLogs',
-    'moods',
-    'journals',
-    'subjects',
-    'units',
-    'sessions',
-    'careSteps',
-    'careLogs',
-    'water',
-    'meals',
-    'decks',
-    'cards',
-    'lessons',
-    'quizAttempts',
-    'goals',
-    'profiles',
-    'sync',
-    'users',
-  ];
+  /// المجموعات المعروفة (تُستخدم في التصدير والمسح). تُشتق من السجل المركزي
+  /// [CollectionRegistry] فلا تُحدَّث قائمة يدوية أخرى.
+  static final List<String> collections = CollectionRegistry.names;
 
   /// مفاتيح إعدادات لا تُصدَّر ولا تُستورد (بيانات حساسة أو حالة أمنية).
   static const Set<String> privateSettingKeys = <String>{
@@ -78,8 +57,16 @@ class LocalDatabase {
     return LocalDatabase(db);
   }
 
-  StoreRef<String, Map<String, Object?>> _store(String name) =>
-      stringMapStoreFactory.store(name);
+  StoreRef<String, Map<String, Object?>> _store(String name) {
+    // في الاختبارات وبناءات التطوير فقط: مجموعة غير مسجَّلة تعني أنها ستسقط
+    // من التصدير والحذف دون تنبيه، فنفشل مبكرًا.
+    assert(
+      CollectionRegistry.isRegistered(name),
+      'Collection "$name" is not registered in CollectionRegistry '
+      '(see docs/ADDING_A_COLLECTION.md)',
+    );
+    return stringMapStoreFactory.store(name);
+  }
 
   StoreRef<String, Map<String, Object?>> get _settings =>
       stringMapStoreFactory.store('settings');
