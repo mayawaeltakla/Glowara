@@ -19,6 +19,12 @@ class MoreScreen extends StatelessWidget {
 
     final sections = <_MoreEntry>[
       _MoreEntry(
+        icon: Icons.calendar_month,
+        title: context.tr('calendarTitle'),
+        subtitle: context.tr('calSubtitle'),
+        route: '/calendar',
+      ),
+      _MoreEntry(
         icon: Icons.menu_book,
         title: context.tr('sectionStudy'),
         subtitle: context.tr('studyProgress'),

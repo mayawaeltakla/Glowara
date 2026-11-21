@@ -6,7 +6,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/features/auth/auth_screens.dart';
+import 'package:glowara/features/calendar/month_calendar_screen.dart';
 import 'package:glowara/features/calendar/tasks_screen.dart';
 import 'package:glowara/features/care/care_screen.dart';
 import 'package:glowara/features/habits/habits_screen.dart';
@@ -79,7 +81,14 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/tasks',
-      builder: (context, state) => const _Protected(child: TasksScreen()),
+      // `?day=YYYY-MM-DD` يفتح الشاشة على يوم معيّن (من التقويم الشهري).
+      builder: (context, state) => _Protected(
+        child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
+      ),
+    ),
+    GoRoute(
+      path: '/calendar',
+      builder: (context, state) => const _Protected(child: MonthCalendarScreen()),
     ),
     GoRoute(
       path: '/worship',
