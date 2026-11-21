@@ -28,12 +28,12 @@ class TaskRepository {
 
   Future<List<TaskItem>> forDay(String userId, DateTime day) async {
     final all = await this.all(userId);
-    return all.where((task) => _occursOn(task, day)).toList();
+    return all.where((task) => occursOn(task, day)).toList();
   }
 
   /// هل تظهر المهمة في هذا اليوم؟ يشمل تكرار السلسلة بعد تاريخ البداية.
   /// ملاحظة: حالة الإنجاز مشتركة بين كل تكرارات السلسلة في هذه النسخة.
-  static bool _occursOn(TaskItem task, DateTime day) {
+  static bool occursOn(TaskItem task, DateTime day) {
     final due = task.dueDateTime;
     if (due == null) return false;
     final target = startOfDay(day);

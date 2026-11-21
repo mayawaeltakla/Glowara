@@ -8,10 +8,14 @@ import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class TasksScreen extends StatefulWidget {
-  const TasksScreen({super.key});
+  const TasksScreen({super.key, this.initialDay});
+
+  /// اليوم الذي تبدأ منه الشاشة (مثلًا عند الفتح من التقويم الشهري).
+  final DateTime? initialDay;
 
   @override
   State<TasksScreen> createState() => _TasksScreenState();
@@ -20,9 +24,15 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen> {
   bool _didLoad = false;
   bool _loading = true;
-  DateTime _selectedDay = startOfDay(DateTime.now());
+  late DateTime _selectedDay;
   List<TaskItem> _tasks = <TaskItem>[];
   List<TaskItem> _overdue = <TaskItem>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = startOfDay(widget.initialDay ?? DateTime.now());
+  }
 
   @override
   void didChangeDependencies() {
@@ -135,6 +145,11 @@ class _TasksScreenState extends State<TasksScreen> {
     return GlowPage(
       title: l10n.tasks,
       actions: <Widget>[
+        IconButton(
+          onPressed: () => context.push('/calendar'),
+          icon: const Icon(Icons.calendar_month),
+          tooltip: context.tr('calendarTitle'),
+        ),
         IconButton(
           onPressed: () {
             setState(() {
