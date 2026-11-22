@@ -310,7 +310,7 @@ void main() {
     });
     await _pump(tester, state, week: _arWeek);
 
-    await tester.tap(find.byKey(const Key('wk-focus-habit')));
+    await tester.tap(find.byKey(const Key('wk-focus-type-habit')));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.byType(DropdownButtonFormField<String>));
     await tester.pump(const Duration(milliseconds: 500));

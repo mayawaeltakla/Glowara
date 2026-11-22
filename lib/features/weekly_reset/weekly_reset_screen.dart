@@ -437,7 +437,7 @@ class _WeeklyResetScreenState extends State<WeeklyResetScreen> {
                 (WeeklyFocusType.text, 'wkFocusText'),
               ])
                 KeyedSubtree(
-                  key: Key('wk-focus-${entry.$1.name}'),
+                  key: Key('wk-focus-type-${entry.$1.name}'),
                   child: GlowChoiceChip(
                     label: context.tr(entry.$2),
                     selected: _focusType == entry.$1,
