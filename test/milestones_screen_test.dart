@@ -125,6 +125,8 @@ void main() {
     expect(find.byKey(const Key('ms-next-first-task')), findsNothing);
     expect(find.text('1 من 7 أيام'), findsOneWidget);
 
+    // أغلقي الشاشة تمامًا ثم افتحيها من جديد (وإلا أعاد Flutter استعمال الحالة نفسها).
+    await tester.pumpWidget(const SizedBox());
     await _pump(tester, state);
     expect(find.byKey(const Key('ms-earned-first-task')), findsOneWidget);
     expect(find.byKey(const Key('ms-new-first-task')), findsNothing);
