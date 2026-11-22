@@ -1,0 +1,2455 @@
+{
+ "schema": 1,
+ "level": "A1",
+ "units": [
+  {
+   "id": "a1-u01",
+   "order": 1,
+   "level": "A1",
+   "titleEn": "Greetings and Introductions",
+   "titleAr": "التحيات والتعارف",
+   "summaryAr": "تتعلّمين كيف تحيّين وتعرّفين بنفسك وتسألين عن الحال بأدب.",
+   "vocab": [
+    {
+     "en": "hello",
+     "ar": "مرحبًا",
+     "exEn": "Hello, I am Sara.",
+     "exAr": "مرحبًا، أنا سارة."
+    },
+    {
+     "en": "goodbye",
+     "ar": "إلى اللقاء",
+     "exEn": "Goodbye, see you tomorrow.",
+     "exAr": "إلى اللقاء، نراك غدًا."
+    },
+    {
+     "en": "please",
+     "ar": "من فضلك",
+     "exEn": "Please, sit down.",
+     "exAr": "من فضلك، اجلس."
+    },
+    {
+     "en": "thank you",
+     "ar": "شكرًا",
+     "exEn": "Thank you for your help.",
+     "exAr": "شكرًا على مساعدتك."
+    },
+    {
+     "en": "sorry",
+     "ar": "آسف (آسفة)",
+     "exEn": "Sorry, I am late.",
+     "exAr": "آسفة، أنا متأخرة."
+    },
+    {
+     "en": "yes",
+     "ar": "نعم",
+     "exEn": "Yes, I am a student.",
+     "exAr": "نعم، أنا طالبة."
+    },
+    {
+     "en": "no",
+     "ar": "لا",
+     "exEn": "No, thank you.",
+     "exAr": "لا، شكرًا."
+    },
+    {
+     "en": "name",
+     "ar": "اسم",
+     "exEn": "My name is Lina.",
+     "exAr": "اسمي لينا."
+    },
+    {
+     "en": "friend",
+     "ar": "صديق (صديقة)",
+     "exEn": "She is my friend.",
+     "exAr": "هي صديقتي."
+    },
+    {
+     "en": "morning",
+     "ar": "صباح",
+     "exEn": "Good morning, Omar.",
+     "exAr": "صباح الخير يا عمر."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "Nice to meet you.",
+     "ar": "تشرفت بمعرفتك."
+    },
+    {
+     "en": "How are you?",
+     "ar": "كيف حالك؟"
+    },
+    {
+     "en": "I am fine, thank you.",
+     "ar": "أنا بخير، شكرًا."
+    },
+    {
+     "en": "What is your name?",
+     "ar": "ما اسمك؟"
+    },
+    {
+     "en": "Where are you from?",
+     "ar": "من أين أنت؟"
+    },
+    {
+     "en": "I am from Egypt.",
+     "ar": "أنا من مصر."
+    }
+   ],
+   "grammar": {
+    "titleAr": "الفعل to be: am / is / are",
+    "bodyAr": "في الإنجليزية لا تكتمل الجملة التعريفية دون فعل. نستعمل الفعل to be (يكون) هكذا: مع I نقول am، ومع he وshe وit نقول is، ومع you وwe وthey نقول are. فنقول I am a student ولا نقول I student.",
+    "examples": [
+     {
+      "en": "I am Sara.",
+      "ar": "أنا سارة."
+     },
+     {
+      "en": "She is my friend.",
+      "ar": "هي صديقتي."
+     },
+     {
+      "en": "You are kind.",
+      "ar": "أنت لطيفة."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u01-q1",
+     "prompt": "ما معنى كلمة \"friend\"؟",
+     "options": [
+      "صديق",
+      "معلم",
+      "جار",
+      "أخ"
+     ],
+     "answer": 0,
+     "why": "friend تعني صديق أو صديقة."
+    },
+    {
+     "id": "a1-u01-q2",
+     "prompt": "ما معنى \"Thank you\"؟",
+     "options": [
+      "من فضلك",
+      "شكرًا",
+      "آسف",
+      "إلى اللقاء"
+     ],
+     "answer": 1,
+     "why": "Thank you تقال لشكر الآخرين."
+    },
+    {
+     "id": "a1-u01-q3",
+     "prompt": "أكملي: I ___ a student.",
+     "options": [
+      "is",
+      "are",
+      "am"
+     ],
+     "answer": 2,
+     "why": "مع الضمير I نستعمل am."
+    },
+    {
+     "id": "a1-u01-q4",
+     "prompt": "أكملي: She ___ my friend.",
+     "options": [
+      "am",
+      "is",
+      "are"
+     ],
+     "answer": 1,
+     "why": "مع she نستعمل is."
+    },
+    {
+     "id": "a1-u01-q5",
+     "prompt": "أكملي: You ___ kind.",
+     "options": [
+      "is",
+      "am",
+      "are"
+     ],
+     "answer": 2,
+     "why": "مع you نستعمل are."
+    },
+    {
+     "id": "a1-u01-q6",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "I student.",
+      "I am student.",
+      "I am a student."
+     ],
+     "answer": 2,
+     "why": "الجملة تحتاج الفعل am والأداة a قبل student."
+    },
+    {
+     "id": "a1-u01-q7",
+     "prompt": "كيف تجيبين عن \"How are you?\"",
+     "options": [
+      "My name is Lina.",
+      "I am fine, thank you.",
+      "I am from Egypt."
+     ],
+     "answer": 1,
+     "why": "نجيب عن الحال بـ I am fine, thank you."
+    },
+    {
+     "id": "a1-u01-q8",
+     "prompt": "ما معنى \"Where are you from?\"",
+     "options": [
+      "ما اسمك؟",
+      "كم عمرك؟",
+      "من أين أنت؟",
+      "كيف حالك؟"
+     ],
+     "answer": 2,
+     "why": "Where are you from? تسأل عن البلد الذي أتيتِ منه."
+    }
+   ]
+  },
+  {
+   "id": "a1-u02",
+   "order": 2,
+   "level": "A1",
+   "titleEn": "Numbers and Age",
+   "titleAr": "الأرقام والعمر",
+   "summaryAr": "تعدّين من صفر إلى عشرين وتقولين عمرك.",
+   "vocab": [
+    {
+     "en": "zero",
+     "ar": "صفر",
+     "exEn": "The number is zero.",
+     "exAr": "الرقم هو صفر."
+    },
+    {
+     "en": "one",
+     "ar": "واحد",
+     "exEn": "I have one brother.",
+     "exAr": "عندي أخ واحد."
+    },
+    {
+     "en": "two",
+     "ar": "اثنان",
+     "exEn": "She has two books.",
+     "exAr": "عندها كتابان."
+    },
+    {
+     "en": "three",
+     "ar": "ثلاثة",
+     "exEn": "We have three cats.",
+     "exAr": "عندنا ثلاث قطط."
+    },
+    {
+     "en": "four",
+     "ar": "أربعة",
+     "exEn": "There are four chairs.",
+     "exAr": "هناك أربعة كراسي."
+    },
+    {
+     "en": "five",
+     "ar": "خمسة",
+     "exEn": "I am five minutes late.",
+     "exAr": "أنا متأخرة خمس دقائق."
+    },
+    {
+     "en": "ten",
+     "ar": "عشرة",
+     "exEn": "I have ten pens.",
+     "exAr": "عندي عشرة أقلام."
+    },
+    {
+     "en": "twelve",
+     "ar": "اثنا عشر",
+     "exEn": "There are twelve months.",
+     "exAr": "هناك اثنا عشر شهرًا."
+    },
+    {
+     "en": "twenty",
+     "ar": "عشرون",
+     "exEn": "I am twenty years old.",
+     "exAr": "عمري عشرون سنة."
+    },
+    {
+     "en": "age",
+     "ar": "عمر",
+     "exEn": "What is your age?",
+     "exAr": "ما عمرك؟"
+    }
+   ],
+   "phrases": [
+    {
+     "en": "How old are you?",
+     "ar": "كم عمرك؟"
+    },
+    {
+     "en": "I am twenty years old.",
+     "ar": "عمري عشرون سنة."
+    },
+    {
+     "en": "He is ten years old.",
+     "ar": "عمره عشر سنوات."
+    },
+    {
+     "en": "What is your phone number?",
+     "ar": "ما رقم هاتفك؟"
+    },
+    {
+     "en": "Count from one to ten.",
+     "ar": "عدّي من واحد إلى عشرة."
+    }
+   ],
+   "grammar": {
+    "titleAr": "السؤال عن العمر",
+    "bodyAr": "نسأل عن العمر بالسؤال How old are you? ونجيب بـ I am ... years old. بعد الرقم نقول years old. وإن كان الرقم واحدًا نقول one year old.",
+    "examples": [
+     {
+      "en": "How old is she?",
+      "ar": "كم عمرها؟"
+     },
+     {
+      "en": "She is twelve years old.",
+      "ar": "عمرها اثنتا عشرة سنة."
+     },
+     {
+      "en": "The baby is one year old.",
+      "ar": "الطفل عمره سنة واحدة."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u02-q1",
+     "prompt": "ما معنى \"five\"؟",
+     "options": [
+      "ثلاثة",
+      "خمسة",
+      "أربعة",
+      "عشرة"
+     ],
+     "answer": 1,
+     "why": "five هو الرقم خمسة."
+    },
+    {
+     "id": "a1-u02-q2",
+     "prompt": "ما معنى \"twelve\"؟",
+     "options": [
+      "اثنا عشر",
+      "عشرون",
+      "اثنان",
+      "أربعة"
+     ],
+     "answer": 0,
+     "why": "twelve هو اثنا عشر."
+    },
+    {
+     "id": "a1-u02-q3",
+     "prompt": "ما الرقم \"ten\" بالعربية؟",
+     "options": [
+      "خمسة",
+      "أربعة",
+      "عشرة",
+      "صفر"
+     ],
+     "answer": 2,
+     "why": "ten هو عشرة."
+    },
+    {
+     "id": "a1-u02-q4",
+     "prompt": "أيّ سؤال يسأل عن العمر؟",
+     "options": [
+      "What is your name?",
+      "How old are you?",
+      "Where are you from?"
+     ],
+     "answer": 1,
+     "why": "How old are you? سؤال عن العمر."
+    },
+    {
+     "id": "a1-u02-q5",
+     "prompt": "أكملي: I am twenty ___ old.",
+     "options": [
+      "year",
+      "years",
+      "yearly"
+     ],
+     "answer": 1,
+     "why": "بعد رقم أكبر من واحد نقول years."
+    },
+    {
+     "id": "a1-u02-q6",
+     "prompt": "أكملي: The baby is one ___ old.",
+     "options": [
+      "years",
+      "year",
+      "yeary"
+     ],
+     "answer": 1,
+     "why": "مع الرقم واحد نقول year بلا s."
+    },
+    {
+     "id": "a1-u02-q7",
+     "prompt": "ما معنى \"zero\"؟",
+     "options": [
+      "واحد",
+      "لا شيء",
+      "صفر",
+      "عشرة"
+     ],
+     "answer": 2,
+     "why": "zero هو الصفر."
+    },
+    {
+     "id": "a1-u02-q8",
+     "prompt": "كيف نقول \"عندي عشرة أقلام\"؟",
+     "options": [
+      "I have ten pens.",
+      "I am ten pens.",
+      "I have pens ten."
+     ],
+     "answer": 0,
+     "why": "I have تعني عندي، ثم الرقم، ثم الاسم."
+    }
+   ]
+  },
+  {
+   "id": "a1-u03",
+   "order": 3,
+   "level": "A1",
+   "titleEn": "Family",
+   "titleAr": "العائلة",
+   "summaryAr": "تتحدثين عن أفراد أسرتك وتستعملين my وyour.",
+   "vocab": [
+    {
+     "en": "mother",
+     "ar": "أم",
+     "exEn": "My mother is at home.",
+     "exAr": "أمي في البيت."
+    },
+    {
+     "en": "father",
+     "ar": "أب",
+     "exEn": "My father is a doctor.",
+     "exAr": "أبي طبيب."
+    },
+    {
+     "en": "brother",
+     "ar": "أخ",
+     "exEn": "His brother is tall.",
+     "exAr": "أخوه طويل."
+    },
+    {
+     "en": "sister",
+     "ar": "أخت",
+     "exEn": "Her sister is young.",
+     "exAr": "أختها صغيرة."
+    },
+    {
+     "en": "son",
+     "ar": "ابن",
+     "exEn": "Their son is six.",
+     "exAr": "ابنهم عمره ست سنوات."
+    },
+    {
+     "en": "daughter",
+     "ar": "ابنة",
+     "exEn": "Our daughter is happy.",
+     "exAr": "ابنتنا سعيدة."
+    },
+    {
+     "en": "grandmother",
+     "ar": "جدّة",
+     "exEn": "My grandmother cooks well.",
+     "exAr": "جدتي تطبخ جيدًا."
+    },
+    {
+     "en": "grandfather",
+     "ar": "جدّ",
+     "exEn": "My grandfather reads a lot.",
+     "exAr": "جدي يقرأ كثيرًا."
+    },
+    {
+     "en": "family",
+     "ar": "عائلة",
+     "exEn": "I love my family.",
+     "exAr": "أحب عائلتي."
+    },
+    {
+     "en": "baby",
+     "ar": "طفل رضيع",
+     "exEn": "The baby is sleeping.",
+     "exAr": "الرضيع نائم."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "This is my family.",
+     "ar": "هذه عائلتي."
+    },
+    {
+     "en": "I have two sisters.",
+     "ar": "عندي أختان."
+    },
+    {
+     "en": "Do you have a brother?",
+     "ar": "هل عندك أخ؟"
+    },
+    {
+     "en": "My father works in a school.",
+     "ar": "أبي يعمل في مدرسة."
+    },
+    {
+     "en": "We are a big family.",
+     "ar": "نحن عائلة كبيرة."
+    }
+   ],
+   "grammar": {
+    "titleAr": "صفات الملكية: my, your, his, her",
+    "bodyAr": "نستعمل صفات الملكية قبل الاسم لنبيّن لمن الشيء: my (لي)، your (لك)، his (له)، her (لها)، our (لنا)، their (لهم). تأتي دائمًا قبل الاسم: my mother، her sister.",
+    "examples": [
+     {
+      "en": "This is my mother.",
+      "ar": "هذه أمي."
+     },
+     {
+      "en": "His father is a doctor.",
+      "ar": "أبوه طبيب."
+     },
+     {
+      "en": "Her brother is ten.",
+      "ar": "أخوها عمره عشر سنوات."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u03-q1",
+     "prompt": "ما معنى \"sister\"؟",
+     "options": [
+      "أخت",
+      "أم",
+      "جدة",
+      "ابنة"
+     ],
+     "answer": 0,
+     "why": "sister تعني أخت."
+    },
+    {
+     "id": "a1-u03-q2",
+     "prompt": "ما معنى \"grandfather\"؟",
+     "options": [
+      "أب",
+      "جد",
+      "أخ",
+      "ابن"
+     ],
+     "answer": 1,
+     "why": "grandfather تعني الجد."
+    },
+    {
+     "id": "a1-u03-q3",
+     "prompt": "أكملي: This is ___ mother. (أمّي)",
+     "options": [
+      "me",
+      "I",
+      "my"
+     ],
+     "answer": 2,
+     "why": "نستعمل my قبل الاسم."
+    },
+    {
+     "id": "a1-u03-q4",
+     "prompt": "أكملي: ___ brother is tall. (أخوها)",
+     "options": [
+      "Her",
+      "His",
+      "My"
+     ],
+     "answer": 0,
+     "why": "her تعني تخصّها هي."
+    },
+    {
+     "id": "a1-u03-q5",
+     "prompt": "ما معنى \"daughter\"؟",
+     "options": [
+      "ابن",
+      "ابنة",
+      "أخت",
+      "جدة"
+     ],
+     "answer": 1,
+     "why": "daughter هي الابنة."
+    },
+    {
+     "id": "a1-u03-q6",
+     "prompt": "ما معنى \"baby\"؟",
+     "options": [
+      "رضيع",
+      "معلم",
+      "صديق",
+      "جد"
+     ],
+     "answer": 0,
+     "why": "baby هو الطفل الرضيع."
+    },
+    {
+     "id": "a1-u03-q7",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "Mother my is here.",
+      "My mother is here.",
+      "Is my mother here."
+     ],
+     "answer": 1,
+     "why": "الترتيب: صفة الملكية ثم الاسم ثم الفعل."
+    },
+    {
+     "id": "a1-u03-q8",
+     "prompt": "كيف نقول \"عندي أختان\"؟",
+     "options": [
+      "I have two sisters.",
+      "I am two sisters.",
+      "I have sister two."
+     ],
+     "answer": 0,
+     "why": "I have ثم الرقم ثم الجمع sisters."
+    }
+   ]
+  },
+  {
+   "id": "a1-u04",
+   "order": 4,
+   "level": "A1",
+   "titleEn": "Food and Drinks",
+   "titleAr": "الطعام والمشروبات",
+   "summaryAr": "تعبّرين عمّا تحبينه وما لا تحبينه من الطعام والشراب.",
+   "vocab": [
+    {
+     "en": "bread",
+     "ar": "خبز",
+     "exEn": "I eat bread for breakfast.",
+     "exAr": "آكل الخبز على الفطور."
+    },
+    {
+     "en": "rice",
+     "ar": "أرز",
+     "exEn": "We have rice for lunch.",
+     "exAr": "نأكل الأرز على الغداء."
+    },
+    {
+     "en": "chicken",
+     "ar": "دجاج",
+     "exEn": "She likes chicken.",
+     "exAr": "هي تحب الدجاج."
+    },
+    {
+     "en": "egg",
+     "ar": "بيضة",
+     "exEn": "I want an egg.",
+     "exAr": "أريد بيضة."
+    },
+    {
+     "en": "apple",
+     "ar": "تفاحة",
+     "exEn": "This apple is red.",
+     "exAr": "هذه التفاحة حمراء."
+    },
+    {
+     "en": "banana",
+     "ar": "موزة",
+     "exEn": "He eats a banana.",
+     "exAr": "هو يأكل موزة."
+    },
+    {
+     "en": "water",
+     "ar": "ماء",
+     "exEn": "I drink water every day.",
+     "exAr": "أشرب الماء كل يوم."
+    },
+    {
+     "en": "tea",
+     "ar": "شاي",
+     "exEn": "My mother drinks tea.",
+     "exAr": "أمي تشرب الشاي."
+    },
+    {
+     "en": "milk",
+     "ar": "حليب",
+     "exEn": "The baby drinks milk.",
+     "exAr": "الرضيع يشرب الحليب."
+    },
+    {
+     "en": "breakfast",
+     "ar": "فطور",
+     "exEn": "Breakfast is ready.",
+     "exAr": "الفطور جاهز."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "I like apples.",
+     "ar": "أحب التفاح."
+    },
+    {
+     "en": "I do not like tea.",
+     "ar": "لا أحب الشاي."
+    },
+    {
+     "en": "Do you like rice?",
+     "ar": "هل تحبين الأرز؟"
+    },
+    {
+     "en": "I am hungry.",
+     "ar": "أنا جائعة."
+    },
+    {
+     "en": "Can I have some water?",
+     "ar": "هل يمكنني الحصول على ماء؟"
+    }
+   ],
+   "grammar": {
+    "titleAr": "like و do not like",
+    "bodyAr": "نقول I like لما نحب شيئًا، ونقول I do not like (أو I don't like) لما لا نحبه. وللسؤال نبدأ بـ Do: Do you like tea? والإجابة: Yes, I do أو No, I do not.",
+    "examples": [
+     {
+      "en": "I like bananas.",
+      "ar": "أحب الموز."
+     },
+     {
+      "en": "We do not like milk.",
+      "ar": "لا نحب الحليب."
+     },
+     {
+      "en": "Do you like chicken?",
+      "ar": "هل تحبين الدجاج؟"
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u04-q1",
+     "prompt": "ما معنى \"bread\"؟",
+     "options": [
+      "أرز",
+      "خبز",
+      "دجاج",
+      "حليب"
+     ],
+     "answer": 1,
+     "why": "bread هو الخبز."
+    },
+    {
+     "id": "a1-u04-q2",
+     "prompt": "ما معنى \"milk\"؟",
+     "options": [
+      "ماء",
+      "شاي",
+      "حليب",
+      "تفاح"
+     ],
+     "answer": 2,
+     "why": "milk هو الحليب."
+    },
+    {
+     "id": "a1-u04-q3",
+     "prompt": "أكملي: I ___ apples. (أحب)",
+     "options": [
+      "like",
+      "likes",
+      "am like"
+     ],
+     "answer": 0,
+     "why": "مع I نقول like بلا s."
+    },
+    {
+     "id": "a1-u04-q4",
+     "prompt": "كيف نقول \"لا أحب الشاي\"؟",
+     "options": [
+      "I like not tea.",
+      "I do not like tea.",
+      "I not like tea."
+     ],
+     "answer": 1,
+     "why": "النفي: I do not like."
+    },
+    {
+     "id": "a1-u04-q5",
+     "prompt": "ما معنى \"hungry\"؟",
+     "options": [
+      "عطشان",
+      "متعب",
+      "جائع",
+      "سعيد"
+     ],
+     "answer": 2,
+     "why": "hungry تعني جائع."
+    },
+    {
+     "id": "a1-u04-q6",
+     "prompt": "أيّ سؤال صحيح؟",
+     "options": [
+      "You like rice?",
+      "Like you rice?",
+      "Do you like rice?"
+     ],
+     "answer": 2,
+     "why": "السؤال يبدأ بـ Do."
+    },
+    {
+     "id": "a1-u04-q7",
+     "prompt": "ما معنى \"breakfast\"؟",
+     "options": [
+      "غداء",
+      "عشاء",
+      "فطور",
+      "حلوى"
+     ],
+     "answer": 2,
+     "why": "breakfast هو وجبة الصباح."
+    },
+    {
+     "id": "a1-u04-q8",
+     "prompt": "أيّ كلمة هي مشروب؟",
+     "options": [
+      "rice",
+      "tea",
+      "bread",
+      "egg"
+     ],
+     "answer": 1,
+     "why": "tea مشروب وهو الشاي."
+    }
+   ]
+  },
+  {
+   "id": "a1-u05",
+   "order": 5,
+   "level": "A1",
+   "titleEn": "Days, Months and Time",
+   "titleAr": "الأيام والشهور والوقت",
+   "summaryAr": "تسألين عن الوقت واليوم وتستعملين in وon وat.",
+   "vocab": [
+    {
+     "en": "Monday",
+     "ar": "الاثنين",
+     "exEn": "I have class on Monday.",
+     "exAr": "عندي حصة يوم الاثنين."
+    },
+    {
+     "en": "Friday",
+     "ar": "الجمعة",
+     "exEn": "Friday is a holiday.",
+     "exAr": "الجمعة عطلة."
+    },
+    {
+     "en": "Sunday",
+     "ar": "الأحد",
+     "exEn": "We visit my grandmother on Sunday.",
+     "exAr": "نزور جدتي يوم الأحد."
+    },
+    {
+     "en": "today",
+     "ar": "اليوم",
+     "exEn": "Today is a good day.",
+     "exAr": "اليوم يوم جميل."
+    },
+    {
+     "en": "tomorrow",
+     "ar": "غدًا",
+     "exEn": "See you tomorrow.",
+     "exAr": "أراك غدًا."
+    },
+    {
+     "en": "week",
+     "ar": "أسبوع",
+     "exEn": "There are seven days in a week.",
+     "exAr": "في الأسبوع سبعة أيام."
+    },
+    {
+     "en": "month",
+     "ar": "شهر",
+     "exEn": "This month is busy.",
+     "exAr": "هذا الشهر مزدحم."
+    },
+    {
+     "en": "year",
+     "ar": "سنة",
+     "exEn": "A year has twelve months.",
+     "exAr": "السنة فيها اثنا عشر شهرًا."
+    },
+    {
+     "en": "hour",
+     "ar": "ساعة (مدة)",
+     "exEn": "The lesson is one hour.",
+     "exAr": "مدة الدرس ساعة."
+    },
+    {
+     "en": "minute",
+     "ar": "دقيقة",
+     "exEn": "Wait one minute, please.",
+     "exAr": "انتظري دقيقة من فضلك."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "What time is it?",
+     "ar": "كم الساعة؟"
+    },
+    {
+     "en": "It is three o'clock.",
+     "ar": "الساعة الثالثة تمامًا."
+    },
+    {
+     "en": "It is half past two.",
+     "ar": "الساعة الثانية والنصف."
+    },
+    {
+     "en": "What day is it today?",
+     "ar": "ما اليوم؟"
+    },
+    {
+     "en": "See you on Monday.",
+     "ar": "أراك يوم الاثنين."
+    },
+    {
+     "en": "The class is at nine.",
+     "ar": "الحصة في الساعة التاسعة."
+    }
+   ],
+   "grammar": {
+    "titleAr": "حروف الجر: at / on / in مع الوقت",
+    "bodyAr": "نستعمل at مع الساعة (at five o'clock)، ونستعمل on مع الأيام (on Monday)، ونستعمل in مع الشهور والسنوات (in May, in 2030).",
+    "examples": [
+     {
+      "en": "The class is at nine o'clock.",
+      "ar": "الحصة في الساعة التاسعة."
+     },
+     {
+      "en": "I rest on Friday.",
+      "ar": "أرتاح يوم الجمعة."
+     },
+     {
+      "en": "My birthday is in May.",
+      "ar": "عيد ميلادي في مايو."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u05-q1",
+     "prompt": "ما معنى \"tomorrow\"؟",
+     "options": [
+      "اليوم",
+      "أمس",
+      "غدًا",
+      "أسبوع"
+     ],
+     "answer": 2,
+     "why": "tomorrow تعني غدًا."
+    },
+    {
+     "id": "a1-u05-q2",
+     "prompt": "ما معنى \"Friday\"؟",
+     "options": [
+      "الجمعة",
+      "الأحد",
+      "الاثنين",
+      "اليوم"
+     ],
+     "answer": 0,
+     "why": "Friday هو يوم الجمعة."
+    },
+    {
+     "id": "a1-u05-q3",
+     "prompt": "أكملي: See you ___ Monday.",
+     "options": [
+      "in",
+      "on",
+      "at"
+     ],
+     "answer": 1,
+     "why": "مع الأيام نستعمل on."
+    },
+    {
+     "id": "a1-u05-q4",
+     "prompt": "أكملي: The class is ___ nine o'clock.",
+     "options": [
+      "on",
+      "in",
+      "at"
+     ],
+     "answer": 2,
+     "why": "مع الساعة نستعمل at."
+    },
+    {
+     "id": "a1-u05-q5",
+     "prompt": "أكملي: My birthday is ___ May.",
+     "options": [
+      "on",
+      "at",
+      "in"
+     ],
+     "answer": 2,
+     "why": "مع الشهور نستعمل in."
+    },
+    {
+     "id": "a1-u05-q6",
+     "prompt": "ما معنى \"hour\"؟",
+     "options": [
+      "دقيقة",
+      "ساعة (مدة)",
+      "أسبوع",
+      "شهر"
+     ],
+     "answer": 1,
+     "why": "hour هي الساعة كمدة زمنية."
+    },
+    {
+     "id": "a1-u05-q7",
+     "prompt": "أيّ سؤال يسأل عن الوقت؟",
+     "options": [
+      "What time is it?",
+      "Where are you from?",
+      "How old are you?"
+     ],
+     "answer": 0,
+     "why": "What time is it? تعني كم الساعة؟"
+    },
+    {
+     "id": "a1-u05-q8",
+     "prompt": "ما معنى \"It is half past two.\"؟",
+     "options": [
+      "الساعة الثالثة تمامًا",
+      "الساعة الثانية والنصف",
+      "الساعة الثانية إلا ربعًا"
+     ],
+     "answer": 1,
+     "why": "half past two تعني الثانية والنصف."
+    }
+   ]
+  },
+  {
+   "id": "a1-u06",
+   "order": 6,
+   "level": "A1",
+   "titleEn": "Daily Routine",
+   "titleAr": "الروتين اليومي",
+   "summaryAr": "تصفين يومك بأفعال بسيطة بزمن المضارع البسيط.",
+   "vocab": [
+    {
+     "en": "wake up",
+     "ar": "يستيقظ",
+     "exEn": "I wake up at six.",
+     "exAr": "أستيقظ في السادسة."
+    },
+    {
+     "en": "eat",
+     "ar": "يأكل",
+     "exEn": "We eat lunch at one.",
+     "exAr": "نأكل الغداء في الواحدة."
+    },
+    {
+     "en": "study",
+     "ar": "يدرس",
+     "exEn": "She studies English.",
+     "exAr": "هي تدرس الإنجليزية."
+    },
+    {
+     "en": "work",
+     "ar": "يعمل",
+     "exEn": "He works in a shop.",
+     "exAr": "هو يعمل في متجر."
+    },
+    {
+     "en": "go",
+     "ar": "يذهب",
+     "exEn": "They go to school.",
+     "exAr": "هم يذهبون إلى المدرسة."
+    },
+    {
+     "en": "sleep",
+     "ar": "ينام",
+     "exEn": "I sleep at ten.",
+     "exAr": "أنام في العاشرة."
+    },
+    {
+     "en": "read",
+     "ar": "يقرأ",
+     "exEn": "She reads a book.",
+     "exAr": "هي تقرأ كتابًا."
+    },
+    {
+     "en": "walk",
+     "ar": "يمشي",
+     "exEn": "I walk to the park.",
+     "exAr": "أمشي إلى الحديقة."
+    },
+    {
+     "en": "cook",
+     "ar": "يطبخ",
+     "exEn": "My mother cooks dinner.",
+     "exAr": "أمي تطبخ العشاء."
+    },
+    {
+     "en": "clean",
+     "ar": "ينظّف",
+     "exEn": "We clean the house on Friday.",
+     "exAr": "ننظّف البيت يوم الجمعة."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "I wake up at six every day.",
+     "ar": "أستيقظ في السادسة كل يوم."
+    },
+    {
+     "en": "I brush my teeth.",
+     "ar": "أنظّف أسناني بالفرشاة."
+    },
+    {
+     "en": "I take a shower.",
+     "ar": "آخذ حمّامًا."
+    },
+    {
+     "en": "I go to bed at ten.",
+     "ar": "أذهب إلى النوم في العاشرة."
+    },
+    {
+     "en": "What do you do in the morning?",
+     "ar": "ماذا تفعلين في الصباح؟"
+    }
+   ],
+   "grammar": {
+    "titleAr": "المضارع البسيط",
+    "bodyAr": "نستعمل المضارع البسيط للعادات والأمور التي تتكرر. مع I وyou وwe وthey يبقى الفعل كما هو: I walk. ومع he وshe وit نضيف s إلى الفعل: she walks. وإن انتهى الفعل بحرف y بعد حرف ساكن نحوّله إلى ies: study تصبح studies. والفعل go يصبح goes.",
+    "examples": [
+     {
+      "en": "I walk every day.",
+      "ar": "أمشي كل يوم."
+     },
+     {
+      "en": "She walks every day.",
+      "ar": "هي تمشي كل يوم."
+     },
+     {
+      "en": "He studies at night.",
+      "ar": "هو يدرس في الليل."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u06-q1",
+     "prompt": "أكملي: She ___ English.",
+     "options": [
+      "study",
+      "studies",
+      "studying"
+     ],
+     "answer": 1,
+     "why": "مع she نحوّل study إلى studies."
+    },
+    {
+     "id": "a1-u06-q2",
+     "prompt": "أكملي: I ___ at six.",
+     "options": [
+      "wakes up",
+      "wake up",
+      "waking up"
+     ],
+     "answer": 1,
+     "why": "مع I يبقى الفعل كما هو."
+    },
+    {
+     "id": "a1-u06-q3",
+     "prompt": "أكملي: He ___ in a shop.",
+     "options": [
+      "work",
+      "works",
+      "working"
+     ],
+     "answer": 1,
+     "why": "مع he نضيف s."
+    },
+    {
+     "id": "a1-u06-q4",
+     "prompt": "أكملي: They ___ to school.",
+     "options": [
+      "goes",
+      "go",
+      "going"
+     ],
+     "answer": 1,
+     "why": "مع they يبقى الفعل go."
+    },
+    {
+     "id": "a1-u06-q5",
+     "prompt": "ما معنى \"sleep\"؟",
+     "options": [
+      "يأكل",
+      "ينام",
+      "يقرأ",
+      "يطبخ"
+     ],
+     "answer": 1,
+     "why": "sleep تعني ينام."
+    },
+    {
+     "id": "a1-u06-q6",
+     "prompt": "ما معنى \"cook\"؟",
+     "options": [
+      "يطبخ",
+      "يمشي",
+      "يعمل",
+      "يذهب"
+     ],
+     "answer": 0,
+     "why": "cook تعني يطبخ."
+    },
+    {
+     "id": "a1-u06-q7",
+     "prompt": "نستعمل المضارع البسيط للحديث عن:",
+     "options": [
+      "العادات والأمور المتكررة",
+      "الماضي فقط",
+      "المستقبل فقط"
+     ],
+     "answer": 0,
+     "why": "المضارع البسيط يصف العادات والأمور المتكررة."
+    },
+    {
+     "id": "a1-u06-q8",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "My mother cook dinner.",
+      "My mother cooks dinner.",
+      "My mother cooking dinner."
+     ],
+     "answer": 1,
+     "why": "مع my mother (she) نضيف s."
+    }
+   ]
+  },
+  {
+   "id": "a1-u07",
+   "order": 7,
+   "level": "A1",
+   "titleEn": "Home and Rooms",
+   "titleAr": "البيت والغرف",
+   "summaryAr": "تصفين بيتك وما فيه باستعمال there is وthere are.",
+   "vocab": [
+    {
+     "en": "house",
+     "ar": "بيت",
+     "exEn": "My house is small.",
+     "exAr": "بيتي صغير."
+    },
+    {
+     "en": "room",
+     "ar": "غرفة",
+     "exEn": "This room is clean.",
+     "exAr": "هذه الغرفة نظيفة."
+    },
+    {
+     "en": "kitchen",
+     "ar": "مطبخ",
+     "exEn": "My mother is in the kitchen.",
+     "exAr": "أمي في المطبخ."
+    },
+    {
+     "en": "bedroom",
+     "ar": "غرفة نوم",
+     "exEn": "My bedroom is quiet.",
+     "exAr": "غرفة نومي هادئة."
+    },
+    {
+     "en": "bathroom",
+     "ar": "حمّام",
+     "exEn": "The bathroom is on the left.",
+     "exAr": "الحمّام على اليسار."
+    },
+    {
+     "en": "door",
+     "ar": "باب",
+     "exEn": "Please close the door.",
+     "exAr": "أغلقي الباب من فضلك."
+    },
+    {
+     "en": "window",
+     "ar": "نافذة",
+     "exEn": "Open the window.",
+     "exAr": "افتحي النافذة."
+    },
+    {
+     "en": "table",
+     "ar": "طاولة",
+     "exEn": "The books are on the table.",
+     "exAr": "الكتب على الطاولة."
+    },
+    {
+     "en": "chair",
+     "ar": "كرسي",
+     "exEn": "This chair is comfortable.",
+     "exAr": "هذا الكرسي مريح."
+    },
+    {
+     "en": "bed",
+     "ar": "سرير",
+     "exEn": "The bed is big.",
+     "exAr": "السرير كبير."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "Welcome to my house.",
+     "ar": "أهلًا بك في بيتي."
+    },
+    {
+     "en": "Where is the kitchen?",
+     "ar": "أين المطبخ؟"
+    },
+    {
+     "en": "There is a table in the kitchen.",
+     "ar": "هناك طاولة في المطبخ."
+    },
+    {
+     "en": "There are two beds in the room.",
+     "ar": "هناك سريران في الغرفة."
+    },
+    {
+     "en": "Is there a window?",
+     "ar": "هل هناك نافذة؟"
+    }
+   ],
+   "grammar": {
+    "titleAr": "There is / There are",
+    "bodyAr": "نستعمل There is مع الاسم المفرد: There is a door. ونستعمل There are مع الجمع: There are three chairs. وللسؤال نقلب الترتيب: Is there a window? Are there two beds?",
+    "examples": [
+     {
+      "en": "There is a bed in my room.",
+      "ar": "هناك سرير في غرفتي."
+     },
+     {
+      "en": "There are four chairs.",
+      "ar": "هناك أربعة كراسي."
+     },
+     {
+      "en": "Are there two windows?",
+      "ar": "هل هناك نافذتان؟"
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u07-q1",
+     "prompt": "ما معنى \"kitchen\"؟",
+     "options": [
+      "غرفة نوم",
+      "مطبخ",
+      "حمّام",
+      "نافذة"
+     ],
+     "answer": 1,
+     "why": "kitchen هو المطبخ."
+    },
+    {
+     "id": "a1-u07-q2",
+     "prompt": "ما معنى \"window\"؟",
+     "options": [
+      "باب",
+      "كرسي",
+      "نافذة",
+      "طاولة"
+     ],
+     "answer": 2,
+     "why": "window هي النافذة."
+    },
+    {
+     "id": "a1-u07-q3",
+     "prompt": "أكملي: There ___ a bed in the room.",
+     "options": [
+      "are",
+      "is",
+      "am"
+     ],
+     "answer": 1,
+     "why": "مع المفرد نستعمل There is."
+    },
+    {
+     "id": "a1-u07-q4",
+     "prompt": "أكملي: There ___ two chairs.",
+     "options": [
+      "is",
+      "are",
+      "am"
+     ],
+     "answer": 1,
+     "why": "مع الجمع نستعمل There are."
+    },
+    {
+     "id": "a1-u07-q5",
+     "prompt": "كيف نسأل \"هل هناك نافذة؟\"",
+     "options": [
+      "Is there a window?",
+      "Are there window?",
+      "There is window?"
+     ],
+     "answer": 0,
+     "why": "نسأل بـ Is there مع المفرد."
+    },
+    {
+     "id": "a1-u07-q6",
+     "prompt": "ما معنى \"bedroom\"؟",
+     "options": [
+      "غرفة نوم",
+      "مطبخ",
+      "بيت",
+      "باب"
+     ],
+     "answer": 0,
+     "why": "bedroom هي غرفة النوم."
+    },
+    {
+     "id": "a1-u07-q7",
+     "prompt": "ما معنى \"door\"؟",
+     "options": [
+      "كرسي",
+      "سرير",
+      "باب",
+      "طاولة"
+     ],
+     "answer": 2,
+     "why": "door هو الباب."
+    },
+    {
+     "id": "a1-u07-q8",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "There is three chairs.",
+      "There are three chairs.",
+      "There are a chair."
+     ],
+     "answer": 1,
+     "why": "مع الجمع chairs نستعمل There are."
+    }
+   ]
+  },
+  {
+   "id": "a1-u08",
+   "order": 8,
+   "level": "A1",
+   "titleEn": "Colors and Clothes",
+   "titleAr": "الألوان والملابس",
+   "summaryAr": "تصفين الألوان والملابس وتستعملين this وthat وthese وthose.",
+   "vocab": [
+    {
+     "en": "red",
+     "ar": "أحمر",
+     "exEn": "The red dress is new.",
+     "exAr": "الفستان الأحمر جديد."
+    },
+    {
+     "en": "blue",
+     "ar": "أزرق",
+     "exEn": "I like the blue scarf.",
+     "exAr": "أحب الوشاح الأزرق."
+    },
+    {
+     "en": "green",
+     "ar": "أخضر",
+     "exEn": "The green bag is mine.",
+     "exAr": "الحقيبة الخضراء لي."
+    },
+    {
+     "en": "black",
+     "ar": "أسود",
+     "exEn": "He has a black coat.",
+     "exAr": "عنده معطف أسود."
+    },
+    {
+     "en": "white",
+     "ar": "أبيض",
+     "exEn": "My shirt is white.",
+     "exAr": "قميصي أبيض."
+    },
+    {
+     "en": "dress",
+     "ar": "فستان",
+     "exEn": "She wears a long dress.",
+     "exAr": "هي ترتدي فستانًا طويلًا."
+    },
+    {
+     "en": "shirt",
+     "ar": "قميص",
+     "exEn": "This shirt is big.",
+     "exAr": "هذا القميص كبير."
+    },
+    {
+     "en": "shoes",
+     "ar": "حذاء (أحذية)",
+     "exEn": "My shoes are new.",
+     "exAr": "حذائي جديد."
+    },
+    {
+     "en": "scarf",
+     "ar": "وشاح",
+     "exEn": "The scarf is warm.",
+     "exAr": "الوشاح دافئ."
+    },
+    {
+     "en": "coat",
+     "ar": "معطف",
+     "exEn": "I wear a coat in winter.",
+     "exAr": "أرتدي معطفًا في الشتاء."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "What color is it?",
+     "ar": "ما لونه؟"
+    },
+    {
+     "en": "I like the blue scarf.",
+     "ar": "أحب الوشاح الأزرق."
+    },
+    {
+     "en": "This is my coat.",
+     "ar": "هذا معطفي."
+    },
+    {
+     "en": "That shirt is big.",
+     "ar": "ذلك القميص كبير."
+    },
+    {
+     "en": "These shoes are new.",
+     "ar": "هذه الأحذية جديدة."
+    }
+   ],
+   "grammar": {
+    "titleAr": "ترتيب الصفة، وthis / that / these / those",
+    "bodyAr": "في الإنجليزية تأتي الصفة قبل الاسم ولا تتغير مع الجمع: a red dress وtwo red dresses. ونستعمل this (هذا) وthese (هذه للجمع) للقريب، وthat (ذلك) وthose (تلك للجمع) للبعيد.",
+    "examples": [
+     {
+      "en": "I have a red dress.",
+      "ar": "عندي فستان أحمر."
+     },
+     {
+      "en": "This scarf is warm.",
+      "ar": "هذا الوشاح دافئ."
+     },
+     {
+      "en": "Those shoes are old.",
+      "ar": "تلك الأحذية قديمة."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u08-q1",
+     "prompt": "ما معنى \"green\"؟",
+     "options": [
+      "أحمر",
+      "أزرق",
+      "أخضر",
+      "أبيض"
+     ],
+     "answer": 2,
+     "why": "green هو الأخضر."
+    },
+    {
+     "id": "a1-u08-q2",
+     "prompt": "ما معنى \"coat\"؟",
+     "options": [
+      "معطف",
+      "فستان",
+      "قميص",
+      "وشاح"
+     ],
+     "answer": 0,
+     "why": "coat هو المعطف."
+    },
+    {
+     "id": "a1-u08-q3",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "A dress red.",
+      "A red dress.",
+      "Red a dress."
+     ],
+     "answer": 1,
+     "why": "الصفة red تأتي قبل الاسم dress."
+    },
+    {
+     "id": "a1-u08-q4",
+     "prompt": "أكملي: ___ shoes are new. (هذه الأحذية)",
+     "options": [
+      "This",
+      "These",
+      "That"
+     ],
+     "answer": 1,
+     "why": "للجمع القريب نستعمل these."
+    },
+    {
+     "id": "a1-u08-q5",
+     "prompt": "أكملي: ___ shirt is big. (ذلك القميص)",
+     "options": [
+      "Those",
+      "These",
+      "That"
+     ],
+     "answer": 2,
+     "why": "للمفرد البعيد نستعمل that."
+    },
+    {
+     "id": "a1-u08-q6",
+     "prompt": "ما معنى \"white\"؟",
+     "options": [
+      "أسود",
+      "أبيض",
+      "أزرق",
+      "أحمر"
+     ],
+     "answer": 1,
+     "why": "white هو الأبيض."
+    },
+    {
+     "id": "a1-u08-q7",
+     "prompt": "أيّ كلمة ليست لونًا؟",
+     "options": [
+      "red",
+      "blue",
+      "shirt",
+      "green"
+     ],
+     "answer": 2,
+     "why": "shirt قميص وليس لونًا."
+    },
+    {
+     "id": "a1-u08-q8",
+     "prompt": "ما معنى \"What color is it?\"",
+     "options": [
+      "ما لونه؟",
+      "كم عمره؟",
+      "ما اسمه؟"
+     ],
+     "answer": 0,
+     "why": "What color is it? تسأل عن اللون."
+    }
+   ]
+  },
+  {
+   "id": "a1-u09",
+   "order": 9,
+   "level": "A1",
+   "titleEn": "Places in Town",
+   "titleAr": "الأماكن في المدينة",
+   "summaryAr": "تسألين عن الأماكن وتصفين مواقعها وتفهمين الاتجاهات.",
+   "vocab": [
+    {
+     "en": "school",
+     "ar": "مدرسة",
+     "exEn": "The school is near my house.",
+     "exAr": "المدرسة قريبة من بيتي."
+    },
+    {
+     "en": "hospital",
+     "ar": "مستشفى",
+     "exEn": "The hospital is big.",
+     "exAr": "المستشفى كبير."
+    },
+    {
+     "en": "market",
+     "ar": "سوق",
+     "exEn": "We buy fruit at the market.",
+     "exAr": "نشتري الفاكهة من السوق."
+    },
+    {
+     "en": "park",
+     "ar": "حديقة",
+     "exEn": "The children play in the park.",
+     "exAr": "الأطفال يلعبون في الحديقة."
+    },
+    {
+     "en": "library",
+     "ar": "مكتبة",
+     "exEn": "I read books in the library.",
+     "exAr": "أقرأ الكتب في المكتبة."
+    },
+    {
+     "en": "bank",
+     "ar": "مصرف (بنك)",
+     "exEn": "The bank is closed today.",
+     "exAr": "البنك مغلق اليوم."
+    },
+    {
+     "en": "bus",
+     "ar": "حافلة",
+     "exEn": "The bus is late.",
+     "exAr": "الحافلة متأخرة."
+    },
+    {
+     "en": "street",
+     "ar": "شارع",
+     "exEn": "This street is quiet.",
+     "exAr": "هذا الشارع هادئ."
+    },
+    {
+     "en": "shop",
+     "ar": "متجر",
+     "exEn": "The shop opens at nine.",
+     "exAr": "المتجر يفتح في التاسعة."
+    },
+    {
+     "en": "mosque",
+     "ar": "مسجد",
+     "exEn": "The mosque is on this street.",
+     "exAr": "المسجد في هذا الشارع."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "Where is the library?",
+     "ar": "أين المكتبة؟"
+    },
+    {
+     "en": "It is next to the bank.",
+     "ar": "إنها بجانب البنك."
+    },
+    {
+     "en": "Go straight.",
+     "ar": "سيري إلى الأمام."
+    },
+    {
+     "en": "Turn left.",
+     "ar": "انعطفي يسارًا."
+    },
+    {
+     "en": "Excuse me, where is the bus stop?",
+     "ar": "عفوًا، أين موقف الحافلة؟"
+    }
+   ],
+   "grammar": {
+    "titleAr": "حروف الجر للمكان",
+    "bodyAr": "نصف مكان الشيء بحروف الجر: in (داخل)، on (على سطح)، next to (بجانب)، near (قريب من)، between (بين شيئين). مثال: The park is next to the school.",
+    "examples": [
+     {
+      "en": "The park is next to the school.",
+      "ar": "الحديقة بجانب المدرسة."
+     },
+     {
+      "en": "The bank is near the market.",
+      "ar": "البنك قريب من السوق."
+     },
+     {
+      "en": "The shop is between the bank and the library.",
+      "ar": "المتجر بين البنك والمكتبة."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u09-q1",
+     "prompt": "ما معنى \"library\"؟",
+     "options": [
+      "مكتبة",
+      "مستشفى",
+      "سوق",
+      "مدرسة"
+     ],
+     "answer": 0,
+     "why": "library هي المكتبة."
+    },
+    {
+     "id": "a1-u09-q2",
+     "prompt": "ما معنى \"hospital\"؟",
+     "options": [
+      "مدرسة",
+      "حديقة",
+      "مستشفى",
+      "شارع"
+     ],
+     "answer": 2,
+     "why": "hospital هو المستشفى."
+    },
+    {
+     "id": "a1-u09-q3",
+     "prompt": "أكملي: The park is ___ to the school. (بجانب)",
+     "options": [
+      "next",
+      "on",
+      "in"
+     ],
+     "answer": 0,
+     "why": "next to تعني بجانب."
+    },
+    {
+     "id": "a1-u09-q4",
+     "prompt": "أكملي: The shop is ___ the bank and the library. (بين)",
+     "options": [
+      "near",
+      "between",
+      "on"
+     ],
+     "answer": 1,
+     "why": "between تعني بين شيئين."
+    },
+    {
+     "id": "a1-u09-q5",
+     "prompt": "ما معنى \"Turn left.\"؟",
+     "options": [
+      "انعطفي يمينًا",
+      "انعطفي يسارًا",
+      "توقفي هنا"
+     ],
+     "answer": 1,
+     "why": "left يسار."
+    },
+    {
+     "id": "a1-u09-q6",
+     "prompt": "ما معنى \"street\"؟",
+     "options": [
+      "سوق",
+      "حافلة",
+      "شارع",
+      "حديقة"
+     ],
+     "answer": 2,
+     "why": "street هو الشارع."
+    },
+    {
+     "id": "a1-u09-q7",
+     "prompt": "ما معنى \"Where is the market?\"",
+     "options": [
+      "أين السوق؟",
+      "كم سعر السوق؟",
+      "متى يفتح السوق؟"
+     ],
+     "answer": 0,
+     "why": "Where تسأل عن المكان."
+    },
+    {
+     "id": "a1-u09-q8",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "The bank near is the market.",
+      "The bank is near the market.",
+      "Is the bank the market near."
+     ],
+     "answer": 1,
+     "why": "الترتيب: الاسم ثم is ثم حرف الجر ثم المكان."
+    }
+   ]
+  },
+  {
+   "id": "a1-u10",
+   "order": 10,
+   "level": "A1",
+   "titleEn": "Jobs and Study",
+   "titleAr": "الأعمال والدراسة",
+   "summaryAr": "تتحدثين عن المهن والدراسة وتستعملين a وan.",
+   "vocab": [
+    {
+     "en": "teacher",
+     "ar": "معلم (معلمة)",
+     "exEn": "She is a teacher.",
+     "exAr": "هي معلمة."
+    },
+    {
+     "en": "student",
+     "ar": "طالب (طالبة)",
+     "exEn": "I am a student.",
+     "exAr": "أنا طالبة."
+    },
+    {
+     "en": "doctor",
+     "ar": "طبيب (طبيبة)",
+     "exEn": "My father is a doctor.",
+     "exAr": "أبي طبيب."
+    },
+    {
+     "en": "nurse",
+     "ar": "ممرّض (ممرّضة)",
+     "exEn": "The nurse is kind.",
+     "exAr": "الممرضة لطيفة."
+    },
+    {
+     "en": "engineer",
+     "ar": "مهندس (مهندسة)",
+     "exEn": "He is an engineer.",
+     "exAr": "هو مهندس."
+    },
+    {
+     "en": "driver",
+     "ar": "سائق",
+     "exEn": "The driver is waiting.",
+     "exAr": "السائق ينتظر."
+    },
+    {
+     "en": "farmer",
+     "ar": "مزارع",
+     "exEn": "The farmer has many apples.",
+     "exAr": "عند المزارع تفاح كثير."
+    },
+    {
+     "en": "writer",
+     "ar": "كاتب (كاتبة)",
+     "exEn": "She is a writer.",
+     "exAr": "هي كاتبة."
+    },
+    {
+     "en": "job",
+     "ar": "وظيفة",
+     "exEn": "I like my job.",
+     "exAr": "أحب وظيفتي."
+    },
+    {
+     "en": "university",
+     "ar": "جامعة",
+     "exEn": "I study at university.",
+     "exAr": "أدرس في الجامعة."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "What do you do?",
+     "ar": "ماذا تعملين؟"
+    },
+    {
+     "en": "What is your job?",
+     "ar": "ما وظيفتك؟"
+    },
+    {
+     "en": "I am a student.",
+     "ar": "أنا طالبة."
+    },
+    {
+     "en": "I study at university.",
+     "ar": "أدرس في الجامعة."
+    },
+    {
+     "en": "She is a nurse.",
+     "ar": "هي ممرّضة."
+    }
+   ],
+   "grammar": {
+    "titleAr": "أداة النكرة a / an",
+    "bodyAr": "نضع a قبل الاسم المفرد المعدود الذي يبدأ بصوت ساكن: a teacher, a doctor. ونضع an قبل الاسم الذي يبدأ بصوت حرف علّة (a, e, i, o, u): an engineer, an apple. لا نستعمل a أو an مع الجمع.",
+    "examples": [
+     {
+      "en": "She is a teacher.",
+      "ar": "هي معلمة."
+     },
+     {
+      "en": "He is an engineer.",
+      "ar": "هو مهندس."
+     },
+     {
+      "en": "I have an apple.",
+      "ar": "عندي تفاحة."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u10-q1",
+     "prompt": "ما معنى \"doctor\"؟",
+     "options": [
+      "ممرضة",
+      "طبيب",
+      "معلم",
+      "سائق"
+     ],
+     "answer": 1,
+     "why": "doctor هو الطبيب."
+    },
+    {
+     "id": "a1-u10-q2",
+     "prompt": "ما معنى \"farmer\"؟",
+     "options": [
+      "كاتب",
+      "سائق",
+      "مزارع",
+      "مهندس"
+     ],
+     "answer": 2,
+     "why": "farmer هو المزارع."
+    },
+    {
+     "id": "a1-u10-q3",
+     "prompt": "أكملي: He is ___ engineer.",
+     "options": [
+      "a",
+      "an",
+      "any"
+     ],
+     "answer": 1,
+     "why": "engineer تبدأ بحرف علّة فنستعمل an."
+    },
+    {
+     "id": "a1-u10-q4",
+     "prompt": "أكملي: She is ___ teacher.",
+     "options": [
+      "an",
+      "a",
+      "any"
+     ],
+     "answer": 1,
+     "why": "teacher تبدأ بصوت ساكن فنستعمل a."
+    },
+    {
+     "id": "a1-u10-q5",
+     "prompt": "أكملي: I ___ a student.",
+     "options": [
+      "is",
+      "am",
+      "are"
+     ],
+     "answer": 1,
+     "why": "مع I نستعمل am."
+    },
+    {
+     "id": "a1-u10-q6",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "He is doctor.",
+      "He is a doctor.",
+      "He a doctor."
+     ],
+     "answer": 1,
+     "why": "نحتاج الفعل is والأداة a."
+    },
+    {
+     "id": "a1-u10-q7",
+     "prompt": "ما معنى \"What do you do?\"",
+     "options": [
+      "ماذا تعملين؟",
+      "أين تسكنين؟",
+      "كم عمرك؟"
+     ],
+     "answer": 0,
+     "why": "What do you do? تسأل عن العمل."
+    },
+    {
+     "id": "a1-u10-q8",
+     "prompt": "أكملي: I study ___ university.",
+     "options": [
+      "in",
+      "on",
+      "at"
+     ],
+     "answer": 2,
+     "why": "نقول at university."
+    }
+   ]
+  },
+  {
+   "id": "a1-u11",
+   "order": 11,
+   "level": "A1",
+   "titleEn": "Shopping and Money",
+   "titleAr": "التسوق والمال",
+   "summaryAr": "تسألين عن الأسعار وتطلبين ما تريدين بأدب.",
+   "vocab": [
+    {
+     "en": "price",
+     "ar": "سعر",
+     "exEn": "The price is ten dollars.",
+     "exAr": "السعر عشرة دولارات."
+    },
+    {
+     "en": "cheap",
+     "ar": "رخيص",
+     "exEn": "This bag is cheap.",
+     "exAr": "هذه الحقيبة رخيصة."
+    },
+    {
+     "en": "expensive",
+     "ar": "غالٍ",
+     "exEn": "That coat is expensive.",
+     "exAr": "ذلك المعطف غالٍ."
+    },
+    {
+     "en": "buy",
+     "ar": "يشتري",
+     "exEn": "I want to buy a scarf.",
+     "exAr": "أريد أن أشتري وشاحًا."
+    },
+    {
+     "en": "sell",
+     "ar": "يبيع",
+     "exEn": "They sell fresh bread.",
+     "exAr": "هم يبيعون خبزًا طازجًا."
+    },
+    {
+     "en": "money",
+     "ar": "مال (نقود)",
+     "exEn": "I have some money.",
+     "exAr": "معي بعض المال."
+    },
+    {
+     "en": "bag",
+     "ar": "حقيبة",
+     "exEn": "My bag is blue.",
+     "exAr": "حقيبتي زرقاء."
+    },
+    {
+     "en": "size",
+     "ar": "مقاس",
+     "exEn": "What size is it?",
+     "exAr": "ما مقاسه؟"
+    },
+    {
+     "en": "big",
+     "ar": "كبير",
+     "exEn": "This size is too big.",
+     "exAr": "هذا المقاس كبير جدًا."
+    },
+    {
+     "en": "small",
+     "ar": "صغير",
+     "exEn": "I need a small size.",
+     "exAr": "أحتاج مقاسًا صغيرًا."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "How much is this?",
+     "ar": "بكم هذا؟"
+    },
+    {
+     "en": "It is ten dollars.",
+     "ar": "سعره عشرة دولارات."
+    },
+    {
+     "en": "Can I have a bag, please?",
+     "ar": "هل يمكنني الحصول على حقيبة من فضلك؟"
+    },
+    {
+     "en": "It is too expensive.",
+     "ar": "إنه غالٍ جدًا."
+    },
+    {
+     "en": "Do you have a smaller size?",
+     "ar": "هل عندكم مقاس أصغر؟"
+    }
+   ],
+   "grammar": {
+    "titleAr": "How much / How many",
+    "bodyAr": "نستعمل How much للسؤال عن السعر أو عن شيء لا يُعدّ مثل الماء والمال: How much is the scarf? How much water? ونستعمل How many مع الأشياء التي تُعدّ بصيغة الجمع: How many bags?",
+    "examples": [
+     {
+      "en": "How much is the scarf?",
+      "ar": "بكم الوشاح؟"
+     },
+     {
+      "en": "How many bags do you have?",
+      "ar": "كم حقيبة عندك؟"
+     },
+     {
+      "en": "How much water do you drink?",
+      "ar": "كم من الماء تشربين؟"
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u11-q1",
+     "prompt": "ما معنى \"cheap\"؟",
+     "options": [
+      "غالٍ",
+      "رخيص",
+      "كبير",
+      "جديد"
+     ],
+     "answer": 1,
+     "why": "cheap تعني رخيص."
+    },
+    {
+     "id": "a1-u11-q2",
+     "prompt": "ما معنى \"expensive\"؟",
+     "options": [
+      "غالٍ",
+      "صغير",
+      "رخيص",
+      "قديم"
+     ],
+     "answer": 0,
+     "why": "expensive تعني غالٍ."
+    },
+    {
+     "id": "a1-u11-q3",
+     "prompt": "\"How much is this?\" تسأل عن:",
+     "options": [
+      "السعر",
+      "العدد",
+      "الوقت"
+     ],
+     "answer": 0,
+     "why": "How much is this? تسأل عن السعر."
+    },
+    {
+     "id": "a1-u11-q4",
+     "prompt": "أكملي: How ___ apples do you want?",
+     "options": [
+      "much",
+      "many",
+      "old"
+     ],
+     "answer": 1,
+     "why": "apples تُعدّ، فنقول How many."
+    },
+    {
+     "id": "a1-u11-q5",
+     "prompt": "أكملي: How ___ money do you have?",
+     "options": [
+      "many",
+      "much",
+      "old"
+     ],
+     "answer": 1,
+     "why": "money لا يُعدّ، فنقول How much."
+    },
+    {
+     "id": "a1-u11-q6",
+     "prompt": "ما معنى \"buy\"؟",
+     "options": [
+      "يبيع",
+      "يشتري",
+      "يأكل",
+      "يعمل"
+     ],
+     "answer": 1,
+     "why": "buy تعني يشتري."
+    },
+    {
+     "id": "a1-u11-q7",
+     "prompt": "ما معنى \"size\"؟",
+     "options": [
+      "سعر",
+      "لون",
+      "مقاس",
+      "حقيبة"
+     ],
+     "answer": 2,
+     "why": "size هو المقاس."
+    },
+    {
+     "id": "a1-u11-q8",
+     "prompt": "ما معنى \"It is too expensive.\"؟",
+     "options": [
+      "إنه رخيص جدًا",
+      "إنه غالٍ جدًا",
+      "إنه جديد جدًا"
+     ],
+     "answer": 1,
+     "why": "too expensive تعني غالٍ جدًا."
+    }
+   ]
+  },
+  {
+   "id": "a1-u12",
+   "order": 12,
+   "level": "A1",
+   "titleEn": "Abilities and Hobbies",
+   "titleAr": "القدرات والهوايات",
+   "summaryAr": "تقولين ما تستطيعين فعله وما تحبين ممارسته.",
+   "vocab": [
+    {
+     "en": "swim",
+     "ar": "يسبح",
+     "exEn": "I can swim.",
+     "exAr": "أستطيع السباحة."
+    },
+    {
+     "en": "run",
+     "ar": "يركض",
+     "exEn": "He can run fast.",
+     "exAr": "هو يستطيع الركض بسرعة."
+    },
+    {
+     "en": "draw",
+     "ar": "يرسم",
+     "exEn": "She can draw flowers.",
+     "exAr": "هي تستطيع رسم الزهور."
+    },
+    {
+     "en": "sing",
+     "ar": "يغنّي",
+     "exEn": "They can sing well.",
+     "exAr": "هم يستطيعون الغناء جيدًا."
+    },
+    {
+     "en": "write",
+     "ar": "يكتب",
+     "exEn": "I can write a short story.",
+     "exAr": "أستطيع كتابة قصة قصيرة."
+    },
+    {
+     "en": "speak",
+     "ar": "يتحدث",
+     "exEn": "I can speak English a little.",
+     "exAr": "أستطيع التحدث بالإنجليزية قليلًا."
+    },
+    {
+     "en": "play",
+     "ar": "يلعب",
+     "exEn": "The children play outside.",
+     "exAr": "الأطفال يلعبون في الخارج."
+    },
+    {
+     "en": "football",
+     "ar": "كرة القدم",
+     "exEn": "My brother likes football.",
+     "exAr": "أخي يحب كرة القدم."
+    },
+    {
+     "en": "music",
+     "ar": "موسيقى",
+     "exEn": "I listen to music.",
+     "exAr": "أستمع إلى الموسيقى."
+    },
+    {
+     "en": "hobby",
+     "ar": "هواية",
+     "exEn": "My hobby is drawing.",
+     "exAr": "هوايتي الرسم."
+    }
+   ],
+   "phrases": [
+    {
+     "en": "I can speak English a little.",
+     "ar": "أستطيع التحدث بالإنجليزية قليلًا."
+    },
+    {
+     "en": "I cannot sing.",
+     "ar": "لا أستطيع الغناء."
+    },
+    {
+     "en": "Can you draw?",
+     "ar": "هل تستطيعين الرسم؟"
+    },
+    {
+     "en": "What is your hobby?",
+     "ar": "ما هوايتك؟"
+    },
+    {
+     "en": "I like reading and drawing.",
+     "ar": "أحب القراءة والرسم."
+    }
+   ],
+   "grammar": {
+    "titleAr": "can / cannot، وlike مع الفعل + ing",
+    "bodyAr": "بعد can يأتي الفعل بصيغته الأولى دون s ودون to: She can swim. والنفي cannot (أو can't): I cannot sing. وللسؤال نقدّم can: Can you draw? وللحديث عن الهوايات نقول like ثم الفعل مع ing: I like swimming.",
+    "examples": [
+     {
+      "en": "She can swim.",
+      "ar": "هي تستطيع السباحة."
+     },
+     {
+      "en": "Can you draw?",
+      "ar": "هل تستطيعين الرسم؟"
+     },
+     {
+      "en": "I like playing football.",
+      "ar": "أحب لعب كرة القدم."
+     }
+    ]
+   },
+   "questions": [
+    {
+     "id": "a1-u12-q1",
+     "prompt": "ما معنى \"swim\"؟",
+     "options": [
+      "يركض",
+      "يسبح",
+      "يرسم",
+      "يغنّي"
+     ],
+     "answer": 1,
+     "why": "swim تعني يسبح."
+    },
+    {
+     "id": "a1-u12-q2",
+     "prompt": "ما معنى \"hobby\"؟",
+     "options": [
+      "هواية",
+      "وظيفة",
+      "مدرسة",
+      "مقاس"
+     ],
+     "answer": 0,
+     "why": "hobby هي الهواية."
+    },
+    {
+     "id": "a1-u12-q3",
+     "prompt": "أكملي: She can ___.",
+     "options": [
+      "swims",
+      "swim",
+      "swimming"
+     ],
+     "answer": 1,
+     "why": "بعد can يأتي الفعل بصيغته الأولى."
+    },
+    {
+     "id": "a1-u12-q4",
+     "prompt": "أكملي: I ___ sing. (لا أستطيع الغناء)",
+     "options": [
+      "cannot",
+      "do not can",
+      "am not can"
+     ],
+     "answer": 0,
+     "why": "النفي مع can هو cannot."
+    },
+    {
+     "id": "a1-u12-q5",
+     "prompt": "أيّ جملة صحيحة؟",
+     "options": [
+      "I can to run.",
+      "I can run.",
+      "I cans run."
+     ],
+     "answer": 1,
+     "why": "بعد can فعل بلا to وبلا s."
+    },
+    {
+     "id": "a1-u12-q6",
+     "prompt": "كيف نسأل \"هل تستطيعين الرسم؟\"",
+     "options": [
+      "Can you draw?",
+      "You can draw?",
+      "Do you can draw?"
+     ],
+     "answer": 0,
+     "why": "نقدّم can في السؤال."
+    },
+    {
+     "id": "a1-u12-q7",
+     "prompt": "أكملي: I like ___ football.",
+     "options": [
+      "play",
+      "playing",
+      "plays"
+     ],
+     "answer": 1,
+     "why": "بعد like نستعمل الفعل مع ing للهوايات."
+    },
+    {
+     "id": "a1-u12-q8",
+     "prompt": "ما معنى \"music\"؟",
+     "options": [
+      "رياضة",
+      "قصة",
+      "موسيقى",
+      "رسم"
+     ],
+     "answer": 2,
+     "why": "music هي الموسيقى."
+    }
+   ]
+  }
+ ]
+}
