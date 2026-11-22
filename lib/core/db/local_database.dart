@@ -245,8 +245,8 @@ class LocalDatabase {
             final oldId = (safe['id'] ?? recordKey).toString();
             safe['userId'] = targetUserId;
             final shape = CollectionRegistry.byName(name).keyShape;
-            if (shape == CollectionKeyShape.userDate) {
-              // المعرّف القديم: <userId>_<YYYY-MM-DD>، وuserId نفسه يحتوي _.
+            if (shape == CollectionKeyShape.userDate || shape == CollectionKeyShape.userSuffix) {
+              // المعرّف القديم: <userId>_<YYYY-MM-DD> أو <userId>_<suffix>، وuserId نفسه يحتوي _.
               final split = oldId.lastIndexOf('_');
               final datePart = split >= 0 ? oldId.substring(split + 1) : oldId;
               recordKey = '${targetUserId}_$datePart';
