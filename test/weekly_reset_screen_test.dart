@@ -88,7 +88,7 @@ String _text(WidgetTester tester, String key) =>
     tester.widget<TextField>(find.byKey(Key(key))).controller!.text;
 
 Future<WeeklyReset?> _stored(WidgetTester tester, AppState state, DateTime week) async {
-  return tester.runAsync(() => state.db.byId(
+  return tester.runAsync<WeeklyReset?>(() => state.db.byId<WeeklyReset>(
         'weeklyResets',
         WeeklyReset.idFor(state.userId, dateKey(week)),
         WeeklyReset.fromJson,
