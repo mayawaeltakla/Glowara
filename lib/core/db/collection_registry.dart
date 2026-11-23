@@ -148,6 +148,12 @@ class CollectionRegistry {
       keyShape: CollectionKeyShape.userSuffix,
       note: 'Key is <userId>_<unitId>; unit ids never contain an underscore. Content itself is bundled, not stored.',
     ),
+    CollectionSpec(
+      'mealPlans',
+      CollectionOwnership.userId,
+      keyShape: CollectionKeyShape.userDate,
+      note: 'Key is <userId>_<weekStart YYYY-MM-DD>; days are stored by explicit date key.',
+    ),
     CollectionSpec('profiles', CollectionOwnership.userId, keyShape: CollectionKeyShape.profile),
     CollectionSpec('sync', CollectionOwnership.userId),
     CollectionSpec(
