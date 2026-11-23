@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
-import 'package:glowara/core/models/routine_models.dart';
 import 'package:glowara/core/repositories/auth_repository.dart';
 import 'package:glowara/core/repositories/care_repository.dart';
 import 'package:glowara/core/repositories/habit_repository.dart';
