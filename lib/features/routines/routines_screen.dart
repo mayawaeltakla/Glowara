@@ -183,14 +183,24 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
         children: <Widget>[
           Text(r.name, style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface)),
           for (final s in r.steps)
-            CheckboxListTile(
-              key: Key('rt-step-${r.id}-${s.id}'),
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              value: _day?.isDone(r.id, s.id) ?? false,
-              onChanged: (v) => _toggle(r, s, v ?? false),
-              title: Text(s.text, style: const TextStyle(fontSize: 14)),
+            Row(
+              children: <Widget>[
+                Checkbox(
+                  key: Key('rt-step-${r.id}-${s.id}'),
+                  value: _day?.isDone(r.id, s.id) ?? false,
+                  onChanged: (v) => _toggle(r, s, v ?? false),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => _toggle(r, s, !(_day?.isDone(r.id, s.id) ?? false)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(s.text, style: const TextStyle(fontSize: 14)),
+                    ),
+                  ),
+                ),
+              ],
             ),
         ],
       ),
