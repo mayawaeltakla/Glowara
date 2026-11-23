@@ -147,7 +147,8 @@ class _NutritionScreenState extends State<NutritionScreen> {
         ],
       ),
     );
-    controller.dispose();
+    // لا dispose هنا عمدًا: حركة إغلاق النافذة ما زالت تبني الحقل بعد عودة showDialog.
+    // المتحكّم بلا مستمعين فيُجمع مع الذاكرة.
     if (result == null || !mounted) return;
     await _repo(state).setCell(
       userId: state.userId,
