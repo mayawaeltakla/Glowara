@@ -23,6 +23,8 @@ import 'package:glowara/features/language/quiz_screen.dart';
 import 'package:glowara/features/milestones/milestones_screen.dart';
 import 'package:glowara/features/more/more_screen.dart';
 import 'package:glowara/features/nutrition/nutrition_screen.dart';
+import 'package:glowara/features/routines/routine_edit_screen.dart';
+import 'package:glowara/features/routines/routines_screen.dart';
 import 'package:glowara/features/progress/progress_screen.dart';
 import 'package:glowara/features/settings/settings_screen.dart';
 import 'package:glowara/features/study/study_screen.dart';
@@ -90,6 +92,19 @@ final GoRouter _router = GoRouter(
       // `?day=YYYY-MM-DD` يفتح الشاشة على يوم معيّن (من التقويم الشهري).
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
+      ),
+    ),
+    GoRoute(
+      path: '/routines',
+      builder: (context, state) => const _Protected(child: RoutinesScreen()),
+    ),
+    GoRoute(
+      path: '/routines/edit/:id',
+      builder: (context, state) => _Protected(
+        child: RoutineEditScreen(
+          routineId: state.pathParameters['id'] ?? 'new',
+          templateId: state.uri.queryParameters['template'],
+        ),
       ),
     ),
     GoRoute(

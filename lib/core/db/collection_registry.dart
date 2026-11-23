@@ -148,6 +148,13 @@ class CollectionRegistry {
       keyShape: CollectionKeyShape.userSuffix,
       note: 'Key is <userId>_<unitId>; unit ids never contain an underscore. Content itself is bundled, not stored.',
     ),
+    CollectionSpec('routines', CollectionOwnership.userId),
+    CollectionSpec(
+      'routineDays',
+      CollectionOwnership.userId,
+      keyShape: CollectionKeyShape.userDate,
+      note: 'Key is <userId>_<YYYY-MM-DD>; done maps routine id to completed step ids.',
+    ),
     CollectionSpec(
       'mealPlans',
       CollectionOwnership.userId,
