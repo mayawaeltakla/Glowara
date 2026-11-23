@@ -20,12 +20,14 @@ import 'package:glowara/features/home/home_screen.dart';
 import 'package:glowara/features/journal/journal_screen.dart';
 import 'package:glowara/features/language/language_screen.dart';
 import 'package:glowara/features/language/quiz_screen.dart';
+import 'package:glowara/features/library/book_screen.dart';
+import 'package:glowara/features/library/library_screen.dart';
 import 'package:glowara/features/milestones/milestones_screen.dart';
 import 'package:glowara/features/more/more_screen.dart';
 import 'package:glowara/features/nutrition/nutrition_screen.dart';
+import 'package:glowara/features/progress/progress_screen.dart';
 import 'package:glowara/features/routines/routine_edit_screen.dart';
 import 'package:glowara/features/routines/routines_screen.dart';
-import 'package:glowara/features/progress/progress_screen.dart';
 import 'package:glowara/features/settings/settings_screen.dart';
 import 'package:glowara/features/study/study_screen.dart';
 import 'package:glowara/features/study/subject_detail_screen.dart';
@@ -93,6 +95,14 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
       ),
+    ),
+    GoRoute(
+      path: '/library',
+      builder: (context, state) => const _Protected(child: LibraryScreen()),
+    ),
+    GoRoute(
+      path: '/library/book/:id',
+      builder: (context, state) => _Protected(child: BookScreen(bookId: state.pathParameters['id'] ?? 'new')),
     ),
     GoRoute(
       path: '/routines',

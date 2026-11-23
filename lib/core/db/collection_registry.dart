@@ -148,6 +148,7 @@ class CollectionRegistry {
       keyShape: CollectionKeyShape.userSuffix,
       note: 'Key is <userId>_<unitId>; unit ids never contain an underscore. Content itself is bundled, not stored.',
     ),
+    CollectionSpec('books', CollectionOwnership.userId, note: 'Notes, quotes and summaries are embedded in the book record.'),
     CollectionSpec('routines', CollectionOwnership.userId),
     CollectionSpec(
       'routineDays',
