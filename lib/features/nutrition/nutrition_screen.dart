@@ -13,7 +13,7 @@ import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
 import 'package:glowara/features/calendar/calendar_layout.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 /// أبعد أسبوع يمكن التخطيط له (بالأسابيع بعد الأسبوع الحالي).
 const int kMaxPlanWeeksAhead = 8;
