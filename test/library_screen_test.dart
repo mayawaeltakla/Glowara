@@ -144,8 +144,7 @@ void main() {
     expect(books.single.notes.single.kind, 'quote');
 
     // ارجعي إلى القائمة: الصفحة نصًّا بلا نسبة.
-    await tester.pageBack();
-    await _settle(tester);
+    await _tap(tester, find.byIcon(Icons.arrow_back_ios_new_rounded));
     expect(find.text('أقرؤه الآن · الصفحة 40 من 200 · تطوير'), findsOneWidget);
     expect(find.textContaining('%'), findsNothing);
   });
