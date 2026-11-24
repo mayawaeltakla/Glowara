@@ -778,6 +778,14 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'cnUntitled': 'بلا عنوان',
     'cnNotFound': 'هذا المدخل غير موجود',
     'cnLoadError': 'تعذّر تحميل ركنك',
+    // تخصيص الرئيسية
+    'hcTitle': 'تخصيص الصفحة الرئيسية',
+    'hcLink': 'تخصيص الصفحة',
+    'hcNote': 'اختاري أي الأقسام تظهر في الرئيسية وبأي ترتيب. إخفاء قسم لا يحذف بياناته، ويمكنك إظهاره متى شئتِ. التفضيل محفوظ على هذا الجهاز.',
+    'hcMood': 'المزاج',
+    'hcReset': 'إعادة الترتيب الافتراضي',
+    'hcUp': 'أعلى',
+    'hcDown': 'أسفل',
   },
   'en': <String, String>{
     // General
@@ -1554,5 +1562,13 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'cnUntitled': 'Untitled',
     'cnNotFound': 'This entry does not exist',
     'cnLoadError': 'Could not load your corner',
+    // Customize Home
+    'hcTitle': 'Customize Home',
+    'hcLink': 'Customize Home',
+    'hcNote': 'Choose which sections show on Home and in what order. Hiding a section does not delete its data, and you can show it again any time. The preference is saved on this device.',
+    'hcMood': 'Mood',
+    'hcReset': 'Restore default order',
+    'hcUp': 'Up',
+    'hcDown': 'Down',
   },
 };
