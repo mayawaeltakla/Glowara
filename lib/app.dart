@@ -14,6 +14,8 @@ import 'package:glowara/features/auth/auth_screens.dart';
 import 'package:glowara/features/calendar/month_calendar_screen.dart';
 import 'package:glowara/features/calendar/tasks_screen.dart';
 import 'package:glowara/features/care/care_screen.dart';
+import 'package:glowara/features/dreams/dream_screen.dart';
+import 'package:glowara/features/dreams/dreams_screen.dart';
 import 'package:glowara/features/habits/habits_screen.dart';
 import 'package:glowara/features/health/health_screen.dart';
 import 'package:glowara/features/home/home_screen.dart';
@@ -95,6 +97,14 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
       ),
+    ),
+    GoRoute(
+      path: '/dreams',
+      builder: (context, state) => const _Protected(child: DreamsScreen()),
+    ),
+    GoRoute(
+      path: '/dreams/dream/:id',
+      builder: (context, state) => _Protected(child: DreamScreen(dreamId: state.pathParameters['id'] ?? 'new')),
     ),
     GoRoute(
       path: '/library',

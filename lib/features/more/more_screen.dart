@@ -31,6 +31,12 @@ class MoreScreen extends StatelessWidget {
         route: '/weekly-reset',
       ),
       _MoreEntry(
+        icon: Icons.auto_awesome_outlined,
+        title: context.tr('drTitle'),
+        subtitle: context.tr('drSubtitle'),
+        route: '/dreams',
+      ),
+      _MoreEntry(
         icon: Icons.local_library_outlined,
         title: context.tr('lbTitle'),
         subtitle: context.tr('lbSubtitle'),
