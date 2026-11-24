@@ -36,6 +36,7 @@ class JournalRepository {
     required DateTime day,
     required int value,
     String? note,
+    int? energy,
   }) async {
     final id = _moodId(userId, dateKey(day));
     final existing = await _db.byId(_moods, id, MoodEntry.fromJson);
@@ -45,6 +46,7 @@ class JournalRepository {
       date: dateKey(day),
       value: value.clamp(1, 5).toInt(),
       note: note,
+      energy: energy == null ? null : energy.clamp(1, 5).toInt(),
       createdAt: existing?.createdAt ?? DateTime.now(),
       syncStatus: SyncStatus.local,
       lastModified: DateTime.now(),

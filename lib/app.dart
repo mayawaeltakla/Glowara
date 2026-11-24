@@ -22,6 +22,7 @@ import 'package:glowara/features/habits/habits_screen.dart';
 import 'package:glowara/features/home/customize_home_screen.dart';
 import 'package:glowara/features/health/health_screen.dart';
 import 'package:glowara/features/home/home_screen.dart';
+import 'package:glowara/features/insights/insights_screen.dart';
 import 'package:glowara/features/journal/journal_screen.dart';
 import 'package:glowara/features/language/language_screen.dart';
 import 'package:glowara/features/language/quiz_screen.dart';
@@ -100,6 +101,10 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
       ),
+    ),
+    GoRoute(
+      path: '/insights',
+      builder: (context, state) => const _Protected(child: InsightsScreen()),
     ),
     GoRoute(
       path: '/customize-home',

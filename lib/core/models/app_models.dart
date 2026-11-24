@@ -500,6 +500,7 @@ class MoodEntry {
     required this.date,
     required this.value, // 1..5
     this.note,
+    this.energy, // 1..5 اختياري
     required this.createdAt,
     this.syncStatus = SyncStatus.local,
     this.lastModified,
@@ -510,13 +511,16 @@ class MoodEntry {
   final String date;
   final int value;
   final String? note;
+
+  /// مستوى الطاقة 1..5 (اختياري). سجلات ما قبل هذه الميزة بلا طاقة.
+  final int? energy;
   final DateTime createdAt;
   final SyncStatus syncStatus;
   final DateTime? lastModified;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id, 'userId': userId, 'date': date, 'value': value,
-        'note': note, 'createdAt': _DateTimeHelper.toJson(createdAt),
+        'note': note, 'energy': energy, 'createdAt': _DateTimeHelper.toJson(createdAt),
         'syncStatus': syncStatus.toJsonValue(),
         'lastModified': _DateTimeHelper.toJson(lastModified),
       };
@@ -527,6 +531,9 @@ class MoodEntry {
         date: json['date'] as String,
         value: (json['value'] as num).toInt(),
         note: json['note'] as String?,
+        energy: json['energy'] is int && (json['energy'] as int) >= 1 && (json['energy'] as int) <= 5
+            ? json['energy'] as int
+            : null,
         createdAt: _DateTimeHelper.fromJson(json['createdAt']) ?? DateTime.now(),
         syncStatus: SyncStatusX.fromJsonValue(json['syncStatus'] as String? ?? 'local'),
         lastModified: _DateTimeHelper.fromJson(json['lastModified']),
