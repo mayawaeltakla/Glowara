@@ -46,7 +46,7 @@ class JournalRepository {
       date: dateKey(day),
       value: value.clamp(1, 5).toInt(),
       note: note,
-      energy: energy == null ? null : energy.clamp(1, 5).toInt(),
+      energy: energy?.clamp(1, 5).toInt(),
       createdAt: existing?.createdAt ?? DateTime.now(),
       syncStatus: SyncStatus.local,
       lastModified: DateTime.now(),
