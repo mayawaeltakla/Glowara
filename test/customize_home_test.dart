@@ -133,14 +133,14 @@ void main() {
 
     await _tap(tester, find.byKey(const Key('hc-switch-worship')));
     await _tap(tester, find.byKey(const Key('hc-down-dayGlow')));
-    var raw = await tester.runAsync(() => state.settings.get<String>(homeLayoutKey(state.userId)));
+    var raw = await tester.runAsync<String?>(() => state.settings.get<String>(homeLayoutKey(state.userId)));
     var saved = HomeLayout.parse(raw);
     expect(saved.hidden, <String>{'worship'});
     expect(saved.order.first, 'water');
     expect(saved.order[1], 'dayGlow');
 
     await _tap(tester, find.byKey(const Key('hc-reset')));
-    raw = await tester.runAsync(() => state.settings.get<String>(homeLayoutKey(state.userId)));
+    raw = await tester.runAsync<String?>(() => state.settings.get<String>(homeLayoutKey(state.userId)));
     expect(raw, isNull);
     saved = HomeLayout.parse(raw);
     expect(saved.isDefault, isTrue);
