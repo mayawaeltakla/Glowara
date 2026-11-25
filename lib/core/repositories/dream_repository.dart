@@ -4,6 +4,7 @@ library glowara.repositories.dream;
 
 import 'package:sembast/sembast.dart';
 import 'package:glowara/core/db/local_database.dart';
+import 'package:glowara/core/repositories/image_repository.dart';
 import 'package:glowara/core/models/app_models.dart';
 import 'package:glowara/core/models/dream_models.dart';
 
@@ -65,7 +66,10 @@ class DreamRepository {
   }
 
   Future<void> delete(String userId, String id) async {
-    if (await byId(userId, id) != null) await _db.delete(_store, id);
+    if (await byId(userId, id) != null) {
+      await _db.delete(_store, id);
+      await ImageRepository(_db).remove(userId, id);
+    }
   }
 
   Future<Dream> _require(String userId, String id) async {

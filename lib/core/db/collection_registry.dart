@@ -149,6 +149,7 @@ class CollectionRegistry {
       note: 'Key is <userId>_<unitId>; unit ids never contain an underscore. Content itself is bundled, not stored.',
     ),
     CollectionSpec('corner', CollectionOwnership.userId, note: 'Private letters, memories and wishes; a sealed date is a gentle seal, not encryption.'),
+    CollectionSpec('images', CollectionOwnership.userId, note: 'One optional local photo per dream or corner entry, keyed by the owner id; max 700 KB; included in backups.'),
     CollectionSpec('dreams', CollectionOwnership.userId, note: 'Steps are embedded in the dream record.'),
     CollectionSpec('books', CollectionOwnership.userId, note: 'Notes, quotes and summaries are embedded in the book record.'),
     CollectionSpec('routines', CollectionOwnership.userId),

@@ -8,6 +8,7 @@ import 'package:glowara/core/repositories/dream_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:glowara/core/widgets/photo_slot.dart';
 import 'package:glowara/features/dreams/dreams_screen.dart';
 
 class DreamScreen extends StatefulWidget {
@@ -186,6 +187,10 @@ class _DreamScreenState extends State<DreamScreen> {
                       maxLength: kDreamWishMax,
                       decoration: InputDecoration(labelText: context.tr('drWish'), counterText: ''),
                     ),
+                    if (_dream != null) ...<Widget>[
+                      const SizedBox(height: 12),
+                      PhotoSlot(ownerKind: 'dream', ownerId: _dream!.id),
+                    ],
                     const SizedBox(height: 12),
                     Text(context.tr('drStage')),
                     Wrap(

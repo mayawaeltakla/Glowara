@@ -8,6 +8,7 @@ import 'package:glowara/core/repositories/corner_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:glowara/core/widgets/photo_slot.dart';
 import 'package:glowara/features/corner/corner_screen.dart';
 
 class CornerEntryScreen extends StatefulWidget {
@@ -188,6 +189,10 @@ class _CornerEntryScreenState extends State<CornerEntryScreen> {
                           maxLength: kCornerTextMax,
                           decoration: InputDecoration(labelText: context.tr('cnText')),
                         ),
+                        if (_entry != null) ...<Widget>[
+                          const SizedBox(height: 8),
+                          PhotoSlot(ownerKind: 'corner', ownerId: _entry!.id),
+                        ],
                         const SizedBox(height: 8),
                         Text(context.tr('cnOpenOn')),
                         Row(
