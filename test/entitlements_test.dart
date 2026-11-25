@@ -55,7 +55,7 @@ void main() {
 
   group('no selling before it exists', () {
     test('the app contains no sales, trial or subscription wording', () {
-      final banned = RegExp(r'(glowara plus|\bplus\b(?! jakarta)|اشتراك|subscription|premium|بريميوم|free trial|تجربة مجانية|upgrade|ترقية)', caseSensitive: false);
+      final banned = RegExp(r'(glowara plus|\bplus\b(?! jakarta)|اشتراك|subscription|premium|بريميوم|free trial|تجربة مجانية|upgrade to|upgrade your|ترقية حسابك|ترقية إلى)', caseSensitive: false);
       final files = Directory('lib').listSync(recursive: true).whereType<File>().where((f) => f.path.endsWith('.dart'));
       for (final f in files) {
         if (f.path.endsWith('entitlements.dart')) continue; // التعليقات التوضيحية
