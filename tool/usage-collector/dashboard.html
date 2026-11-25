@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>لوحة غلوارا</title>
+<style>
+  :root{--bg:#faf6fb;--card:#fff;--ink:#2d2433;--muted:#7a6d84;--line:#eadff0;--accent:#8b5fa8;--accent2:#d9b3e8;--gold:#c9a24b;--err:#b3261e}
+  @media (prefers-color-scheme: dark){:root{--bg:#1c1722;--card:#272031;--ink:#f1e9f5;--muted:#b3a5bd;--line:#3a3046;--accent:#c79be0;--accent2:#5c3d73;--gold:#e0bd66;--err:#ff8a80}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6}
+  main{max-width:960px;margin:0 auto;padding:20px 16px 48px}
+  h1{font-size:22px;margin:8px 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .stat b{display:block;font-size:30px;color:var(--accent)}
+  .stat span{color:var(--muted);font-size:13px}
+  label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+  input[type=text],input[type=password],input[type=url]{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:15px}
+  button{background:var(--accent);color:#fff;border:0;border-radius:999px;padding:10px 20px;font-size:15px;cursor:pointer;margin-top:12px}
+  button.ghost{background:transparent;color:var(--accent);border:1px solid var(--line);margin-inline-start:8px}
+  .err{color:var(--err);margin-top:8px;font-size:14px}
+  .note{color:var(--muted);font-size:12px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  td,th{padding:6px 4px;text-align:start;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600}
+  h2{font-size:15px;margin:0 0 8px;color:var(--ink)}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  svg{width:100%;height:auto;display:block}
+  .hidden{display:none}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<main>
+  <h1>لوحة غلوارا</h1>
+  <p class="sub">كم مستخدمة تفتح التطبيق: أرقام مجهولة ومجمّعة. لا أسماء ولا بيانات شخصية.</p>
+
+  <section class="card" id="connect">
+    <label for="url">عنوان الجامع (Worker)</label>
+    <input id="url" type="url" inputmode="url" placeholder="https://glowara-usage.xxxx.workers.dev" autocomplete="off">
+    <label for="token">رمز المديرة (ADMIN_TOKEN)</label>
+    <input id="token" type="password" autocomplete="off">
+    <div class="row">
+      <button id="load" type="button">عرض الأرقام</button>
+      <label class="row" style="margin:12px 0 0"><input id="remember" type="checkbox"> تذكّر على هذا المتصفح</label>
+      <button id="forget" class="ghost hidden" type="button">نسيان</button>
+    </div>
+    <div id="error" class="err" role="alert"></div>
+    <p class="note">الرمز تكتبينه أنتِ هنا فقط ولا يُرسل إلا إلى عنوان الجامع الذي أدخلتِه. لا تشاركي هذه الصفحة مع الرمز محفوظًا.</p>
+  </section>
+
+  <div id="out" class="hidden">
+    <div class="card grid">
+      <div class="stat"><b id="dau">0</b><span>نشطات اليوم</span></div>
+      <div class="stat"><b id="wau">0</b><span>نشطات آخر 7 أيام</span></div>
+      <div class="stat"><b id="mau">0</b><span>نشطات آخر 30 يومًا</span></div>
+      <div class="stat"><b id="total">0</b><span>إجمالي التثبيتات (منذ البدء)</span></div>
+      <div class="stat"><b id="newToday">0</b><span>جديدات اليوم</span></div>
+    </div>
+    <div class="card">
+      <h2>النشطات يوميًا (آخر 30 يومًا)</h2>
+      <svg id="chart" viewBox="0 0 600 160" role="img" aria-label="رسم أعمدة للنشطات يوميًا"></svg>
+      <p class="note" id="range"></p>
+    </div>
+    <div class="card cols">
+      <div><h2>المنصة</h2><table id="byPlatform"></table></div>
+      <div><h2>اللغة</h2><table id="byLang"></table></div>
+      <div><h2>النسخة</h2><table id="byVersion"></table></div>
+    </div>
+    <p class="note">تُعدّ كل جهاز مرة في اليوم بمعرّف عشوائي. تُحسب فقط المستخدمات اللواتي وافقن على العدّ. الأرقام إرشادية وليست مضمونة ضد العبث، وهي تبدأ من يوم تشغيل الجامع.</p>
+  </div>
+</main>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var KEY = 'glowara_dashboard_v1';
+
+  function safeGet() { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } }
+  function safeSet(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+  function safeClear() { try { localStorage.removeItem(KEY); } catch (e) {} }
+
+  var saved = safeGet();
+  if (saved && saved.url) {
+    $('url').value = saved.url;
+    $('token').value = saved.token || '';
+    $('remember').checked = true;
+    $('forget').classList.remove('hidden');
+  }
+
+  var LABELS = { android: 'أندرويد', ios: 'آيفون', web: 'الويب', windows: 'ويندوز', linux: 'لينكس', macos: 'ماك', fuchsia: 'فوشيا', ar: 'العربية', en: 'الإنجليزية' };
+
+  function fillTable(id, obj) {
+    var t = $(id);
+    t.textContent = '';
+    var entries = Object.keys(obj).map(function (k) { return [k, obj[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+    if (!entries.length) {
+      var tr0 = document.createElement('tr'); var td0 = document.createElement('td'); td0.textContent = '—'; tr0.appendChild(td0); t.appendChild(tr0); return;
+    }
+    entries.forEach(function (e) {
+      var tr = document.createElement('tr');
+      var a = document.createElement('td'); a.textContent = LABELS[e[0]] || e[0];
+      var b = document.createElement('td'); b.textContent = String(e[1]);
+      tr.appendChild(a); tr.appendChild(b); t.appendChild(tr);
+    });
+  }
+
+  function drawChart(series) {
+    var svg = $('chart');
+    svg.textContent = '';
+    var ns = 'http://www.w3.org/2000/svg';
+    var max = Math.max.apply(null, series.map(function (s) { return s.active; }).concat([1]));
+    var w = 600, h = 160, pad = 18, n = series.length, bw = (w - 2) / n;
+    series.forEach(function (s, i) {
+      var bh = Math.round((h - pad) * (s.active / max));
+      var r = document.createElementNS(ns, 'rect');
+      r.setAttribute('x', String(w - (i + 1) * bw + 2)); // من اليمين إلى اليسار
+      r.setAttribute('y', String(h - pad - bh));
+      r.setAttribute('width', String(Math.max(bw - 4, 1)));
+      r.setAttribute('height', String(bh));
+      r.setAttribute('rx', '3');
+      r.setAttribute('fill', 'var(--accent)');
+      r.setAttribute('data-day', s.day);
+      r.setAttribute('data-active', String(s.active));
+      var title = document.createElementNS(ns, 'title');
+      title.textContent = s.day + ': ' + s.active;
+      r.appendChild(title);
+      svg.appendChild(r);
+    });
+  }
+
+  function render(d) {
+    $('dau').textContent = String(d.dau);
+    $('wau').textContent = String(d.wau);
+    $('mau').textContent = String(d.mau);
+    $('total').textContent = String(d.totalInstalls);
+    $('newToday').textContent = String(d.newToday);
+    drawChart(d.series || []);
+    var s = d.series || [];
+    $('range').textContent = s.length ? ('من ' + s[0].day + ' إلى ' + s[s.length - 1].day + ' (بتوقيت UTC)') : '';
+    fillTable('byPlatform', d.byPlatform || {});
+    fillTable('byLang', d.byLang || {});
+    fillTable('byVersion', d.byVersion || {});
+    $('out').classList.remove('hidden');
+  }
+
+  function fail(msg) { $('error').textContent = msg; $('out').classList.add('hidden'); }
+
+  $('load').addEventListener('click', function () {
+    $('error').textContent = '';
+    var base = $('url').value.trim().replace(/\/+$/, '');
+    var token = $('token').value;
+    if (!/^https:\/\/[^\s/]+/.test(base) && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?/.test(base)) { fail('اكتبي عنوان الجامع كاملًا ويبدأ بـ https://'); return; }
+    if (!token) { fail('اكتبي رمز المديرة.'); return; }
+    $('load').disabled = true;
+    fetch(base + '/stats', { headers: { Authorization: 'Bearer ' + token }, cache: 'no-store' })
+      .then(function (res) {
+        if (res.status === 401) throw new Error('الرمز غير صحيح.');
+        if (!res.ok) throw new Error('تعذّر الجلب (رمز ' + res.status + ').');
+        return res.json();
+      })
+      .then(function (d) {
+        render(d);
+        if ($('remember').checked) { safeSet({ url: base, token: token }); $('forget').classList.remove('hidden'); } else { safeClear(); $('forget').classList.add('hidden'); }
+      })
+      .catch(function (e) { fail(e && e.message && e.message.indexOf('الرمز') === 0 || (e && e.message && e.message.indexOf('تعذّر') === 0) ? e.message : 'تعذّر الاتصال بالجامع. تأكدي من العنوان ومن اتصالك.'); })
+      .then(function () { $('load').disabled = false; });
+  });
+
+  $('forget').addEventListener('click', function () {
+    safeClear();
+    $('token').value = '';
+    $('remember').checked = false;
+    $('forget').classList.add('hidden');
+    $('out').classList.add('hidden');
+  });
+})();
+</script>
+</body>
+</html>

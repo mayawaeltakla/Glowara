@@ -1,0 +1,118 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:glowara/core/localization/app_localizations.dart';
+import 'package:glowara/core/repositories/auth_repository.dart';
+import 'package:glowara/core/repositories/care_repository.dart';
+import 'package:glowara/core/repositories/habit_repository.dart';
+import 'package:glowara/core/repositories/health_repository.dart';
+import 'package:glowara/core/repositories/journal_repository.dart';
+import 'package:glowara/core/repositories/language_repository.dart';
+import 'package:glowara/core/repositories/progress_repository.dart';
+import 'package:glowara/core/repositories/settings_repository.dart';
+import 'package:glowara/core/repositories/study_repository.dart';
+import 'package:glowara/core/repositories/task_repository.dart';
+import 'package:glowara/core/repositories/worship_repository.dart';
+import 'package:glowara/core/security/privacy_service.dart';
+import 'package:glowara/core/services/usage_counter.dart';
+import 'package:glowara/core/state/app_state.dart';
+import 'package:glowara/core/theme/app_theme.dart';
+import 'package:glowara/features/home/home_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
+import 'support/test_db.dart';
+
+Future<AppState> _state() async {
+  final db = await openTestDatabase();
+  final settings = SettingsRepository(db);
+  final state = AppState(
+    db: db,
+    auth: AuthRepository(db, iterations: 10),
+    settings: settings,
+    privacy: PrivacyService(db, iterations: 10),
+    tasks: TaskRepository(db),
+    habits: HabitRepository(db),
+    worship: WorshipRepository(db),
+    journal: JournalRepository(db),
+    study: StudyRepository(db),
+    care: CareRepository(db),
+    health: HealthRepository(db),
+    language: LanguageRepository(db),
+    progress: ProgressRepository(db, settings),
+  );
+  await state.register(email: 'maya@example.com', password: 'secret1', name: 'مايا');
+  await state.initialize();
+  await state.setLocale('ar');
+  return state;
+}
+
+Future<void> _settle(WidgetTester tester) async {
+  await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 150)));
+  await tester.pump(const Duration(milliseconds: 500));
+  await tester.pump(const Duration(milliseconds: 500));
+}
+
+Future<void> _pump(WidgetTester tester, AppState state) async {
+  tester.view.physicalSize = const Size(400, 4000);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(
+    AppStateProvider(
+      state: state,
+      child: MaterialApp(
+        locale: Locale(state.locale),
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+          AppLocalizationsDelegate(),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: AppThemes.material('serene', Brightness.light, locale: state.locale, webFonts: false),
+        home: const HomeScreen(),
+      ),
+    ),
+  );
+  await _settle(tester);
+}
+
+void main() {
+  setUpAll(() async {
+    await initializeDateFormatting('ar');
+    await initializeDateFormatting('en');
+  });
+
+  tearDown(() => UsageCounter.debugEndpoint = null);
+
+  testWidgets('no collector configured: the notice never appears', (tester) async {
+    UsageCounter.debugEndpoint = '';
+    final state = (await tester.runAsync(_state))!;
+    await _pump(tester, state);
+    expect(find.byKey(const Key('home-usage-notice')), findsNothing);
+    expect(await tester.runAsync(() => state.settings.get<String>(kUsageConsentKey)), isNull);
+  });
+
+  testWidgets('with a collector the notice explains what is sent; declining stores a no and hides it', (tester) async {
+    UsageCounter.debugEndpoint = 'https://collector.example.test/ping';
+    final state = (await tester.runAsync(_state))!;
+    await _pump(tester, state);
+    expect(find.byKey(const Key('home-usage-notice')), findsOneWidget);
+    expect(find.textContaining('لا تُرسل أبدًا مهامك ولا مذكراتك'), findsOneWidget);
+    expect(await tester.runAsync(() => state.settings.get<String>(kUsageConsentKey)), isNull, reason: 'nothing decided yet');
+
+    await tester.ensureVisible(find.byKey(const Key('home-usage-no')));
+    await tester.tap(find.byKey(const Key('home-usage-no')));
+    await _settle(tester);
+    expect(find.byKey(const Key('home-usage-notice')), findsNothing);
+    expect(await tester.runAsync(() => state.settings.get<String>(kUsageConsentKey)), '0');
+    expect(await tester.runAsync(() => state.settings.get<String>(kUsageLastPingKey)), isNull);
+  });
+
+  testWidgets('a previous decision is respected: the notice does not come back', (tester) async {
+    UsageCounter.debugEndpoint = 'https://collector.example.test/ping';
+    final state = (await tester.runAsync(_state))!;
+    await tester.runAsync(() => state.settings.set(kUsageConsentKey, '0'));
+    await _pump(tester, state);
+    expect(find.byKey(const Key('home-usage-notice')), findsNothing);
+  });
+}

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:glowara/core/db/local_database.dart' show ImportSourceMismatch;
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
+import 'package:glowara/core/services/usage_counter.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/app_log.dart';
@@ -611,6 +612,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ],
           ),
           const SizedBox(height: 14),
+          const _UsageSection(),
           _Section(
             title: context.tr('dataPrivacy'),
             children: <Widget>[
@@ -842,6 +844,56 @@ class _ReminderHourRow extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// قسم العدّ المجهول في الإعدادات: لا يظهر إن لم يُبنَ التطبيق بعنوان جامع.
+class _UsageSection extends StatefulWidget {
+  const _UsageSection();
+
+  @override
+  State<_UsageSection> createState() => _UsageSectionState();
+}
+
+class _UsageSectionState extends State<_UsageSection> {
+  bool _loaded = false;
+  bool _on = false;
+  late UsageCounter _counter;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loaded) return;
+    _loaded = true;
+    _counter = UsageCounter(settings: AppState.of(context).settings);
+    if (_counter.configured) {
+      _counter.consent().then((c) {
+        if (mounted) setState(() => _on = c == UsageConsent.granted);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded || !_counter.configured) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: _Section(
+        title: context.tr('ucSettingsTitle'),
+        children: <Widget>[
+          SwitchListTile(
+            key: const Key('usage-switch'),
+            value: _on,
+            title: Text(context.tr('ucSettingsTitle')),
+            subtitle: Text(context.tr('ucSettingsSub'), style: const TextStyle(fontSize: 11)),
+            onChanged: (v) async {
+              setState(() => _on = v);
+              await _counter.setConsent(v);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
