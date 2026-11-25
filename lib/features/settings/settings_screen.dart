@@ -10,6 +10,7 @@ import 'package:glowara/core/db/local_database.dart' show ImportSourceMismatch;
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/repositories/settings_repository.dart';
 import 'package:glowara/core/services/usage_counter.dart';
+import 'package:glowara/core/services/widget_sync.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/app_log.dart';
@@ -613,6 +614,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 14),
           const _UsageSection(),
+          const _WidgetSection(),
           _Section(
             title: context.tr('dataPrivacy'),
             children: <Widget>[
@@ -890,6 +892,55 @@ class _UsageSectionState extends State<_UsageSection> {
             onChanged: (v) async {
               setState(() => _on = v);
               await _counter.setConsent(v);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+/// قسم ودجت الشاشة الرئيسية: يظهر فقط في بناء أندرويد الذي يحمل الودجت.
+class _WidgetSection extends StatefulWidget {
+  const _WidgetSection();
+
+  @override
+  State<_WidgetSection> createState() => _WidgetSectionState();
+}
+
+class _WidgetSectionState extends State<_WidgetSection> {
+  bool _loaded = false;
+  bool _on = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loaded || !WidgetSync.platformSupported) return;
+    _loaded = true;
+    final state = AppState.of(context);
+    WidgetSync(settings: state.settings, db: state.db).enabled(state.userId).then((v) {
+      if (mounted) setState(() => _on = v);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!WidgetSync.platformSupported) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: _Section(
+        title: context.tr('wgTitle'),
+        children: <Widget>[
+          SwitchListTile(
+            key: const Key('widget-switch'),
+            value: _on,
+            title: Text(context.tr('wgTitle')),
+            subtitle: Text(context.tr('wgSub'), style: const TextStyle(fontSize: 11)),
+            onChanged: (v) async {
+              final state = AppState.of(context);
+              setState(() => _on = v);
+              await WidgetSync(settings: state.settings, db: state.db).setEnabled(state.userId, v, state.locale);
             },
           ),
         ],

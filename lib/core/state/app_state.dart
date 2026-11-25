@@ -23,6 +23,7 @@ import 'package:glowara/core/security/privacy_service.dart';
 import 'package:glowara/core/services/notification_service.dart';
 import 'package:glowara/core/services/prayer_service.dart';
 import 'package:glowara/core/services/quran_service.dart';
+import 'package:glowara/core/services/widget_sync.dart';
 import 'package:glowara/core/utils/app_log.dart';
 
 class AppState extends ChangeNotifier {
@@ -154,6 +155,7 @@ class AppState extends ChangeNotifier {
 
   Future<void> logout() async {
     await auth.logout();
+    await WidgetSync.clearForLogout();
     _user = null;
     notifyListeners();
   }
@@ -167,6 +169,7 @@ class AppState extends ChangeNotifier {
     final id = _user?.id;
     if (id == null) return;
     await auth.deleteAccount(id);
+    await WidgetSync.clearForLogout();
     if (!await auth.hasAccounts()) {
       await db.clearAll();
       await _clearLegacyData();
