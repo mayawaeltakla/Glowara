@@ -77,7 +77,7 @@ Future<void> _pump(WidgetTester tester, AppState state, String id) async {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         theme: AppThemes.material('serene', Brightness.light, locale: state.locale, webFonts: false),
-        home: DreamScreen(dreamId: id),
+        home: DreamScreen(key: ValueKey<String>(id), dreamId: id),
       ),
     ),
   );

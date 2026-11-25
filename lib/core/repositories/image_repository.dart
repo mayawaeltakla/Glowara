@@ -53,10 +53,10 @@ class ImageRepository {
 
   final LocalDatabase _db;
 
-  static const String store = 'images';
+  static const String _store = 'images';
 
   Future<StoredPhoto?> get(String userId, String ownerId) async {
-    final p = await _db.byId(store, ownerId, (m) => StoredPhoto.tryParse(m));
+    final p = await _db.byId(_store, ownerId, (m) => StoredPhoto.tryParse(m));
     return p != null && p.userId == userId ? p : null;
   }
 
@@ -67,9 +67,9 @@ class ImageRepository {
     final mime = sniffImageMime(bytes);
     if (mime == null) return PhotoResult.notImage;
     if (bytes.length > kPhotoMaxBytes) return PhotoResult.tooLarge;
-    final existing = await _db.byId(store, ownerId, (m) => StoredPhoto.tryParse(m));
+    final existing = await _db.byId(_store, ownerId, (m) => StoredPhoto.tryParse(m));
     if (existing != null && existing.userId != userId) throw StateError('not yours');
-    await _db.put(store, ownerId, <String, dynamic>{
+    await _db.put(_store, ownerId, <String, dynamic>{
       'id': ownerId,
       'userId': userId,
       'ownerKind': ownerKind,
@@ -81,6 +81,6 @@ class ImageRepository {
   }
 
   Future<void> remove(String userId, String ownerId) async {
-    if (await get(userId, ownerId) != null) await _db.delete(store, ownerId);
+    if (await get(userId, ownerId) != null) await _db.delete(_store, ownerId);
   }
 }
