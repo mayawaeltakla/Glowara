@@ -3,12 +3,14 @@ library glowara.feature.home;
 
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/models/app_models.dart';
 import 'package:glowara/core/models/home_layout.dart';
 import 'package:glowara/core/models/weekly_reset_models.dart';
 import 'package:glowara/core/repositories/weekly_reset_repository.dart';
+import 'package:glowara/core/services/usage_counter.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
@@ -43,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   MoodEntry? _mood;
   String? _lastSurah;
   HomeLayout _layout = HomeLayout.defaults;
+  bool _offerUsage = false;
 
   @override
   void didChangeDependencies() {
@@ -100,6 +103,39 @@ class _HomeScreenState extends State<HomeScreen> {
       _loading = false;
     });
     await _loadWeeklyOffer(state, now);
+    await _loadUsage(state);
+  }
+
+  /// بطاقة موافقة العدّ المجهول (تظهر فقط إن كان الجامع مضبوطًا ولم تقرّر بعد)،
+  /// ثم إرسال إشارة اليوم إن وافقت. فشلها لا يمنع بقية الرئيسية.
+  Future<void> _loadUsage(AppState state) async {
+    try {
+      final counter = UsageCounter(settings: state.settings);
+      if (!counter.configured) return;
+      final consent = await counter.consent();
+      if (mounted) setState(() => _offerUsage = consent == UsageConsent.unset);
+      if (consent == UsageConsent.granted) {
+        await counter.maybePing(
+          platform: kIsWeb ? 'web' : defaultTargetPlatform.name,
+          locale: state.locale,
+        );
+      }
+    } catch (_) {
+      // لا شيء: العدّ اختياري ولا يؤثر على التطبيق.
+    }
+  }
+
+  Future<void> _answerUsage(bool granted) async {
+    final state = AppState.of(context);
+    setState(() => _offerUsage = false);
+    final counter = UsageCounter(settings: state.settings);
+    await counter.setConsent(granted);
+    if (granted) {
+      await counter.maybePing(
+        platform: kIsWeb ? 'web' : defaultTargetPlatform.name,
+        locale: state.locale,
+      );
+    }
   }
 
   /// بطاقة المراجعة الأسبوعية: في أول يومين من الأسبوع، إن لم تُحفظ مراجعة للأسبوع
@@ -629,6 +665,42 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                   ],
 
+                  if (_offerUsage) ...<Widget>[
+                    GlowCard(
+                      key: const Key('home-usage-notice'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            context.tr('ucNoticeTitle'),
+                            style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            context.tr('ucNoticeBody'),
+                            style: TextStyle(fontSize: 13, color: c.onSurfaceVariant, height: 1.5),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: <Widget>[
+                              FilledButton(
+                                key: const Key('home-usage-yes'),
+                                onPressed: () => _answerUsage(true),
+                                child: Text(context.tr('ucYes')),
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton(
+                                key: const Key('home-usage-no'),
+                                onPressed: () => _answerUsage(false),
+                                child: Text(context.tr('ucNo')),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   if (_backupDue) ...<Widget>[
                     GlowCard(
                       onTap: () => _open('/settings'),

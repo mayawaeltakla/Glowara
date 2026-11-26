@@ -831,6 +831,13 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'dbDreams': 'أحلام أعمل عليها',
     'dbBooks': 'أقرؤه الآن',
     'dbLoadError': 'تعذّر تحميل الملخص',
+    // عدّ الاستخدام المجهول
+    'ucNoticeTitle': 'عدّ استخدام مجهول',
+    'ucNoticeBody': 'تريد صاحبة غلوارا أن تعرف كم مستخدمة تفتح التطبيق لتطوّره. إن وافقتِ، يرسل جهازك مرة في اليوم رقمًا عشوائيًا لا يدل عليك، مع نسخة التطبيق والمنصة واللغة وتاريخ اليوم. لا تُرسل أبدًا مهامك ولا مذكراتك ولا مزاجك ولا عبادتك ولا أي بيانات أخرى. يمكنك الإيقاف متى شئتِ من الإعدادات.',
+    'ucYes': 'أوافق',
+    'ucNo': 'لا أريد',
+    'ucSettingsTitle': 'عدّ الاستخدام المجهول',
+    'ucSettingsSub': 'يرسل رقمًا عشوائيًا مرة في اليوم مع النسخة والمنصة واللغة فقط. لا بياناتك.',
   },
   'en': <String, String>{
     // General
@@ -1660,5 +1667,12 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'dbDreams': 'Dreams in progress',
     'dbBooks': 'Reading now',
     'dbLoadError': 'Could not load the summary',
+    // Anonymous usage count
+    'ucNoticeTitle': 'Anonymous usage count',
+    'ucNoticeBody': 'The owner of Glowara would like to know how many people open the app, to improve it. If you agree, your device sends once a day a random number that does not identify you, with the app version, platform, language and today\'s date. Your tasks, journals, mood, worship or any other data are never sent. You can turn it off any time in Settings.',
+    'ucYes': 'I agree',
+    'ucNo': 'No thanks',
+    'ucSettingsTitle': 'Anonymous usage count',
+    'ucSettingsSub': 'Sends a random number once a day with only the version, platform and language. Never your data.',
   },
 };
