@@ -23,6 +23,8 @@ String _keyFor(CollectionSpec spec, String user) {
       return '${user}_2026-11-01';
     case CollectionKeyShape.profile:
       return 'profile_$user';
+    case CollectionKeyShape.userSuffix:
+      return '${user}_first-task';
     case CollectionKeyShape.plain:
       return '${spec.name}_$user';
   }

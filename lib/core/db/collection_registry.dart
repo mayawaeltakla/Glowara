@@ -38,6 +38,9 @@ enum CollectionKeyShape {
 
   /// `profile_<userId>`.
   profile,
+
+  /// `<userId>_<suffix>` حيث اللاحقة بلا شرطة سفلية (مثل `<userId>_first-task`).
+  userSuffix,
 }
 
 class CollectionSpec {
@@ -132,6 +135,12 @@ class CollectionRegistry {
       CollectionOwnership.userId,
       keyShape: CollectionKeyShape.userDate,
       note: 'Key is <userId>_<weekStart YYYY-MM-DD>; weekStart/weekEnd are stored explicitly.',
+    ),
+    CollectionSpec(
+      'milestones',
+      CollectionOwnership.userId,
+      keyShape: CollectionKeyShape.userSuffix,
+      note: 'Key is <userId>_<milestoneId>; milestone ids never contain an underscore.',
     ),
     CollectionSpec('profiles', CollectionOwnership.userId, keyShape: CollectionKeyShape.profile),
     CollectionSpec('sync', CollectionOwnership.userId),
