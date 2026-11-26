@@ -36,6 +36,7 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
   List<MoodEntry> _moods = <MoodEntry>[];
   List<JournalEntry> _journals = <JournalEntry>[];
   int _moodValue = 3;
+  int? _energy;
   final _moodNote = TextEditingController();
   final _search = TextEditingController();
 
@@ -118,6 +119,7 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
       _journals = journals;
       if (mood != null) {
         _moodValue = mood.value;
+        _energy = mood.energy;
         _moodNote.text = mood.note ?? '';
       }
       _loading = false;
@@ -180,6 +182,7 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
       day: DateTime.now(),
       value: _moodValue,
       note: _moodNote.text.trim().isEmpty ? null : _moodNote.text.trim(),
+      energy: _energy,
     );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -451,6 +454,22 @@ class _JournalScreenState extends State<JournalScreen> with WidgetsBindingObserv
                     onTap: () => setState(() => _moodValue = value),
                   );
                 }).toList(),
+              ),
+              const SizedBox(height: 12),
+              Text(context.tr('egTitle'), style: TextStyle(fontSize: 12, color: c.onSurfaceVariant)),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: <Widget>[
+                  for (var level = 1; level <= 5; level++)
+                    ChoiceChip(
+                      key: Key('energy-$level'),
+                      label: Text(context.tr('eg$level')),
+                      selected: _energy == level,
+                      onSelected: (on) => setState(() => _energy = on ? level : null),
+                    ),
+                ],
               ),
               const SizedBox(height: 12),
               TextField(
