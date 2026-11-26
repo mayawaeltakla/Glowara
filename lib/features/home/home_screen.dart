@@ -6,10 +6,13 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/models/app_models.dart';
+import 'package:glowara/core/models/weekly_reset_models.dart';
+import 'package:glowara/core/repositories/weekly_reset_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
 import 'package:glowara/core/widgets/glow_widgets.dart';
+import 'package:glowara/features/calendar/calendar_layout.dart';
 import 'package:glowara/features/worship/adhkar_screen.dart' show doneFlagKey;
 import 'package:glowara/features/worship/dua_screen.dart' show kDuas;
 import 'package:go_router/go_router.dart';
@@ -33,6 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _eveningDone = false;
   int _duaDone = 0;
   bool _backupDue = false;
+  bool _offerReset = false;
+  DateTime? _resetWeek; // بداية الأسبوع السابق (الذي تُعرض مراجعته)
   int _studyMinutes = 0;
   MoodEntry? _mood;
   String? _lastSurah;
@@ -90,6 +95,39 @@ class _HomeScreenState extends State<HomeScreen> {
           : duaRaw.split(',').map(int.tryParse).whereType<int>().where((i) => i < kDuas.length).length;
       _loading = false;
     });
+    await _loadWeeklyOffer(state, now);
+  }
+
+  /// بطاقة المراجعة الأسبوعية: في أول يومين من الأسبوع، إن لم تُحفظ مراجعة للأسبوع
+  /// السابق ولم تُخفَ. فشلها لا يمنع بقية الرئيسية.
+  Future<void> _loadWeeklyOffer(AppState state, DateTime now) async {
+    try {
+      final first = weekStartFor(state.locale);
+      final thisWeek = weekStartOf(now, first);
+      final prevWeek = addDays(thisWeek, -7);
+      final uid = state.userId;
+      final reviewed = await WeeklyResetRepository(state.db, state.progress).forWeek(uid, prevWeek) != null;
+      final hidden = await state.settings.get<String>(weeklyResetHiddenKey(uid, thisWeek)) == '1';
+      if (!mounted) return;
+      setState(() {
+        _resetWeek = prevWeek;
+        _offerReset = shouldOfferWeeklyReset(
+          today: now,
+          weekStart: first,
+          previousWeekReviewed: reviewed,
+          hidden: hidden,
+        );
+      });
+    } catch (_) {
+      if (mounted) setState(() => _offerReset = false);
+    }
+  }
+
+  Future<void> _hideWeeklyOffer() async {
+    final state = AppState.of(context);
+    final thisWeek = weekStartOf(DateTime.now(), weekStartFor(state.locale));
+    setState(() => _offerReset = false);
+    await state.settings.set(weeklyResetHiddenKey(state.userId, thisWeek), '1');
   }
 
   Future<void> _open(String route) async {
@@ -495,6 +533,51 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                   const SizedBox(height: 12),
+
+                  if (_offerReset && _resetWeek != null) ...<Widget>[
+                    GlowCard(
+                      key: const Key('home-weekly-reset'),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.self_improvement, color: c.primary),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  context.tr('wkHomeTitle'),
+                                  style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            context.tr('wkHomeBody'),
+                            style: TextStyle(fontSize: 13, color: c.onSurfaceVariant, height: 1.5),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: <Widget>[
+                              FilledButton(
+                                key: const Key('home-weekly-reset-start'),
+                                onPressed: () => _open('/weekly-reset?week=${dateKey(_resetWeek!)}'),
+                                child: Text(context.tr('wkHomeStart')),
+                              ),
+                              const SizedBox(width: 8),
+                              TextButton(
+                                key: const Key('home-weekly-reset-hide'),
+                                onPressed: _hideWeeklyOffer,
+                                child: Text(context.tr('wkHomeLater')),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
 
                   if (_backupDue) ...<Widget>[
                     GlowCard(

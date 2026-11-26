@@ -127,6 +127,12 @@ class CollectionRegistry {
     CollectionSpec('lessons', CollectionOwnership.userId),
     CollectionSpec('quizAttempts', CollectionOwnership.userId),
     CollectionSpec('goals', CollectionOwnership.userId),
+    CollectionSpec(
+      'weeklyResets',
+      CollectionOwnership.userId,
+      keyShape: CollectionKeyShape.userDate,
+      note: 'Key is <userId>_<weekStart YYYY-MM-DD>; weekStart/weekEnd are stored explicitly.',
+    ),
     CollectionSpec('profiles', CollectionOwnership.userId, keyShape: CollectionKeyShape.profile),
     CollectionSpec('sync', CollectionOwnership.userId),
     CollectionSpec(

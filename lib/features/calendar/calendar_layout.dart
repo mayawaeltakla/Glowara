@@ -31,3 +31,12 @@ bool isInMonth(DateTime day, DateTime month) =>
 
 /// اليوم المجاور لـ [day] بعد [delta] يومًا (يقبل سالبًا).
 DateTime addDays(DateTime day, int delta) => DateTime(day.year, day.month, day.day + delta);
+
+/// أول يوم في الأسبوع الذي يحوي [day] (بحساب التقويم المحلي لا بإضافة 24 ساعة).
+DateTime weekStartOf(DateTime day, int weekStart) {
+  final offset = (day.weekday - weekStart + 7) % 7;
+  return DateTime(day.year, day.month, day.day - offset);
+}
+
+/// آخر يوم (اليوم السابع) في الأسبوع الذي يبدأ في [start].
+DateTime weekEndOf(DateTime start) => DateTime(start.year, start.month, start.day + 6);

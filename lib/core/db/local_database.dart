@@ -41,7 +41,11 @@ class LocalDatabase {
 
   /// بادئات مفاتيح إعدادات لا تُصدَّر لأنها نسخ مؤقتة قابلة لإعادة الجلب
   /// (مثل كاش سور القرآن) وتُضخّم النسخة الاحتياطية دون فائدة.
-  static const List<String> nonExportedSettingPrefixes = <String>['quran_cache_'];
+  static const List<String> nonExportedSettingPrefixes = <String>[
+    'quran_cache_',
+    // حالة واجهة على الجهاز (إخفاء بطاقة المراجعة الأسبوعية)، لا تُنقل.
+    'weekly_reset_hidden_',
+  ];
 
   /// هل يُسمح بتصدير/استيراد هذا المفتاح؟
   static bool isExportableSetting(String key) {
@@ -240,13 +244,14 @@ class LocalDatabase {
           if (targetUserId != null) {
             final oldId = (safe['id'] ?? recordKey).toString();
             safe['userId'] = targetUserId;
-            if (name == 'water' || name == 'moods') {
+            final shape = CollectionRegistry.byName(name).keyShape;
+            if (shape == CollectionKeyShape.userDate) {
               // المعرّف القديم: <userId>_<YYYY-MM-DD>، وuserId نفسه يحتوي _.
               final split = oldId.lastIndexOf('_');
               final datePart = split >= 0 ? oldId.substring(split + 1) : oldId;
               recordKey = '${targetUserId}_$datePart';
               safe['id'] = recordKey;
-            } else if (name == 'profiles') {
+            } else if (shape == CollectionKeyShape.profile) {
               recordKey = 'profile_$targetUserId';
               safe['id'] = recordKey;
             }

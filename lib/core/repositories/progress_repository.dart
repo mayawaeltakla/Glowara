@@ -15,10 +15,14 @@ class ProgressRepository {
   final LocalDatabase _db;
   final SettingsRepository _settings;
 
+  /// [includeLegacyOwnerless]: هل تُحسب السجلات القديمة التي لا تحمل `userId`
+  /// (الدراسة والقراءة)؟ الافتراضي `true` للحفاظ على سلوك شاشة التقدم؛ المراجعة
+  /// الأسبوعية والتقويم يستبعدانها.
   Future<PeriodStats> stats({
     required String userId,
     required DateTime from,
     required DateTime to,
+    bool includeLegacyOwnerless = true,
   }) async {
     final fromKey = dateKey(from);
     final toKey = dateKey(to);
@@ -76,14 +80,14 @@ class ProgressRepository {
     // الدراسة
     final sessions = await _db.list('sessions', StudySession.fromJson);
     final studyMinutes = sessions
-        .where((s) => s.userId.isEmpty || s.userId == userId)
+        .where((s) => s.userId == userId || (includeLegacyOwnerless && s.userId.isEmpty))
         .where((s) => inRange(s.startedAt, start, end))
         .fold<int>(0, (sum, s) => sum + (s.durationMinutes ?? 0));
 
     // القرآن
     final readings = await _db.list('readingLogs', ReadingLog.fromJson);
     final periodReadings = readings
-        .where((r) => r.userId.isEmpty || r.userId == userId)
+        .where((r) => r.userId == userId || (includeLegacyOwnerless && r.userId.isEmpty))
         .where((r) => inRange(r.completedAt, start, end))
         .toList();
     final quranReadings = periodReadings.where((r) => r.itemId.startsWith('quran')).length;

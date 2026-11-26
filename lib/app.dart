@@ -22,6 +22,7 @@ import 'package:glowara/features/progress/progress_screen.dart';
 import 'package:glowara/features/settings/settings_screen.dart';
 import 'package:glowara/features/study/study_screen.dart';
 import 'package:glowara/features/study/subject_detail_screen.dart';
+import 'package:glowara/features/weekly_reset/weekly_reset_screen.dart';
 import 'package:glowara/features/worship/quran_reader_screen.dart';
 import 'package:glowara/features/worship/worship_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -84,6 +85,15 @@ final GoRouter _router = GoRouter(
       // `?day=YYYY-MM-DD` يفتح الشاشة على يوم معيّن (من التقويم الشهري).
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
+      ),
+    ),
+    GoRoute(
+      path: '/weekly-reset',
+      // `?week=YYYY-MM-DD` يفتح المراجعة على أسبوع يبدأ في هذا اليوم.
+      builder: (context, state) => _Protected(
+        child: WeeklyResetScreen(
+          initialWeekStart: parseDateKey(state.uri.queryParameters['week']),
+        ),
       ),
     ),
     GoRoute(
