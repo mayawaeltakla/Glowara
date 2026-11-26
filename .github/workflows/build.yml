@@ -106,6 +106,9 @@ jobs:
       - name: Prepare Android for local notifications
         run: python3 tool/apply_android_notifications.py
 
+      - name: Add the home-screen widget (test build only)
+        run: python3 tool/apply_android_widget.py
+
       - name: Set application id (debug-signed test build)
         run: python3 tool/apply_signing.py --test
 
@@ -131,7 +134,7 @@ jobs:
       - name: Build Android APK (test-signed, not an official release)
         id: build_apk
         continue-on-error: true
-        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols
+        run: flutter build apk --release --split-per-abi --split-debug-info=build/symbols --dart-define=GLOWARA_WIDGET=true
 
       - name: Build web release
         id: build_web

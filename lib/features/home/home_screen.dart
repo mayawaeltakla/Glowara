@@ -11,6 +11,7 @@ import 'package:glowara/core/models/home_layout.dart';
 import 'package:glowara/core/models/weekly_reset_models.dart';
 import 'package:glowara/core/repositories/weekly_reset_repository.dart';
 import 'package:glowara/core/services/usage_counter.dart';
+import 'package:glowara/core/services/widget_sync.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
@@ -104,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     await _loadWeeklyOffer(state, now);
     await _loadUsage(state);
+    await WidgetSync(settings: state.settings, db: state.db).refresh(state.userId, state.locale);
   }
 
   /// بطاقة موافقة العدّ المجهول (تظهر فقط إن كان الجامع مضبوطًا ولم تقرّر بعد)،

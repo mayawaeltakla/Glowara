@@ -838,6 +838,8 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'phTooLarge': 'الصورة كبيرة. اختاري صورة أقل من 700 ك.ب.',
     'phNotImage': 'هذا الملف ليس صورة مدعومة (JPG أو PNG أو WebP).',
     'phNote': 'تبقى الصورة على جهازك فقط، وتدخل في النسخة الاحتياطية مع بياناتك.',
+    'wgTitle': 'ودجت الشاشة الرئيسية',
+    'wgSub': 'يعرض سطرًا واحدًا فقط: عدد مهام اليوم. لا عناوين مهامك ولا أي شيء آخر. ولأن أي شخص ينظر إلى شاشة هاتفك قد يراه، هو مغلق إلى أن تفتحيه. أضيفيه بالضغط المطوّل على الشاشة الرئيسية ثم «الأدوات». يتجدد كل نحو نصف ساعة.',
     // عدّ الاستخدام المجهول
     'ucNoticeTitle': 'عدّ استخدام مجهول',
     'ucNoticeBody': 'تريد صاحبة غلوارا أن تعرف كم مستخدمة تفتح التطبيق لتطوّره. إن وافقتِ، يرسل جهازك مرة في اليوم رقمًا عشوائيًا لا يدل عليك، مع نسخة التطبيق والمنصة واللغة وتاريخ اليوم. لا تُرسل أبدًا مهامك ولا مذكراتك ولا مزاجك ولا عبادتك ولا أي بيانات أخرى. يمكنك الإيقاف متى شئتِ من الإعدادات.',
@@ -1681,6 +1683,8 @@ const Map<String, Map<String, String>> extraStrings = <String, Map<String, Strin
     'phTooLarge': 'The photo is too large. Choose one under 700 KB.',
     'phNotImage': 'This file is not a supported image (JPG, PNG or WebP).',
     'phNote': 'The photo stays on your device only and is included in your backup.',
+    'wgTitle': 'Home-screen widget',
+    'wgSub': 'Shows a single line only: how many tasks you have today. No task titles and nothing else. Anyone looking at your phone could see it, so it is off until you turn it on. Add it by long-pressing the home screen, then Widgets. It refreshes about every half hour.',
     // Anonymous usage count
     'ucNoticeTitle': 'Anonymous usage count',
     'ucNoticeBody': 'The owner of Glowara would like to know how many people open the app, to improve it. If you agree, your device sends once a day a random number that does not identify you, with the app version, platform, language and today\'s date. Your tasks, journals, mood, worship or any other data are never sent. You can turn it off any time in Settings.',
