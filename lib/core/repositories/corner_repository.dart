@@ -4,6 +4,7 @@ library glowara.repositories.corner;
 
 import 'package:sembast/sembast.dart';
 import 'package:glowara/core/db/local_database.dart';
+import 'package:glowara/core/repositories/image_repository.dart';
 import 'package:glowara/core/models/app_models.dart';
 import 'package:glowara/core/models/corner_models.dart';
 
@@ -60,6 +61,9 @@ class CornerRepository {
   }
 
   Future<void> delete(String userId, String id) async {
-    if (await byId(userId, id) != null) await _db.delete(_store, id);
+    if (await byId(userId, id) != null) {
+      await _db.delete(_store, id);
+      await ImageRepository(_db).remove(userId, id);
+    }
   }
 }

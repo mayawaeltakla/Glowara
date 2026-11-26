@@ -165,6 +165,7 @@ void main() {
     await _tap(tester, find.byKey(Key('cn-item-${e.id}')));
     expect(find.byKey(const Key('cn-sealed')), findsNothing);
     expect(tester.widget<TextField>(find.byKey(const Key('cn-text'))).controller!.text, 'رسالة قديمة');
+    await _settle(tester); // the photo slot finishes its local read
   });
 
   testWidgets('filter by kind, and deleting asks first', (tester) async {
