@@ -7,6 +7,9 @@ import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
+import 'package:glowara/features/academy/academy_practice_screen.dart';
+import 'package:glowara/features/academy/academy_screen.dart';
+import 'package:glowara/features/academy/academy_unit_screen.dart';
 import 'package:glowara/features/auth/auth_screens.dart';
 import 'package:glowara/features/calendar/month_calendar_screen.dart';
 import 'package:glowara/features/calendar/tasks_screen.dart';
@@ -86,6 +89,26 @@ final GoRouter _router = GoRouter(
       // `?day=YYYY-MM-DD` يفتح الشاشة على يوم معيّن (من التقويم الشهري).
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
+      ),
+    ),
+    GoRoute(
+      path: '/academy',
+      builder: (context, state) => const _Protected(child: AcademyScreen()),
+    ),
+    GoRoute(
+      path: '/academy/unit/:id',
+      builder: (context, state) => _Protected(
+        child: AcademyUnitScreen(unitId: state.pathParameters['id'] ?? ''),
+      ),
+    ),
+    GoRoute(
+      path: '/academy/practice/:id',
+      // `?mode=review` يراجع ما أُخطئ فيه فقط.
+      builder: (context, state) => _Protected(
+        child: AcademyPracticeScreen(
+          unitId: state.pathParameters['id'] ?? '',
+          reviewOnly: state.uri.queryParameters['mode'] == 'review',
+        ),
       ),
     ),
     GoRoute(

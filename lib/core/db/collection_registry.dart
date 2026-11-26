@@ -142,6 +142,12 @@ class CollectionRegistry {
       keyShape: CollectionKeyShape.userSuffix,
       note: 'Key is <userId>_<milestoneId>; milestone ids never contain an underscore.',
     ),
+    CollectionSpec(
+      'academyProgress',
+      CollectionOwnership.userId,
+      keyShape: CollectionKeyShape.userSuffix,
+      note: 'Key is <userId>_<unitId>; unit ids never contain an underscore. Content itself is bundled, not stored.',
+    ),
     CollectionSpec('profiles', CollectionOwnership.userId, keyShape: CollectionKeyShape.profile),
     CollectionSpec('sync', CollectionOwnership.userId),
     CollectionSpec(

@@ -48,4 +48,5 @@ flutter:
 
   assets:
     - assets/images/glowara_logo.png
+    - assets/academy/a1.json
     - assets/google_fonts/
