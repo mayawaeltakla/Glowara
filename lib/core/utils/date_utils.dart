@@ -59,3 +59,17 @@ bool inRange(DateTime date, DateTime from, DateTime to) {
   final d = startOfDay(date);
   return !d.isBefore(startOfDay(from)) && !d.isAfter(startOfDay(to));
 }
+
+/// يقرأ مفتاح تاريخ بصيغة `YYYY-MM-DD` ويعيد `null` إن كان غير صالح (مثل
+/// `2026-02-30`). يُستعمل لقراءة معاملات الروابط بأمان.
+DateTime? parseDateKey(String? raw) {
+  if (raw == null) return null;
+  final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(raw);
+  if (match == null) return null;
+  final year = int.parse(match.group(1)!);
+  final month = int.parse(match.group(2)!);
+  final day = int.parse(match.group(3)!);
+  final date = DateTime(year, month, day);
+  if (date.year != year || date.month != month || date.day != day) return null;
+  return date;
+}
