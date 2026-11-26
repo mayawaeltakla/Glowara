@@ -22,6 +22,7 @@ import 'package:glowara/features/language/language_screen.dart';
 import 'package:glowara/features/language/quiz_screen.dart';
 import 'package:glowara/features/milestones/milestones_screen.dart';
 import 'package:glowara/features/more/more_screen.dart';
+import 'package:glowara/features/nutrition/nutrition_screen.dart';
 import 'package:glowara/features/progress/progress_screen.dart';
 import 'package:glowara/features/settings/settings_screen.dart';
 import 'package:glowara/features/study/study_screen.dart';
@@ -90,6 +91,10 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => _Protected(
         child: TasksScreen(initialDay: parseDateKey(state.uri.queryParameters['day'])),
       ),
+    ),
+    GoRoute(
+      path: '/nutrition',
+      builder: (context, state) => const _Protected(child: NutritionScreen()),
     ),
     GoRoute(
       path: '/academy',

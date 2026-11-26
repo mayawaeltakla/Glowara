@@ -834,6 +834,7 @@ class MealNote {
     required this.dateTime,
     this.mealType = 'meal',
     this.note,
+    this.groups = const <String>[],
     required this.createdAt,
     this.syncStatus = SyncStatus.local,
     this.lastModified,
@@ -845,6 +846,10 @@ class MealNote {
   /// breakfast | lunch | dinner | snack | meal
   final String mealType;
   final String? note;
+
+  /// مجموعات الطعام التي علّمتها المستخدمة (اختياري): vegetables | fruit | grains |
+  /// protein | dairy. لا كميات ولا سعرات.
+  final List<String> groups;
   final DateTime createdAt;
   final SyncStatus syncStatus;
   final DateTime? lastModified;
@@ -853,6 +858,7 @@ class MealNote {
         'id': id, 'userId': userId,
         'dateTime': _DateTimeHelper.toJson(dateTime),
         'mealType': mealType, 'note': note,
+        'groups': groups,
         'createdAt': _DateTimeHelper.toJson(createdAt),
         'syncStatus': syncStatus.toJsonValue(),
         'lastModified': _DateTimeHelper.toJson(lastModified),
@@ -864,6 +870,9 @@ class MealNote {
         dateTime: _DateTimeHelper.fromJson(json['dateTime']) ?? DateTime.now(),
         mealType: (json['mealType'] as String?) ?? 'meal',
         note: json['note'] as String?,
+        groups: json['groups'] is List
+            ? (json['groups'] as List<dynamic>).whereType<String>().toList()
+            : const <String>[],
         createdAt: _DateTimeHelper.fromJson(json['createdAt']) ?? DateTime.now(),
         syncStatus: SyncStatusX.fromJsonValue(json['syncStatus'] as String? ?? 'local'),
         lastModified: _DateTimeHelper.fromJson(json['lastModified']),

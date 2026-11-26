@@ -4,6 +4,7 @@ library glowara.feature.health;
 import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/models/app_models.dart';
+import 'package:glowara/core/models/nutrition_models.dart';
 import 'package:glowara/core/state/app_state.dart';
 import 'package:glowara/core/theme/app_theme.dart';
 import 'package:glowara/core/utils/date_utils.dart';
@@ -164,6 +165,7 @@ class _HealthScreenState extends State<HealthScreen> {
     final state = AppState.of(context);
     final note = TextEditingController(text: meal?.note ?? '');
     var type = meal?.mealType ?? 'meal';
+    final groups = <String>{...?meal?.groups};
     final l10n = context.l10n;
     final result = await showDialog<bool>(
       context: context,
@@ -190,6 +192,31 @@ class _HealthScreenState extends State<HealthScreen> {
                 controller: note,
                 maxLines: 3,
                 decoration: InputDecoration(labelText: context.tr('mealNote')),
+              ),
+              const SizedBox(height: 12),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(context.tr('ngTitle'), style: const TextStyle(fontSize: 12)),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: <Widget>[
+                  for (final g in kFoodGroups)
+                    FilterChip(
+                      key: Key('meal-group-$g'),
+                      label: Text(context.tr(kFoodGroupLabelKeys[g]!)),
+                      selected: groups.contains(g),
+                      onSelected: (on) => setDialogState(() {
+                        if (on) {
+                          groups.add(g);
+                        } else {
+                          groups.remove(g);
+                        }
+                      }),
+                    ),
+                ],
               ),
             ],
           ),
@@ -220,6 +247,7 @@ class _HealthScreenState extends State<HealthScreen> {
         dateTime: meal?.dateTime ?? now,
         mealType: type,
         note: noteText.isEmpty ? null : noteText,
+        groups: kFoodGroups.where(groups.contains).toList(),
         createdAt: meal?.createdAt ?? now,
         syncStatus: SyncStatus.local,
         lastModified: now,
@@ -451,6 +479,15 @@ class _HealthScreenState extends State<HealthScreen> {
                                               Text(
                                                 meal.note!,
                                                 style: TextStyle(fontSize: 12, color: c.onSurfaceVariant),
+                                              ),
+                                            if (meal.groups.isNotEmpty)
+                                              Text(
+                                                meal.groups
+                                                    .where(kFoodGroupLabelKeys.containsKey)
+                                                    .map((g) => context.tr(kFoodGroupLabelKeys[g]!))
+                                                    .join(' · '),
+                                                key: Key('meal-groups-${meal.id}'),
+                                                style: TextStyle(fontSize: 11, color: c.primary),
                                               ),
                                           ],
                                         ),
