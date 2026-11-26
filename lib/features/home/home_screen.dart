@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:glowara/core/localization/app_localizations.dart';
 import 'package:glowara/core/models/app_models.dart';
+import 'package:glowara/core/models/home_layout.dart';
 import 'package:glowara/core/models/weekly_reset_models.dart';
 import 'package:glowara/core/repositories/weekly_reset_repository.dart';
 import 'package:glowara/core/state/app_state.dart';
@@ -41,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _studyMinutes = 0;
   MoodEntry? _mood;
   String? _lastSurah;
+  HomeLayout _layout = HomeLayout.defaults;
 
   @override
   void didChangeDependencies() {
@@ -67,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
       state.settings.get<String>(doneFlagKey(false, now)),
       state.settings.get<String>('dua_done_${dateKey(now)}'),
       state.settings.get<String>('last_export_at'),
+      state.settings.get<String>(homeLayoutKey(uid)),
     ]);
     if (!mounted) return;
     final habits = results[1] as List<Habit>;
@@ -93,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _duaDone = (duaRaw == null || duaRaw.isEmpty)
           ? 0
           : duaRaw.split(',').map(int.tryParse).whereType<int>().where((i) => i < kDuas.length).length;
+      _layout = HomeLayout.parse(results[11]);
       _loading = false;
     });
     await _loadWeeklyOffer(state, now);
@@ -231,6 +235,284 @@ class _HomeScreenState extends State<HomeScreen> {
     final waterGoal = state.waterGoalMl;
     final balance = _balance(tasksDone, habitsDone, waterGoal);
 
+    final sections = <String, List<Widget>>{
+      'dayGlow': <Widget>[
+                  // إشراقة يومك
+                  _DayGlowCard(
+                    title: context.tr('dayGlow'),
+                    balanceLabel: context.tr('dayBalance'),
+                    balance: balance,
+                    rows: <_GlowRow>[
+                      _GlowRow(
+                        label: context.tr('tasksToday'),
+                        trailing: '$tasksDone/${_tasks.length}',
+                        fraction: _tasks.isEmpty ? 0 : tasksDone / _tasks.length,
+                      ),
+                      _GlowRow(
+                        label: context.tr('habitsToday'),
+                        trailing: '$habitsDone/${_habits.length}',
+                        fraction: _habits.isEmpty ? 0 : habitsDone / _habits.length,
+                      ),
+                      _GlowRow(
+                        label: context.tr('waterToday'),
+                        trailing: '$_waterMl ${context.tr('mlShort')}',
+                        fraction: waterGoal == 0 ? 0 : (_waterMl / waterGoal).clamp(0.0, 1.0).toDouble(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+      ],
+      'water': <Widget>[
+                  if (state.reminders.waterEnabled &&
+                      !_inQuietHours() &&
+                      _waterMl < waterGoal) ...<Widget>[
+                    GlowCard(
+                      color: c.primaryContainer,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(Icons.water_drop_outlined, color: c.primary),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              context.tr('waterReminderBanner'),
+                              style: TextStyle(fontSize: 13, color: c.onSurface),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: _addCup,
+                            child: Text(context.tr('addCup')),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
+                  // الماء بالقطرات
+                  _WaterCard(
+                    title: context.tr('waterToday'),
+                    amountLabel: '$_waterMl / $waterGoal ${context.tr('mlShort')}',
+                    cups: waterGoal <= 0 ? 0 : (waterGoal / state.cupSizeMl).ceil().clamp(1, 16).toInt(),
+                    filled: (_waterMl / state.cupSizeMl).floor().clamp(0, 16).toInt(),
+                    addTooltip: context.tr('addCup'),
+                    onAdd: _addCup,
+                    onOpen: () => _open('/health'),
+                  ),
+                  const SizedBox(height: 18),
+
+      ],
+      'corners': <Widget>[
+                  // أركان يومك
+                  GlowSectionTitle(
+                    title: context.tr('homeCorners'),
+                    icon: Icons.spa_outlined,
+                    actionLabel: context.tr('seeProgress'),
+                    onAction: () => _open('/progress'),
+                  ),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: _CornerTile(
+                            icon: Icons.menu_book_outlined,
+                            tint: c.gold,
+                            title: l10n.quran,
+                            subtitle: _lastSurah == null
+                                ? null
+                                : '${context.tr('quranContinue')} • $_lastSurah',
+                            onTap: () => _open('/quran'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _CornerTile(
+                            icon: Icons.timer_outlined,
+                            tint: c.primary,
+                            title: context.tr('startStudy'),
+                            subtitle: '$_studyMinutes ${context.tr('minutesLabel')}',
+                            onTap: () => _open('/study'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: _CornerTile(
+                            icon: Icons.edit_note,
+                            tint: c.blush,
+                            title: context.tr('openJournal'),
+                            subtitle: _mood == null
+                                ? null
+                                : '${_moodEmoji(_mood!.value)} ${_moodLabel(context, _mood!.value)}',
+                            onTap: () => _open('/journal'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _CornerTile(
+                            icon: Icons.favorite_border,
+                            tint: c.lilac,
+                            title: l10n.selfCare,
+                            onTap: () => _open('/care'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+      ],
+      'mood': <Widget>[
+                  // المزاج
+                  GlowCard(
+                    onTap: () => _open('/journal'),
+                    child: Row(
+                      children: <Widget>[
+                        Container(
+                          width: 48,
+                          height: 48,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: c.blush.withValues(alpha: 0.25),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            _mood == null ? '🌸' : _moodEmoji(_mood!.value),
+                            style: const TextStyle(fontSize: 26),
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                context.tr('moodQuestion'),
+                                style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _mood == null
+                                    ? context.tr('moodPromptSub')
+                                    : '${context.tr('moodToday')}: ${_moodLabel(context, _mood!.value)}',
+                                style: TextStyle(fontSize: 12.5, color: c.onSurfaceVariant),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.chevron_right, color: c.onSurfaceVariant),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+      ],
+      'tasks': <Widget>[
+                  // المهام
+                  GlowSectionTitle(
+                    title: context.tr('tasksToday'),
+                    icon: Icons.task_alt,
+                    actionLabel: context.tr('viewAll'),
+                    onAction: () => _open('/tasks'),
+                  ),
+                  if (_loading)
+                    const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else if (_tasks.isEmpty)
+                    GlowCard(
+                      child: Text(
+                        context.tr('noTasksToday'),
+                        style: TextStyle(color: c.onSurfaceVariant, fontSize: 13),
+                      ),
+                    )
+                  else
+                    ..._tasks.take(4).map(
+                          (task) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: _CheckRow(
+                              title: task.title,
+                              subtitle: task.dueDateTime == null
+                                  ? null
+                                  : formatTime(task.dueDateTime!, locale),
+                              done: task.isDoneOn(now),
+                              onTap: () => _toggleTask(task),
+                            ),
+                          ),
+                        ),
+                  const SizedBox(height: 12),
+
+      ],
+      'habits': <Widget>[
+                  // العادات
+                  GlowSectionTitle(
+                    title: context.tr('habitsToday'),
+                    icon: Icons.emoji_objects_outlined,
+                    actionLabel: context.tr('viewAll'),
+                    onAction: () => _open('/habits'),
+                  ),
+                  if (_habits.isEmpty)
+                    GlowCard(
+                      child: Text(
+                        context.tr('noHabitsToday'),
+                        style: TextStyle(color: c.onSurfaceVariant, fontSize: 13),
+                      ),
+                    )
+                  else
+                    ..._habits.take(4).map(
+                          (habit) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: _CheckRow(
+                              title: habit.name,
+                              done: _doneHabits.contains(habit.id),
+                              onTap: () => _toggleHabit(habit),
+                            ),
+                          ),
+                        ),
+                  const SizedBox(height: 12),
+
+      ],
+      'worship': <Widget>[
+                  // عبادة اليوم
+                  GlowSectionTitle(
+                    title: context.tr('worshipToday'),
+                    icon: Icons.mosque,
+                    actionLabel: context.tr('viewAll'),
+                    onAction: () => _open('/worship'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _CheckRow(
+                      title: context.tr('morningAdhkar'),
+                      done: _morningDone,
+                      onTap: () => _open('/worship'),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _CheckRow(
+                      title: context.tr('eveningAdhkar'),
+                      done: _eveningDone,
+                      onTap: () => _open('/worship'),
+                    ),
+                  ),
+                  _CheckRow(
+                    title: context.tr('duaToday'),
+                    subtitle: '$_duaDone/${kDuas.length}',
+                    done: _duaDone >= kDuas.length,
+                    onTap: () => _open('/worship'),
+                  ),
+      ],
+    };
+
     return Scaffold(
       backgroundColor: c.scaffold,
       body: SafeArea(
@@ -301,238 +583,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(color: c.onSurfaceVariant, fontSize: 13),
                   ),
                   const SizedBox(height: 18),
-
-                  // إشراقة يومك
-                  _DayGlowCard(
-                    title: context.tr('dayGlow'),
-                    balanceLabel: context.tr('dayBalance'),
-                    balance: balance,
-                    rows: <_GlowRow>[
-                      _GlowRow(
-                        label: context.tr('tasksToday'),
-                        trailing: '$tasksDone/${_tasks.length}',
-                        fraction: _tasks.isEmpty ? 0 : tasksDone / _tasks.length,
-                      ),
-                      _GlowRow(
-                        label: context.tr('habitsToday'),
-                        trailing: '$habitsDone/${_habits.length}',
-                        fraction: _habits.isEmpty ? 0 : habitsDone / _habits.length,
-                      ),
-                      _GlowRow(
-                        label: context.tr('waterToday'),
-                        trailing: '$_waterMl ${context.tr('mlShort')}',
-                        fraction: waterGoal == 0 ? 0 : (_waterMl / waterGoal).clamp(0.0, 1.0).toDouble(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  if (state.reminders.waterEnabled &&
-                      !_inQuietHours() &&
-                      _waterMl < waterGoal) ...<Widget>[
-                    GlowCard(
-                      color: c.primaryContainer,
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.water_drop_outlined, color: c.primary),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              context.tr('waterReminderBanner'),
-                              style: TextStyle(fontSize: 13, color: c.onSurface),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: _addCup,
-                            child: Text(context.tr('addCup')),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                  ],
-
-                  // الماء بالقطرات
-                  _WaterCard(
-                    title: context.tr('waterToday'),
-                    amountLabel: '$_waterMl / $waterGoal ${context.tr('mlShort')}',
-                    cups: waterGoal <= 0 ? 0 : (waterGoal / state.cupSizeMl).ceil().clamp(1, 16).toInt(),
-                    filled: (_waterMl / state.cupSizeMl).floor().clamp(0, 16).toInt(),
-                    addTooltip: context.tr('addCup'),
-                    onAdd: _addCup,
-                    onOpen: () => _open('/health'),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // أركان يومك
-                  GlowSectionTitle(
-                    title: context.tr('homeCorners'),
-                    icon: Icons.spa_outlined,
-                    actionLabel: context.tr('seeProgress'),
-                    onAction: () => _open('/progress'),
-                  ),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Expanded(
-                          child: _CornerTile(
-                            icon: Icons.menu_book_outlined,
-                            tint: c.gold,
-                            title: l10n.quran,
-                            subtitle: _lastSurah == null
-                                ? null
-                                : '${context.tr('quranContinue')} • $_lastSurah',
-                            onTap: () => _open('/quran'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _CornerTile(
-                            icon: Icons.timer_outlined,
-                            tint: c.primary,
-                            title: context.tr('startStudy'),
-                            subtitle: '$_studyMinutes ${context.tr('minutesLabel')}',
-                            onTap: () => _open('/study'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Expanded(
-                          child: _CornerTile(
-                            icon: Icons.edit_note,
-                            tint: c.blush,
-                            title: context.tr('openJournal'),
-                            subtitle: _mood == null
-                                ? null
-                                : '${_moodEmoji(_mood!.value)} ${_moodLabel(context, _mood!.value)}',
-                            onTap: () => _open('/journal'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _CornerTile(
-                            icon: Icons.favorite_border,
-                            tint: c.lilac,
-                            title: l10n.selfCare,
-                            onTap: () => _open('/care'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // المزاج
-                  GlowCard(
-                    onTap: () => _open('/journal'),
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: 48,
-                          height: 48,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: c.blush.withValues(alpha: 0.25),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            _mood == null ? '🌸' : _moodEmoji(_mood!.value),
-                            style: const TextStyle(fontSize: 26),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                context.tr('moodQuestion'),
-                                style: TextStyle(fontWeight: FontWeight.w700, color: c.onSurface),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                _mood == null
-                                    ? context.tr('moodPromptSub')
-                                    : '${context.tr('moodToday')}: ${_moodLabel(context, _mood!.value)}',
-                                style: TextStyle(fontSize: 12.5, color: c.onSurfaceVariant),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Icon(Icons.chevron_right, color: c.onSurfaceVariant),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-
-                  // المهام
-                  GlowSectionTitle(
-                    title: context.tr('tasksToday'),
-                    icon: Icons.task_alt,
-                    actionLabel: context.tr('viewAll'),
-                    onAction: () => _open('/tasks'),
-                  ),
-                  if (_loading)
-                    const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  else if (_tasks.isEmpty)
-                    GlowCard(
-                      child: Text(
-                        context.tr('noTasksToday'),
-                        style: TextStyle(color: c.onSurfaceVariant, fontSize: 13),
-                      ),
-                    )
-                  else
-                    ..._tasks.take(4).map(
-                          (task) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: _CheckRow(
-                              title: task.title,
-                              subtitle: task.dueDateTime == null
-                                  ? null
-                                  : formatTime(task.dueDateTime!, locale),
-                              done: task.isDoneOn(now),
-                              onTap: () => _toggleTask(task),
-                            ),
-                          ),
-                        ),
-                  const SizedBox(height: 12),
-
-                  // العادات
-                  GlowSectionTitle(
-                    title: context.tr('habitsToday'),
-                    icon: Icons.emoji_objects_outlined,
-                    actionLabel: context.tr('viewAll'),
-                    onAction: () => _open('/habits'),
-                  ),
-                  if (_habits.isEmpty)
-                    GlowCard(
-                      child: Text(
-                        context.tr('noHabitsToday'),
-                        style: TextStyle(color: c.onSurfaceVariant, fontSize: 13),
-                      ),
-                    )
-                  else
-                    ..._habits.take(4).map(
-                          (habit) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: _CheckRow(
-                              title: habit.name,
-                              done: _doneHabits.contains(habit.id),
-                              onTap: () => _toggleHabit(habit),
-                            ),
-                          ),
-                        ),
-                  const SizedBox(height: 12),
 
                   if (_offerReset && _resetWeek != null) ...<Widget>[
                     GlowCard(
@@ -607,34 +657,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 12),
                   ],
-                  // عبادة اليوم
-                  GlowSectionTitle(
-                    title: context.tr('worshipToday'),
-                    icon: Icons.mosque,
-                    actionLabel: context.tr('viewAll'),
-                    onAction: () => _open('/worship'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _CheckRow(
-                      title: context.tr('morningAdhkar'),
-                      done: _morningDone,
-                      onTap: () => _open('/worship'),
+                  for (final id in _layout.visibleOrder) ...sections[id]!,
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton.icon(
+                      key: const Key('home-customize'),
+                      onPressed: () => _open('/customize-home'),
+                      icon: const Icon(Icons.tune, size: 18),
+                      label: Text(context.tr('hcLink')),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _CheckRow(
-                      title: context.tr('eveningAdhkar'),
-                      done: _eveningDone,
-                      onTap: () => _open('/worship'),
-                    ),
-                  ),
-                  _CheckRow(
-                    title: context.tr('duaToday'),
-                    subtitle: '$_duaDone/${kDuas.length}',
-                    done: _duaDone >= kDuas.length,
-                    onTap: () => _open('/worship'),
                   ),
                 ],
               ),
